@@ -1,0 +1,52 @@
+### YamlMime:ModuleUnit
+uid: learn.work-with-dataframe-advanced-methods-in-azure-databricks.knowledge-check
+title: Knowledge check
+metadata:
+  title: Knowledge check
+  description: Test your knowledge by answering questions about skills you learned from the lab.
+  ms.date: 02/20/2019
+  author: jasallen 
+  ms.author: jasdeb
+  ms.topic: interactive-tutorial
+  ms.prod: learning-azure
+durationInMinutes: 5
+content: |
+  [!include[](includes/5-knowledge-check.md)]
+quiz:
+  questions:
+    - content: "Which method for renaming a DataFrame's column is incorrect?"
+      choices:
+        - content: df.select(col("timestamp").alias("dateCaptured"))
+          isCorrect: false
+          explanation: This is a valid renaming method.
+        - content: df.withColumnRenamed("timestamp", "dateCaptured")
+          isCorrect: false
+          explanation: This is a valid renaming method.
+        - content: df.alias("timestamp", "dateCaptured")
+          isCorrect: true
+          explanation: The DataFrame does not contain an alias method for a column.
+        - content: df.toDF("dateCaptured")
+          explanation: This is a valid renaming method.
+          isCorrect: false
+    - content: "How do you convert a string column to a timestamp?"
+      choices:
+        - content: First, convert the string value to a Unix time stamp, then cast it to a timestamp data type.
+          explanation: Correct. Your code would be similar to the following - df.withColumn("dateCaptured", unix_timestamp( col("dateCaptured"), "yyyy-MM-dd'T'HH:mm:ss").cast("timestamp") )
+          isCorrect: true
+        - content: You can directly cast the string value to a timestamp data type, using the Column's cast() method.
+          isCorrect: false
+          explanation: These steps are incorrect. You must first convert the string to a Unix time stamp, which is a Java Epoch. Then you can cast it to a timestamp data type.
+    - content: "You need to find the average of sales transactions by storefront. Which of the following aggregates would you use?"
+      choices:
+        - content: df.select(col("storefront")).avg("completedTransactions")
+          isCorrect: false
+          explanation: This syntax is incorrect.
+        - content: df.groupBy(col("storefront")).avg(col("completedTransactions"))
+          isCorrect: false
+          explanation: This syntax is incorrect. You would receive an error that Column is not iterable.
+        - content: df.select(col("storefront")).average("completedTransactions")
+          isCorrect: false
+          explanation: This syntax is incorrect.
+        - content: df.groupBy(col("storefront")).avg("completedTransactions")
+          explanation: Correct. The syntax shown groups the data by the storefront Column, then calculates the average value of completed sales transactions.
+          isCorrect: true

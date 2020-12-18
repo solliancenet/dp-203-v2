@@ -1,0 +1,14 @@
+### YamlMime:ModuleUnit
+uid: learn.process-streaming-data-with-azure-databricks-structured-streaming.describe-azure-databricks-structured-streamin
+title: Describe Azure Databricks Structured Streaming
+metadata:
+  title: Describe Azure Databricks Structured Streaming
+  description: Overview of the Spark Structured Streaming process.
+  ms.date: 02/20/2019
+  author: jasallen 
+  ms.author: jasdeb
+  ms.topic: interactive-tutorial
+  ms.prod: learning-azure
+durationInMinutes: 5
+content: |
+  [!include[](includes/2-describe-azure-databricks-structured-streaming.md)]

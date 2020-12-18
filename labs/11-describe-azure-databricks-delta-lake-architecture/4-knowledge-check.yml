@@ -1,0 +1,68 @@
+### YamlMime:ModuleUnit
+uid: learn.describe-azure-databricks-delta-lake-architecture.knowledge-check
+title: Knowledge check
+metadata:
+  title: Knowledge check
+  description: Test your knowledge by answering questions about skills you learned from the lab.
+  ms.date: 02/20/2019
+  author: jasallen 
+  ms.author: jasdeb
+  ms.topic: interactive-tutorial
+  ms.prod: learning-azure
+durationInMinutes: 3
+content: |
+  [!include[](includes/4-knowledge-check.md)]
+quiz:
+  questions:
+    - content: 'What is a lambda architecture and what does it try to solve?'
+      choices:
+        - content: An architecture that defines a data processing pipeline whereby microservices act as compute resources for efficient large-scale data processing.
+          isCorrect: false
+          explanation: Incorrect. A lambda architecture does not define the type of compute used for data processing.
+        - content: An architecture that splits incoming data into two paths - a batch path and a streaming path. This architecture helps address the need to provide real-time processing in addition to slower batch computations.
+          explanation: Correct. The lambda architecture is a big data processing architecture that combines both batch- and real-time processing methods.
+          isCorrect: true
+        - content: An architecture that employs the latest Scala runtimes in one or more Databricks clusters to provide the most efficient data processing platform available today.
+          isCorrect: false
+          explanation: Incorrect. The lambda architecture does not define the type of compute nor specific versions of runtime libraries for data processing.
+    - content: 'How does Delta Lake improve upon the traditional lambda architecture?'
+      choices:
+        - content: At each stage, Delta Lake enriches data through a unified pipeline that allows us to combine batch and streaming workflows through a shared filestore with ACID compliant transactions.
+          explanation: Correct. By considering the business logic at all steps of the ETL pipeline, you can ensure that storage and compute costs are optimized by reducing unnecessary duplication of data and limiting ad hoc querying against full historic data. Each stage can be configured as a batch or streaming job, and ACID transactions ensure that processing succeeds or fails completely.
+          isCorrect: true
+        - content: Delta Lake improves data processing efficiency through built-in utilities such as OPTIMIZE and VACUUM. In addition, it allows you to upsert data and work with each version of your data through Time Travel operations.
+          isCorrect: false
+          explanation: Incorrect. Although these statements are true, they do not address how Delta Lake improves upon the lambda architecture.
+    - content: 'Which of these statements about bronze tables is true?'
+      choices:
+        - content: Bronze tables are stored on cheaper disks than silver or gold, allowing you to optimize costs based on relative storage value.
+          isCorrect: false
+          explanation: Incorrect. The bronze, silver, or gold designation does not pertain to monetary value.
+        - content: Bronze tables are exclusively for storing job and cluster logs collected during data processing.
+          isCorrect: false
+          explanation: Incorrect. There are no rules about what type of data can be stored in bronze tables.
+        - content: Bronze tables contain raw data ingested from various sources (JSON files, RDBMS data,  IoT data, etc.).
+          explanation: Correct. The bronze, silver, and gold designations identify the amount of processing performed on the data within those tables.
+          isCorrect: true
+    - content: 'How do you view the list of active streams?'
+      choices:
+        - content:  Invoke **spark.streams.active**.
+          explanation: That's the correct syntax to view the list of active streams.
+          isCorrect: true
+        - content:  Invoke **spark.streams.show**.
+          isCorrect: false
+          explanation: The syntax isn't correct for this operation.
+        - content:  Invoke **spark.view.active**.
+          isCorrect: false
+          explanation: The syntax isn't correct for this operation.
+    - content: 'How do you specify the location of a checkpoint directory when defining a Delta Lake streaming query?'
+      choices:
+        - content: .writeStream.format("delta").checkpoint("location", checkpointPath) ...
+          isCorrect: false
+          explanation: The syntax isn't correct for this operation.
+        - content: .writeStream.format("delta").option("checkpointLocation", checkpointPath) ...
+          explanation: That's the correct syntax to specify the checkpoint directory on a Delta Lake streaming query.
+          isCorrect: true
+        - content:  .writeStream.format("parquet").option("checkpointLocation", checkpointPath) ...
+          isCorrect: false
+          explanation: Incorrect. You must specify delta as the format for a Delta Lake streaming query.

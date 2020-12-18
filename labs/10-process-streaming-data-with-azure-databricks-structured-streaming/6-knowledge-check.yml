@@ -1,0 +1,41 @@
+### YamlMime:ModuleUnit
+uid: learn.process-streaming-data-with-azure-databricks-structured-streaming.knowledge-check
+title: Knowledge check
+metadata:
+  title: Knowledge check
+  description: Test your knowledge by answering questions about skills you learned from the lab.
+  ms.date: 02/20/2019
+  author: jasallen 
+  ms.author: jasdeb
+  ms.topic: interactive-tutorial
+  ms.prod: learning-azure
+durationInMinutes: 2
+content: |
+  [!include[](includes/6-knowledge-check.md)]
+quiz:
+ questions:
+    - content: 'When you do a write stream command, what does the `outputMode("append")` option do?'
+      choices:
+        - content: The append mode allows records to be updated and changed in place.
+          isCorrect: false
+          explanation: 'The append mode allows records to be added to the output sink. Using the update mode will allow updated records to be changed in place.'
+        - content: The append outputMode allows records to be added to the output sink.
+          explanation: 'The outputMode "append" option informs the write stream to add only new records to the output sink. The "complete" option is to rewrite the full output - applicable to aggregations operations. Finally, the "update" option is for updating changed records in place.'
+          isCorrect: true
+    - content: 'In Spark Structured Streaming, what method should you use to read streaming data into a DataFrame?'
+      choices:
+        - content: spark.readStream
+          explanation: You use the `spark.readStream` method to start reading data from a streaming query into a DataFrame.
+          isCorrect: true
+        - content: spark.read
+          isCorrect: false
+          explanation: You use the `spark.readStream` method to start reading data from a streaming query into a DataFrame. `spark.read` is used for batch and interactive queries.
+    - content: 'What happens if you do not specify `option("checkpointLocation", pointer-to-checkpoint directory)`?'
+      choices:
+        - content: You will not be able to create more than one streaming query that uses the same streaming source, since they will conflict.
+          isCorrect: false
+          explanation: Incorrect.
+        - content: When the streaming job stops, you lose all state around your streaming job and upon restart, you start from scratch.
+          isCorrect: true
+          explanation: Setting the `checkpointLocation` is required for many sinks used in Structured Streaming. For those sinks where this setting is optional, keep in mind that when you do not set this value, you risk losing your place in the stream.
+    

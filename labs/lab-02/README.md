@@ -6,24 +6,26 @@ After completing the lab, you will understand the main steps of an end-to-end da
 
 This lab has the following structure:
 
-- [Before the hands-on lab](#before-the-hands-on-lab)
-  - [Task 1 - Create and configure the Azure Synapse Analytics workspace](#task-1---create-and-configure-the-azure-synapse-analytics-workspace)
-  - [Task 2 - Create and configure additional resources for this lab](#task-2---create-and-configure-additional-resources-for-this-lab)
-- [Exercise 1 - Configure an Azure Data Explorer linked service](#exercise-1---configure-an-azure-data-explorer-linked-service)
-  - [Task 1 - Create the linked service](#task-1---create-the-linked-service)
-  - [Task 2 - Explore the Azure Data Explorer database in Synapse Studio](#task-2---explore-the-azure-data-explorer-database-in-synapse-studio)
-- [Exercise 2 - Load and enrich data with Spark](#exercise-2---load-and-enrich-data-with-spark)
-  - [Task 1 - Load data from Azure Data Explorer](#task-1---load-data-from-azure-data-explorer)
-  - [Task 2 - Index the Data Lake storage with Hyperspace](#task-2---index-the-data-lake-storage-with-hyperspace)
-  - [Task 3 - Explore the Data Lake storage with the MSSparkUtil library](#task-3---explore-the-data-lake-storage-with-the-mssparkutil-library)
-  - [Task 4 - Load data from Data Lake storage](#task-4---load-data-from-data-lake-storage)
-  - [Task 5 - Load data from SQL Pool](#task-5---load-data-from-sql-pool)
-  - [Task 6 - Enrich data from multiple sources](#task-6---enrich-data-from-multiple-sources)
-- [Exercise 3 - Consume enriched data](#exercise-3---consume-enriched-data)
-  - [Task 1 - Access data with the SQL built-in pool](#task-1---access-data-with-the-sql-built-in-pool)
-  - [Task 2 - Display enriched data in Power BI](#task-2---display-enriched-data-in-power-bi)
-- [After the hands-on lab](#after-the-hands-on-lab)
-- [Resources](#resources)
+- [Lab 02 - Working with Apache Spark in Synapse Analytics](#lab-02---working-with-apache-spark-in-synapse-analytics)
+  - [Before the hands-on lab](#before-the-hands-on-lab)
+    - [Task 1 - Create and configure the Azure Synapse Analytics workspace](#task-1---create-and-configure-the-azure-synapse-analytics-workspace)
+    - [Task 2 - Create and configure additional resources for this lab](#task-2---create-and-configure-additional-resources-for-this-lab)
+  - [Exercise 1 - Configure an Azure Data Explorer linked service](#exercise-1---configure-an-azure-data-explorer-linked-service)
+    - [Task 1 - Create the linked service](#task-1---create-the-linked-service)
+    - [Task 2 - Explore the Azure Data Explorer database in Synapse Studio](#task-2---explore-the-azure-data-explorer-database-in-synapse-studio)
+  - [Exercise 2 - Load and enrich data with Spark](#exercise-2---load-and-enrich-data-with-spark)
+    - [Task 1 - Load data from Azure Data Explorer](#task-1---load-data-from-azure-data-explorer)
+    - [Task 2 - Index the Data Lake storage with Hyperspace](#task-2---index-the-data-lake-storage-with-hyperspace)
+    - [Task 3 - Explore the Data Lake storage with the MSSparkUtil library](#task-3---explore-the-data-lake-storage-with-the-mssparkutil-library)
+    - [Task 4 - Load data from Data Lake storage](#task-4---load-data-from-data-lake-storage)
+    - [Task 5 - Load data from SQL Pool](#task-5---load-data-from-sql-pool)
+    - [Task 6 - Enrich data from multiple sources](#task-6---enrich-data-from-multiple-sources)
+  - [Exercise 3 - Consume enriched data](#exercise-3---consume-enriched-data)
+    - [Task 1 - Access data with the SQL built-in pool](#task-1---access-data-with-the-sql-built-in-pool)
+    - [Task 2 - Display enriched data in Power BI](#task-2---display-enriched-data-in-power-bi)
+  - [After the hands-on lab](#after-the-hands-on-lab)
+  - [Resources](#resources)
+  - [Report issues](#report-issues)
 
 ## Before the hands-on lab
 
@@ -55,27 +57,27 @@ The Synapse Analytics linked service authenticates with Azure Data Explorer usin
 
 To view the service principal, open the Azure portal and navigate to your instance of Azure Active directory. Select the `App registrations` section and you should see the `Azure Synapse Analytics GA Labs` application under the `Owned applications` tab.
 
-![Azure Active Directory application and service principal](./../media/lab-02-ex-01-task-01-service-principal.png)
+![Azure Active Directory application and service principal](media/lab-02-ex-01-task-01-service-principal.png)
 
 Select the application to view its properties and copy the value of the `Application (client) ID` property (you will need it in a moment to configure the linked service).
 
-![Azure Active Directory application client ID](./../media/lab-02-ex-01-task-01-service-principal-clientid.png)
+![Azure Active Directory application client ID](media/lab-02-ex-01-task-01-service-principal-clientid.png)
 
 To view the secret, open the Azure Portal and navigate to the Azure Key Vault instance that has been created in your resource group. Select the `Secrets` section and you should see the `ASA-GA-LABS` secret:
 
-![Azure Key Vault secret for security principal](./../media/lab-02-ex-01-task-01-keyvault-secret.png)
+![Azure Key Vault secret for security principal](media/lab-02-ex-01-task-01-keyvault-secret.png)
 
 First, you need to make sure the service principal has permissions to work with the Azure Data Explorer cluster and database. The setup procedure has already configured the necessary permissions, so you will just inspect them to make sure everything is in place.
 
 Open the Azure Portal and navigate to the Azure Data Explorer cluster that has been created in your resource group. Select the `Databases` section on the left, then select the `ASA-Data-Explorer-DB-01` from the list of databases, and then select the `Permissions` section on the left. You should see the `Azure Synapse Analytica GA Labs` application listed under the `Database Admin` role.
 
-![Azure Data Explorer database permissions](./../media/lab-02-ex-01-task-01-database-permissions.png)
+![Azure Data Explorer database permissions](media/lab-02-ex-01-task-01-database-permissions.png)
 
 You are now ready to create the Azure Data Explorer linked service.
 
 To create a new linked service, open Synapse Studio, select the `Manage` hub, select `Linked services`, and the select `+ New`. In the search field from the `New linked service` dialog, enter `Azure Machine Learning`. Select the `Azure Machine Learning` option and then select `Continue`.
 
-![Create new linked service in Synapse Studio](./../media/lab-02-ex-01-task-01-new-linked-service.png)
+![Create new linked service in Synapse Studio](media/lab-02-ex-01-task-01-new-linked-service.png)
 
 In the `New linked service (Azure Data Explorer (Kusto))` dialog, provide the following properties:
 
@@ -89,7 +91,7 @@ In the `New linked service (Azure Data Explorer (Kusto))` dialog, provide the fo
 - **Secret name**: enter `ASA-GA-LABS`.
 - **Database**: enter `ASA-Data-Explorer-DB-01`.
 
-![Configure linked service in Synapse Studio](./../media/lab-02-ex-01-task-01-configure-linked-service.png)
+![Configure linked service in Synapse Studio](media/lab-02-ex-01-task-01-configure-linked-service.png)
 
 Next, select `Test connection` to make sure all settings are correct, and then select `Create`. The Azure Machine Learning linked service will now be created in the Synapse Analytics workspace.
 
@@ -97,17 +99,17 @@ Next, select `Test connection` to make sure all settings are correct, and then s
 >
 >The linked service is not complete until you publish it to the workspace. Notice the indicator near your Azure Machine Learning linked service. To publish it, select `Publish all` and then `Publish`.
 
-![Publish Azure Machine Learning linked service in Synapse Studio](./../media/lab-02-ex-01-task-01-publish-linked-service.png)
+![Publish Azure Machine Learning linked service in Synapse Studio](media/lab-02-ex-01-task-01-publish-linked-service.png)
 
 ### Task 2 - Explore the Azure Data Explorer database in Synapse Studio
 
 Once the linked service is published, you can view the Azure Data Explorer databases and tables in Synapse Studio. Select the `Data` hub on the left site, then select the `Linked` section and the expand the `Azure Data Explorer` section to view the databases and tables under it. Activate the context menu next to the `SalesTelemetry` table by clicking on the `...` indicator (appears when you hover over the table name) and then select `New notebook > Read DataFrame from table`.
 
-![Read Spark DataFrame from Azure Data Explorer table](./../media/lab-02-ex-01-task-02-notebook-from-table.png)
+![Read Spark DataFrame from Azure Data Explorer table](media/lab-02-ex-01-task-02-notebook-from-table.png)
 
 The notebook that is created for your shows how to load a Spark DataFrame from the `SalesTelemetry` table. Take a moment to observe the generated code, then select the `SparkPool01` Spark pool to attach to and run the cell. You will get the first 10 records from the table.
 
-![View Spark DataFrame content](./../media/lab-02-ex-01-task-02-load-table.png)
+![View Spark DataFrame content](media/lab-02-ex-01-task-02-load-table.png)
 
 ## Exercise 2 - Load and enrich data with Spark
 
@@ -123,7 +125,7 @@ kustoDf.count()
 
 Run the cell again. This time, the execution should take longer as the DataFrame is fully loaded with the content of the Data Explorer table. The loaded DataFrame contains 12.79 million records.
 
-![Load SalesTelemetry into Spark DataFrame](./../media/lab-02-ex-02-task-01-load-sales-telemetry.png)
+![Load SalesTelemetry into Spark DataFrame](media/lab-02-ex-02-task-01-load-sales-telemetry.png)
 
 ### Task 2 - Index the Data Lake storage with Hyperspace
 
@@ -155,7 +157,7 @@ hyperspace = Hyperspace(spark)
 
 Run the new cell. It will load the two DataFrames with data from the data lake and initalize Hyperspace.
 
-![Load data from the data lake and initialize Hyperspace](./../media/lab-02-ex-02-task-02-initialize-hyperspace.png)
+![Load data from the data lake and initialize Hyperspace](media/lab-02-ex-02-task-02-initialize-hyperspace.png)
 
 Add another new cell to your notebook with the following code:
 
@@ -171,7 +173,7 @@ hyperspace.indexes().show()
 
 Run the new cell. It will create two indexes and display their structure.
 
-![Create new indexes and display their structure](./../media/lab-02-ex-02-task-02-create-indexes.png)
+![Create new indexes and display their structure](media/lab-02-ex-02-task-02-create-indexes.png)
 
 Add another new cell to your notebook with the following code:
 
@@ -183,7 +185,7 @@ df1.explain(True)
 
 Run the new cell. The output will show that the physical execution plan is not taking into account any of the indexes (performs a file scan on the original data file).
 
-![Hyperspace explained - no indexes used](./../media/lab-02-ex-02-task-02-explain-hyperspace-01.png)
+![Hyperspace explained - no indexes used](media/lab-02-ex-02-task-02-explain-hyperspace-01.png)
 
 Now add another new cell to your notebook with the following code (notice the extra line at the beginning used to enable Hyperspace optimization in the Spark engine):
 
@@ -197,7 +199,7 @@ df1.explain(True)
 
 Run the new cell. The output will show that the physical execution plan is now using the index instead of the orginal data file.
 
-![Hyperspace explained - using an index](./../media/lab-02-ex-02-task-02-explain-hyperspace-02.png)
+![Hyperspace explained - using an index](media/lab-02-ex-02-task-02-explain-hyperspace-02.png)
 
 Hyperspace provides an Explain API that allows you to compare the execution plans without indexes vs. with indexes. Add a new cell with the following code:
 
@@ -210,7 +212,7 @@ hyperspace.explain(df1, True, displayHTML)
 
 Run the new cell. The output shows a comparison `Plan with indexes` vs. `Plan without indexes`. Observe how, in the first case the index file is used while in the second case the original data file is used.
 
-![Hyperspace explained - plan comparison](./../media/lab-02-ex-02-task-02-explain-hyperspace-03.png)
+![Hyperspace explained - plan comparison](media/lab-02-ex-02-task-02-explain-hyperspace-03.png)
 
 Let's investigate now a more complex case, involving a join operation. Add a new cell with the following code:
 
@@ -222,7 +224,7 @@ hyperspace.explain(eqJoin, True, displayHTML)
 
 Run the new cell. The output shows again a comparison `Plan with indexes` vs. `Plan without indexes`, where indexes are used in the first case and the original data files in the second.
 
-![Hyperspace explained - plan comparison for join](./../media/lab-02-ex-02-task-02-explain-hyperspace-04.png)
+![Hyperspace explained - plan comparison for join](media/lab-02-ex-02-task-02-explain-hyperspace-04.png)
 
 In case you want to deactivate Hyperspace and cleanup the indexes, you can run the following code:
 
@@ -422,7 +424,7 @@ In this exercise, you will view the information in the enriched dataset in a Pow
 
 In Synapse Studio, select the `Data` hub on the left side, select the `Linked` section, and then select the primary data lake account under `Azure Data Lake Storage Gen 2`. Next, select the `wwi-02` file system, select the `sale-small-stats` folder, and then select `New SQL script > Select TOP 100 rows` from the context menu available by right-clicking on the Parquet file.
 
-![Open new SQL script on the enriched data file in the data lake](./../media/lab-02-ex-03-task-01-new-sql-script.png)
+![Open new SQL script on the enriched data file in the data lake](media/lab-02-ex-03-task-01-new-sql-script.png)
 
 Change the T-SQL script to the following (remember to replace `<unique_suffix>` in line 1 with the value you specified during the Synapse Analytics workspace deployment):
 
@@ -438,7 +440,7 @@ FROM
 
 Run the query on the `Built-in` serverless pool and observe the results.
 
-![Explore the enriched dataset using SQL serverless](./../media/lab-02-ex-03-task-01-execute-sql-script.png)
+![Explore the enriched dataset using SQL serverless](media/lab-02-ex-03-task-01-execute-sql-script.png)
 
 ### Task 2 - Display enriched data in Power BI
 
@@ -450,19 +452,19 @@ Open the file with Power BI Desktop (ignore the warning about missing credential
 
 In the `Home` section, select `Transform data`, then edit the `Source` entry in the `APPLIED STEPS` list of the `TransactionStatistics` query. Change the name of the server to `asagaworkspace<unique_suffix>-ondemand.sql.azuresynapse.net` (where `<unique_suffix>` is the unique suffix you provided when deploying the Synapse Analytics workspace). Also, ensure the Data Lake account name in the `SQL statement` textbox starts with `asagadatalake<unique_suffix>`.
 
-![Edit server name in Power BI Desktop](./../media/lab-02-ex-03-task-02-server-in-power-bi-desktop.png)
+![Edit server name in Power BI Desktop](media/lab-02-ex-03-task-02-server-in-power-bi-desktop.png)
 
 The credentials window will pop up and promopt you to enter the credentials to connect to the Synapse Analytics SQL pool (in case it doesn't, select `Data source settings` on the ribbon, select your data source, select `Edit Permissions...`, and then select `Edit...` under `Credentials`).
 
 In the credentials window, select `Microsoft account` and then select `Sign in`. Use your Power BI Pro account to sign in.
 
-![Edit credentials in Power BI Desktop](./../media/lab-02-ex-03-task-02-credentials-in-power-bi-desktop.png)
+![Edit credentials in Power BI Desktop](media/lab-02-ex-03-task-02-credentials-in-power-bi-desktop.png)
 
 Close all open popup windows, select `Close & Apply` and then publish the file to your Power BI workspace.
 
 To view the results of the report, in Synapse Studio, select the `Develop` hub on the left side, expand the `Power BI` section, and select the `TransactionStatistics` report under the `Power BI reports` section from your workspace.
 
-![View Product Quantity Forecast report in Synapse Studio](./../media/lab-02-ex-03-task-02-view-report.png)
+![View Product Quantity Forecast report in Synapse Studio](media/lab-02-ex-03-task-02-view-report.png)
 
 ## After the hands-on lab
 

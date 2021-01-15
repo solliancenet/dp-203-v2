@@ -38,11 +38,11 @@ Before stepping through the exercises in this lab, make sure you have properly c
 >
 >If you have already created and configured the Synapse Analytics workspace while running one of the other labs available in this repo, you must not perform this task again and you can move on to the next task. The labs are designed to share the Synapse Analytics workspace, so you only need to create it once.
 
-Follow the instructions in [Deploy your Azure Synapse Analytics workspace](./../setup/15/asa-workspace-deploy.md) to create and configure the workspace.
+Follow the instructions in [Deploy your Azure Synapse Analytics workspace](./../setup/17/asa-workspace-deploy.md) to create and configure the workspace.
 
 ### Task 2 - Create and configure additional resources for this lab
 
-Follow the instructions in [Deploy resources for Lab 01](./../setup/15/lab-01-deploy.md) to deploy additional resources for this lab. Once deployment is complete, you are ready to proceed with the exercises in this lab.
+Follow the instructions in [Deploy resources for Lab 01](./../setup/17/lab-01-deploy.md) to deploy additional resources for this lab. Once deployment is complete, you are ready to proceed with the exercises in this lab.
 
 ## Exercise 1 - Create an Azure Machine Learning linked service
 

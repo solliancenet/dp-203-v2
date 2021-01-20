@@ -1,958 +1,346 @@
-# Module 12 - Analyzing and Optimizing Data Warehouse Storage
+# Module 12 - Support Hybrid Transactional Analytical Processing (HTAP) with Azure Synapse Link
 
-In this module, students will learn how to analyze then optimize the data storage of the Azure Synapse dedicated SQL pools. The student will know techniques to understand table space usage and column store storage details. Next the student will know how to compare storage requirements between identical tables that use different data types. Finally, the student will observe the impact materialized views have when executed in place of complex queries and learn how to avoid extensive logging by optimizing delete operations.
+In this module, students will learn how Azure Synapse Link enables seamless connectivity of an Azure Cosmos DB account to a Synapse workspace. The student will understand how to enable and configure Synapse link, then how to query the Azure Cosmos DB analytical store using Apache Spark and SQL Serverless.
 
 In this module, the student will be able to:
 
-- Check for skewed data and space usage
-- Understand column store storage details
-- Study the impact of materialized views
-- Explore rules for minimally logged operations
+- Configure Azure Synapse Link with Azure Cosmos DB
+- Query Azure Cosmos DB with Apache Spark for Synapse Analytics
+- Query Azure Cosmos DB with serverless SQL pool for Azure Synapse Analytics
 
 ## Lab details
 
-- [Module 12 - Analyzing and Optimizing Data Warehouse Storage](#module-12---analyzing-and-optimizing-data-warehouse-storage)
+- [Module 12 - Support Hybrid Transactional Analytical Processing (HTAP) with Azure Synapse Link](#module-12---support-hybrid-transactional-analytical-processing-htap-with-azure-synapse-link)
   - [Lab details](#lab-details)
-  - [Exercise 1 - Check for skewed data and space usage](#exercise-1---check-for-skewed-data-and-space-usage)
-    - [Task 1 - Analyze the space used by tables](#task-1---analyze-the-space-used-by-tables)
-    - [Task 2 - Use a more advanced approach to understand table space usage](#task-2---use-a-more-advanced-approach-to-understand-table-space-usage)
-  - [Exercise 2 - Understand column store storage details](#exercise-2---understand-column-store-storage-details)
-    - [Task 1 - Create view for column store row group stats](#task-1---create-view-for-column-store-row-group-stats)
-    - [Task 2 - Explore column store storage details](#task-2---explore-column-store-storage-details)
-  - [Exercise 3 - Study the impact of wrong choices for column data types](#exercise-3---study-the-impact-of-wrong-choices-for-column-data-types)
-    - [Task 1 - Create and populate tables with optimal column data types](#task-1---create-and-populate-tables-with-optimal-column-data-types)
-    - [Task 2 - Create and populate tables with sub-optimal column data types](#task-2---create-and-populate-tables-with-sub-optimal-column-data-types)
-    - [Task 3 - Compare storage requirements](#task-3---compare-storage-requirements)
-  - [Exercise 4 - Study the impact of materialized views](#exercise-4---study-the-impact-of-materialized-views)
-    - [Task 1 - Analyze the execution plan of a query](#task-1---analyze-the-execution-plan-of-a-query)
-    - [Task 2 - Improve the execution plan of the query with a materialized view](#task-2---improve-the-execution-plan-of-the-query-with-a-materialized-view)
-  - [Exercise 5 - Avoid extensive logging](#exercise-5---avoid-extensive-logging)
-    - [Task 1 - Explore rules for minimally logged operations](#task-1---explore-rules-for-minimally-logged-operations)
-    - [Task 2 - Optimizing a delete operation](#task-2---optimizing-a-delete-operation)
+  - [Lab prerequisites](#lab-prerequisites)
+  - [Configuring Azure Synapse Link with Azure Cosmos DB](#configuring-azure-synapse-link-with-azure-cosmos-db)
+    - [Enable Azure Synapse Link](#enable-azure-synapse-link)
+    - [Create a new Azure Cosmos DB container](#create-a-new-azure-cosmos-db-container)
+    - [Create and run a copy pipeline](#create-and-run-a-copy-pipeline)
+  - [Querying Azure Cosmos DB with Apache Spark for Synapse Analytics](#querying-azure-cosmos-db-with-apache-spark-for-synapse-analytics)
+  - [Querying Azure Cosmos DB with serverless SQL pool for Azure Synapse Analytics](#querying-azure-cosmos-db-with-serverless-sql-pool-for-azure-synapse-analytics)
 
-## Exercise 1 - Check for skewed data and space usage
+## Lab prerequisites
 
-### Task 1 - Analyze the space used by tables
+- You have created the Azure Cosmos DB linked service.
+- You have created the `asal400_customerprofile_cosmosdb` integration data set.
 
-1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+## Configuring Azure Synapse Link with Azure Cosmos DB
 
-2. Select the **Develop** hub.
+Tailwind Traders uses Azure Cosmos DB to store user profile data from their eCommerce site. The NoSQL document store provided by the Azure Cosmos DB SQL API provides the familiarity of managing their data using SQL syntax, while being able to read and write the files at a massive, global scale.
 
-    ![The develop hub is highlighted.](media/develop-hub.png "Develop hub")
+While Tailwind Traders is happy with the capabilities and performance of Azure Cosmos DB, they are concerned about the cost of executing a large volume of analytical queries over multiple partitions (cross-partition queries) from their data warehouse. They want to efficiently access all the data without needing to increase the Azure Cosmos DB request units (RUs). They have looked at options for extracting data from their containers to the data lake as it changes, through the Azure Cosmos DB change feed mechanism. The problem with this approach is the extra service and code dependencies and long-term maintenance of the solution. They could perform bulk exports from a Synapse Pipeline, but then they won't have the most up-to-date information at any given moment.
 
-3. From the **Develop** menu, select the **+** button **(1)** and choose **SQL Script (2)** from the context menu.
+You decide to enable Azure Synapse Link for Cosmos DB and enable the analytical store on their Azure Cosmos DB containers. With this configuration, all transactional data is automatically stored in a fully isolated column store. This store enables large-scale analytics against the operational data in Azure Cosmos DB, without impacting the transactional workloads or incurring resource unit (RU) costs. Azure Synapse Link for Cosmos DB creates a tight integration between Azure Cosmos DB and Azure Synapse Analytics, which enables Tailwind Traders to run near real-time analytics over their operational data with no-ETL and full performance isolation from their transactional workloads.
 
-    ![The SQL script context menu item is highlighted.](media/synapse-studio-new-sql-script.png "New SQL script")
+By combining the distributed scale of Cosmos DB's transactional processing with the built-in analytical store and the computing power of Azure Synapse Analytics, Azure Synapse Link enables a Hybrid Transactional/Analytical Processing (HTAP) architecture for optimizing Tailwind Trader's business processes. This integration eliminates ETL processes, enabling business analysts, data engineers & data scientists to self-serve and run near real-time BI, analytics, and Machine Learning pipelines over operational data.
 
-4. In the toolbar menu, connect to the **SQLPool01** database to execute the query.
+### Enable Azure Synapse Link
 
-    ![The connect to option is highlighted in the query toolbar.](media/synapse-studio-query-toolbar-connect.png "Query toolbar")
+1. Navigate to the Azure portal (<https://portal.azure.com>) and open the `synapse-in-a-day` resource group (or whichever resource group you are using for the demo).
 
-5. In the query window, replace the script with the following Database Console Command (DBCC):
+2. Select the **Azure Cosmos DB account**.
 
-    ```sql
-    DBCC PDW_SHOWSPACEUSED('wwi_perf.Sale_Hash');
+    ![The Azure Cosmos DB account is highlighted.](media/resource-group-cosmos.png "Azure Cosmos DB account")
+
+3. Select **Features** in the left-hand menu **(1)**, then select **Azure Synapse Link (2)**.
+
+    ![The Features blade is displayed.](media/cosmos-db-features.png "Features")
+
+4. Select **Enable**.
+
+    ![Enable is highlighted.](media/synapse-link-enable.png "Azure Synapse Link")
+
+    Before we can create an Azure Cosmos DB container with an analytical store, we must first enable Azure Synapse Link.
+
+5. You must wait for this operation to complete before continuing. Check the status by selecting the Azure **Notifications** icon.
+
+    ![The Enabling Synapse Link process is running.](media/notifications-running.png "Notifications")
+
+    You will see a green checkmark next to "Enabling Synapse Link" when it successfully completes.
+
+    ![The operation completed successfully.](media/notifications-completed.png "Notifications")
+
+### Create a new Azure Cosmos DB container
+
+Tailwind Traders has an Azure Cosmos DB container named `OnlineUserProfile01`. Since we enabled the Azure Synapse Link feature _after_ the container was already created, we cannot enable the analytical store on the container. We will create a new container that has the same partition key and enable the analytical store.
+
+After creating the container, we will create a new Synapse Pipeline to copy data from the `OnlineUserProfile01` container to the new one.
+
+1. Select **Data Explorer** on the left-hand menu.
+
+    ![The menu item is selected.](media/data-explorer-link.png "Data Explorer")
+
+2. Select **New Container**.
+
+    ![The button is highlighted.](media/new-container-button.png "New Container")
+
+3. For **Database id**, select **Use existing**, then select **`CustomerProfile` (1)**. Enter **`UserProfileHTAP`** for the **Container id (2)**, then enter **`/userId`** for the **Partition key (3)**. For **Throughput**, select **Autoscale (4)**, then enter **`4000`** for the **Max RU/s** value **(5)**. Finally, set **Analytical store** to **On (6)**, then select **OK**.
+
+    ![The form is configured as described.](media/new-container.png "New container")
+
+    Here we set the `partition key` value to `customerId`, because it is a field we use most often in queries and contains a relatively high cardinality (number of unique values) for good partitioning performance. We set the throughput to Autoscale with a maximum value of 4,000 request units (RUs). This means that the container will have a minimum of 400 RUs allocated (10% of the maximum number), and will scale up to a maximum of 4,000 when the scale engine detects a high enough demand to warrant increasing the throughput. Finally, we enable the **analytical store** on the container, which allows us to take full advantage of the Hybrid Transactional/Analytical Processing (HTAP) architecture from within Synapse Analytics.
+
+    Let's take a quick look at the data we will copy over to the new container.
+
+4. Expand the `OnlineUserProfile01` container underneath the **CustomerProfile** database, then select **Items (1)**. Select one of the documents **(2)** and view its contents **(3)**. The documents are stored in JSON format.
+
+    ![The container items are displayed.](media/existing-items.png "Container items")
+
+5. Select **Keys** in the left-hand menu **(1)**, then copy the **Primary Key** value **(2)** and save it to Notepad or similar for later reference. Copy the Azure Cosmos DB **account name** in the upper-left corner **(3)** and also save it to Notepad or similar text editor for later.
+
+    ![The primary key is highlighted.](media/cosmos-keys.png "Keys")
+
+    > **Note**: Take note of these values. You will need this information when creating the SQL view toward the end of the demo.
+
+### Create and run a copy pipeline
+
+Now that we have the new Azure Cosmos DB container with the analytical store enabled, we need to copy the contents of the existing container by using a Synapse Pipeline.
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>), and then navigate to the **Integrate** hub.
+
+    ![The Integrate menu item is highlighted.](media/integrate-hub.png "Integrate hub")
+
+2. Select **+ (1)**, then **Pipeline (2)**.
+
+    ![The new pipeline link is highlighted.](media/new-pipeline.png "New pipeline")
+
+3. Under Activities, expand the `Move & transform` group, then drag the **Copy data** activity onto the canvas **(1)**. Set the **Name** to **`Copy Cosmos DB Container`** in the Properties blade **(2)**.
+
+    ![The new copy activity is displayed.](media/add-copy-pipeline.png "Add copy activity")
+
+4. Select the new Copy activity that you added to the canvas, then select the **Source** tab **(1)**. Select the **`asal400_customerprofile_cosmosdb`** source dataset from the list **(2)**.
+
+    ![The source is selected.](media/copy-source.png "Source")
+
+5. Select the **Sink** tab **(1)**, then select **+ New (2)**.
+
+    ![The sink is selected.](media/copy-sink.png "Sink")
+
+6. Select the **Azure Cosmos DB (SQL API)** dataset type **(1)**, then select **Continue (2)**.
+
+    ![Azure Cosmos DB is selected.](media/dataset-type.png "New dataset")
+
+7. For **Name**, enter **`cosmos_db_htap` (1)**. Select the **`asacosmosdb01` (2)** **Linked service**. Select **From connection/store** under **Import schema (3)**, then select **OK (4)**.
+
+    ![The form is configured as described.](media/dataset-properties.png "Set properties")
+
+8. Underneath the new sink dataset you just added, select the **Insert** write behavior.
+
+    ![The sink tab is displayed.](media/sink-insert.png "Sink tab")
+
+9. Select **Publish all**, then **Publish** to save the new pipeline.
+
+    ![Publish all.](media/publish-all-1.png "Publish")
+
+10. Above the pipeline canvas, select **Add trigger (1)**, then **Trigger now (2)**. Select **OK** to trigger the run.
+
+    ![The trigger menu is shown.](media/pipeline-trigger.png "Trigger now")
+
+11. Navigate to the **Monitor** hub.
+
+    ![Monitor hub.](media/monitor-hub.png "Monitor hub")
+
+12. Select **Pipeline runs (1)** and wait until the pipeline run has successfully completed **(2)**. You may have to select **Refresh (3)** a few times.
+
+    ![The pipeline run is shown as successfully completed.](media/pipeline-run-status.png "Pipeline runs")
+
+    > This may take around 4 minutes to complete.
+
+## Querying Azure Cosmos DB with Apache Spark for Synapse Analytics
+
+Tailwind Traders wants to use Apache Spark to run analytical queries against the new Azure Cosmos DB container. In this segment, we will use built-in gestures in Synapse Studio to quickly create a Synapse Notebook that loads data from the analytical store of the HTAP-enabled container, without impacting the transactional store.
+
+Tailwind Traders is trying to solve how they can use the list of preferred products identified with each user, coupled with any matching product IDs in their review history, to show a list of all preferred product reviews.
+
+1. Navigate to the **Data** hub.
+
+    ![Data hub.](media/data-hub.png "Data hub")
+
+2. Select the **Linked** tab **(1)** and expand the **Azure Cosmos DB** section, then the **asacosmosdb01 (CustomerProfile)** linked service **(2)**. Right-click on the **UserProfileHTAP** container **(3)**, select the **New notebook** gesture **(4)**, then select **Load to DataFrame (5)**.
+
+    ![The new notebook gesture is highlighted.](media/new-notebook.png "New notebook")
+
+    Notice that the `UserProfileHTAP` container that we created has a slightly different icon than the other two containers. This indicates that the analytical store is enabled.
+
+3. Select **Run all (1)**.
+
+    ![Thew new notebook is shown with the cell 1 output.](media/notebook-cell1.png "Cell 1")
+
+    > It will take a few minutes to start the Spark session the first time.
+
+    In the generated code within Cell 1, notice that the `spark.read` format is set to **`cosmos.olap` (2)**. This instructs Synapse Link to use the container's analytical store. If we wanted to connect to the transactional store instead, like to read from the change feed or write to the container, we'd use `cosmos.oltp` instead.
+
+    > **Note:** You cannot write to the analytical store, only read from it. If you want to load data into the container, you need to connect to the transactional store.
+
+    The first `option` configures the name of the Azure Cosmos DB linked service **(3)**. The second `option` defines the Azure Cosmos DB container from which we want to read **(4)**.
+
+4. Hover your mouse underneath the cell, then select **{} Add code**.
+
+    ![The add code button is highlighted.](media/add-code.png "Add code")
+
+5. The DataFrame contains extra columns that we don't need. Let's remove the unwanted columns and create a clean version of the DataFrame. To do this, enter the following in the new cell and **run** it:
+
+    ```python
+    unwanted_cols = {'_attachments','_etag','_rid','_self','_ts','collectionType','id'}
+
+    # Remove unwanted columns from the columns collection
+    cols = list(set(df.columns) - unwanted_cols)
+
+    profiles = df.select(cols)
+
+    display(profiles.limit(10))
     ```
 
-    ![Show table space usage](./media/lab3_table_space_usage.png)
+    The output now only contains the columns that we want. Notice that the `preferredProducts` **(1)** and `productReviews` **2** columns contain child elements. Expand the values on a row to view them. You may recall seeing the raw JSON format in the `UserProfiles01` container within the Azure Cosmos DB Data Explorer.
 
-6. Analyze the number of rows in each distribution. Those numbers should be as even as possible. You can see from the results that rows are equally distributed across distributions. Let's dive a bit more into this analysis. Use the following query to get customers with the most sale transaction items:
+    ![The cell's output is displayed.](media/cell2.png "Cell 2 output")
 
-    ```sql
-    SELECT TOP 1000
-        CustomerId,
-        count(*) as TransactionItemsCount
-    FROM
-        [wwi_perf].[Sale_Hash]
-    GROUP BY
-        CustomerId
-    ORDER BY
-        count(*) DESC
+6. We should know how many records we're dealing with. To do this, enter the following in a new cell and **run** it:
+
+    ```python
+    profiles.count()
     ```
 
-    ![Customers with most sale transaction items](./media/lab4_data_skew_1.png)
+    You should see a count result of 100,000.
 
-    Now find the customers with the least sale transaction items:
+7. We want to use the `preferredProducts` column array and `productReviews` column array for each user and create a graph of products that are from their preferred list that match with products that they have reviewed. To do this, we need to create two new DataFrames that contain flattened values from those two columns so we can join them in a later step. Enter the following in a new cell and **run** it:
 
-    ```sql
-    SELECT TOP 1000
-        CustomerId,
-        count(*) as TransactionItemsCount
-    FROM
-        [wwi_perf].[Sale_Hash]
-    GROUP BY
-        CustomerId
-    ORDER BY
-        count(*) ASC
+    ```python
+    from pyspark.sql.functions import udf, explode
+
+    preferredProductsFlat=profiles.select('userId',explode('preferredProducts').alias('productId'))
+    productReviewsFlat=profiles.select('userId',explode('productReviews').alias('productReviews'))
+    display(productReviewsFlat.limit(10))
     ```
 
-    ![Customers with most sale transaction items](./media/lab4_data_skew_2.png)
+    In this cell, we imported the special PySpark [`explode` function](https://spark.apache.org/docs/latest/api/python/pyspark.sql.html?highlight=explode#pyspark.sql.functions.explode), which returns a new row for each element of the array. This function helps flatten the `preferredProducts` and `productReviews` columns for better readability or for easier querying.
 
-    Notice the largest number of transaction items is 69 and the smallest is 16.
+    ![Cell output.](media/cell4.png "Cell 4 output")
 
-    Let's find now the distribution of per-customer transaction item counts. Run the following query:
+    Observe the cell output where we display the `productReviewFlat` DataFrame contents. We see a new `productReviews` column that contains the `productId` we want to match to the preferred products list for the user, as well as the `reviewText` that we want to display or save.
 
-    ```sql
-    SELECT
-        T.TransactionItemsCountBucket
-        ,count(*) as CustomersCount
-    FROM
-        (
-            SELECT
-                CustomerId,
-                (count(*) - 16) / 100 as TransactionItemsCountBucket
-            FROM
-                [wwi_perf].[Sale_Hash]
-            GROUP BY
-                CustomerId
-        ) T
-    GROUP BY
-        T.TransactionItemsCountBucket
-    ORDER BY
-        T.TransactionItemsCountBucket
+8. Let's look at the `preferredProductsFlat` DataFrame contents. To do this, enter the following in a new cell and **run** it:
+
+    ```python
+    display(preferredProductsFlat.limit(20))
     ```
 
-    In the `Results` pane, switch to the `Chart` view and configure it as follows (see the options set on the right side):
+    ![Cell output.](media/cell5.png "Cell 5 results")
 
-    ![Distribution of per-customer transaction item counts](./media/lab4_transaction_items_count_distribution.png)
+    Since we used the `explode` function on the preferred products array, we have flattened the column values to `userId` and `productId` rows, ordered by user.
 
-    Without diving too much into the mathematical and statistical aspects of it, this histogram displays the reason why there is virtually no skew in the data distribution of the `Sale_Hash` table. If you haven't figured it out yet, the reason we are talking about is the quasi-normal distribution of the per-customer transaction items counts.
+9. Now we need to further flatten the `productReviewFlat` DataFrame contents to extract the `productReviews.productId` and `productReviews.reviewText` fields and create new rows for each data combination. To do this, enter the following in a new cell and **run** it:
 
-### Task 2 - Use a more advanced approach to understand table space usage
+    ```python
+    productReviews = (productReviewsFlat.select('userId','productReviews.productId','productReviews.reviewText')
+        .orderBy('userId'))
 
-1. Run the following script to create the `vTableSizes` view:
+    display(productReviews.limit(10))
+    ```
 
-    ```sql
-    CREATE VIEW [wwi_perf].[vTableSizes]
-    AS
-    WITH base
-    AS
-    (
-    SELECT
-        GETDATE()                                                              AS  [execution_time]
-        , DB_NAME()                                                            AS  [database_name]
-        , s.name                                                               AS  [schema_name]
-        , t.name                                                               AS  [table_name]
-        , QUOTENAME(s.name)+'.'+QUOTENAME(t.name)                              AS  [two_part_name]
-        , nt.[name]                                                            AS  [node_table_name]
-        , ROW_NUMBER() OVER(PARTITION BY nt.[name] ORDER BY (SELECT NULL))     AS  [node_table_name_seq]
-        , tp.[distribution_policy_desc]                                        AS  [distribution_policy_name]
-        , c.[name]                                                             AS  [distribution_column]
-        , nt.[distribution_id]                                                 AS  [distribution_id]
-        , i.[type]                                                             AS  [index_type]
-        , i.[type_desc]                                                        AS  [index_type_desc]
-        , nt.[pdw_node_id]                                                     AS  [pdw_node_id]
-        , pn.[type]                                                            AS  [pdw_node_type]
-        , pn.[name]                                                            AS  [pdw_node_name]
-        , di.name                                                              AS  [dist_name]
-        , di.position                                                          AS  [dist_position]
-        , nps.[partition_number]                                               AS  [partition_nmbr]
-        , nps.[reserved_page_count]                                            AS  [reserved_space_page_count]
-        , nps.[reserved_page_count] - nps.[used_page_count]                    AS  [unused_space_page_count]
-        , nps.[in_row_data_page_count]
-            + nps.[row_overflow_used_page_count]
-            + nps.[lob_used_page_count]                                        AS  [data_space_page_count]
-        , nps.[reserved_page_count]
-        - (nps.[reserved_page_count] - nps.[used_page_count])
-        - ([in_row_data_page_count]
-                + [row_overflow_used_page_count]+[lob_used_page_count])        AS  [index_space_page_count]
-        , nps.[row_count]                                                      AS  [row_count]
-    FROM
-        sys.schemas s
-    INNER JOIN sys.tables t
-        ON s.[schema_id] = t.[schema_id]
-    INNER JOIN sys.indexes i
-        ON  t.[object_id] = i.[object_id]
-        AND i.[index_id] <= 1
-    INNER JOIN sys.pdw_table_distribution_properties tp
-        ON t.[object_id] = tp.[object_id]
-    INNER JOIN sys.pdw_table_mappings tm
-        ON t.[object_id] = tm.[object_id]
-    INNER JOIN sys.pdw_nodes_tables nt
-        ON tm.[physical_name] = nt.[name]
-    INNER JOIN sys.dm_pdw_nodes pn
-        ON  nt.[pdw_node_id] = pn.[pdw_node_id]
-    INNER JOIN sys.pdw_distributions di
-        ON  nt.[distribution_id] = di.[distribution_id]
-    INNER JOIN sys.dm_pdw_nodes_db_partition_stats nps
-        ON nt.[object_id] = nps.[object_id]
-        AND nt.[pdw_node_id] = nps.[pdw_node_id]
-        AND nt.[distribution_id] = nps.[distribution_id]
-    LEFT OUTER JOIN (select * from sys.pdw_column_distribution_properties where distribution_ordinal = 1) cdp
-        ON t.[object_id] = cdp.[object_id]
-    LEFT OUTER JOIN sys.columns c
-        ON cdp.[object_id] = c.[object_id]
-        AND cdp.[column_id] = c.[column_id]
-    WHERE pn.[type] = 'COMPUTE'
+    In the output, notice that we now have multiple rows for each `userId`.
+
+    ![Cell output.](media/cell6.png "Cell 6 results")
+
+10. The final step is to join the `preferredProductsFlat` and `productReviews` DataFrames on the `userId` and `productId` values to build our graph of preferred product reviews. To do this, enter the following in a new cell and **run** it:
+
+    ```python
+    preferredProductReviews = (preferredProductsFlat.join(productReviews,
+        (preferredProductsFlat.userId == productReviews.userId) &
+        (preferredProductsFlat.productId == productReviews.productId))
     )
-    , size
-    AS
-    (
-    SELECT
-    [execution_time]
-    ,  [database_name]
-    ,  [schema_name]
-    ,  [table_name]
-    ,  [two_part_name]
-    ,  [node_table_name]
-    ,  [node_table_name_seq]
-    ,  [distribution_policy_name]
-    ,  [distribution_column]
-    ,  [distribution_id]
-    ,  [index_type]
-    ,  [index_type_desc]
-    ,  [pdw_node_id]
-    ,  [pdw_node_type]
-    ,  [pdw_node_name]
-    ,  [dist_name]
-    ,  [dist_position]
-    ,  [partition_nmbr]
-    ,  [reserved_space_page_count]
-    ,  [unused_space_page_count]
-    ,  [data_space_page_count]
-    ,  [index_space_page_count]
-    ,  [row_count]
-    ,  ([reserved_space_page_count] * 8.0)                                 AS [reserved_space_KB]
-    ,  ([reserved_space_page_count] * 8.0)/1000                            AS [reserved_space_MB]
-    ,  ([reserved_space_page_count] * 8.0)/1000000                         AS [reserved_space_GB]
-    ,  ([reserved_space_page_count] * 8.0)/1000000000                      AS [reserved_space_TB]
-    ,  ([unused_space_page_count]   * 8.0)                                 AS [unused_space_KB]
-    ,  ([unused_space_page_count]   * 8.0)/1000                            AS [unused_space_MB]
-    ,  ([unused_space_page_count]   * 8.0)/1000000                         AS [unused_space_GB]
-    ,  ([unused_space_page_count]   * 8.0)/1000000000                      AS [unused_space_TB]
-    ,  ([data_space_page_count]     * 8.0)                                 AS [data_space_KB]
-    ,  ([data_space_page_count]     * 8.0)/1000                            AS [data_space_MB]
-    ,  ([data_space_page_count]     * 8.0)/1000000                         AS [data_space_GB]
-    ,  ([data_space_page_count]     * 8.0)/1000000000                      AS [data_space_TB]
-    ,  ([index_space_page_count]  * 8.0)                                   AS [index_space_KB]
-    ,  ([index_space_page_count]  * 8.0)/1000                              AS [index_space_MB]
-    ,  ([index_space_page_count]  * 8.0)/1000000                           AS [index_space_GB]
-    ,  ([index_space_page_count]  * 8.0)/1000000000                        AS [index_space_TB]
-    FROM base
-    )
-    SELECT *
-    FROM size
+
+    display(preferredProductReviews.limit(100))
     ```
 
-    Take a moment to analyze the script above. You have encountered already some of the tables in the previous lab. Here is a short description of the tables and DMVs involved in the query:
+    > **Note**: Feel free to click on the column headers in the Table view to sort the result set.
 
-    Table Name | Description
-    ---|---
-    sys.schemas | All schemas in the database.
-    sys.tables | All tables in the database.
-    sys.indexes | All indexes in the database.
-    sys.columns | All columns in the database.
-    sys.pdw_table_mappings | Maps each table to local tables on physical nodes and distributions.
-    sys.pdw_nodes_tables | Contains information on each local table in each distribution.
-    sys.pdw_table_distribution_properties | Holds distribution information for tables (the type of distribution tables have).
-    sys.pdw_column_distribution_properties | Holds distribution information for columns. Filtered to include only columns used to distribute their parent tables (`distribution_ordinal` = 1).
-    sys.pdw_distributions |  Holds information about the distributions from the SQL pool.
-    sys.dm_pdw_nodes | Holds information about the nodes from the SQL pool. Filtered to include only compute nodes (`type` = `COMPUTE`).
-    sys.dm_pdw_nodes_db_partition_stats | Returns page and row-count information for every partition in the current database.
+    ![Cell output.](media/cell7.png "Cell 7 results")
 
-2. Run the following script to view the details about the structure of the tables in the `wwi_perf` schema:
+## Querying Azure Cosmos DB with serverless SQL pool for Azure Synapse Analytics
+
+Tailwind Traders wants to explore the Azure Cosmos DB analytical store with T-SQL. Ideally, they can create views that can then be used for joins with other analytical store containers, files from the data lake, or accessed by external tools, like Power BI.
+
+1. Navigate to the **Develop** hub.
+
+    ![Develop hub.](media/develop-hub.png "Develop hub")
+
+2. Select **+ (1)**, then **SQL script (2)**.
+
+    ![The SQL script button is highlighted.](media/new-script.png "SQL script")
+
+3. When the script opens, you will see the **Properties** pane to the right **(1)**. Enter **`User Profile HTAP`** for the **Name (2)**, then select the **Properties** button to close the pane **(1)**.
+
+    ![The properties pane is displayed.](media/new-script-properties.png "Properties")
+
+4. Verify that the serverless SQL pool (**Built-in**) is selected.
+
+    ![The serverless SQL pool is selected.](media/built-in-htap.png "Built-in")
+
+5. Paste the following SQL query. In the OPENROWSET statement, replace **`YOUR_ACCOUNT_NAME`** with the Azure Cosmos DB account name and **`YOUR_ACCOUNT_KEY`** with the Azure Cosmos DB Primary Key value you copied in step 5 above after you created the container.
 
     ```sql
-    SELECT
-        database_name
-    ,    schema_name
-    ,    table_name
-    ,    distribution_policy_name
-    ,      distribution_column
-    ,    index_type_desc
-    ,    COUNT(distinct partition_nmbr) as nbr_partitions
-    ,    SUM(row_count)                 as table_row_count
-    ,    SUM(reserved_space_GB)         as table_reserved_space_GB
-    ,    SUM(data_space_GB)             as table_data_space_GB
-    ,    SUM(index_space_GB)            as table_index_space_GB
-    ,    SUM(unused_space_GB)           as table_unused_space_GB
-    FROM
-        [wwi_perf].[vTableSizes]
-    WHERE
-        schema_name = 'wwi_perf'
-    GROUP BY
-        database_name
-    ,    schema_name
-    ,    table_name
-    ,    distribution_policy_name
-    ,      distribution_column
-    ,    index_type_desc
-    ORDER BY
-        table_reserved_space_GB desc
-    ```
+    USE master
+    GO
 
-    Analyze the results:
+    IF DB_ID (N'Profiles') IS NULL
+    BEGIN
+        CREATE DATABASE Profiles;
+    END
+    GO
 
-    ![Detailed table space usage](./media/lab4_table_space.png)
+    USE Profiles
+    GO
 
-    Notice the significant difference between the space used by `CLUSTERED COLUMNSTORE` and `HEAP` or `CLUSTERED` tables. This provides a clear indication on the significant advantages columnstore indexes have.
+    DROP VIEW IF EXISTS UserProfileHTAP;
+    GO
 
-    Also notice the slight increase of storage space for ordered CCI table (`Sale_Hash_Ordered`).
-
-## Exercise 2 - Understand column store storage details
-
-### Task 1 - Create view for column store row group stats
-
-1. Run the following query to create the `vColumnStoreRowGroupStats`:
-
-    ```sql
-    create view [wwi_perf].[vColumnStoreRowGroupStats]
-    as
-    with cte
-    as
-    (
-    select   tb.[name]                    AS [logical_table_name]
-    ,        rg.[row_group_id]            AS [row_group_id]
-    ,        rg.[state]                   AS [state]
-    ,        rg.[state_desc]              AS [state_desc]
-    ,        rg.[total_rows]              AS [total_rows]
-    ,        rg.[trim_reason_desc]        AS trim_reason_desc
-    ,        mp.[physical_name]           AS physical_name
-    FROM    sys.[schemas] sm
-    JOIN    sys.[tables] tb               ON  sm.[schema_id]          = tb.[schema_id]
-    JOIN    sys.[pdw_table_mappings] mp   ON  tb.[object_id]          = mp.[object_id]
-    JOIN    sys.[pdw_nodes_tables] nt     ON  nt.[name]               = mp.[physical_name]
-    JOIN    sys.[dm_pdw_nodes_db_column_store_row_group_physical_stats] rg      ON  rg.[object_id]     = nt.[object_id]
-                                                                                AND rg.[pdw_node_id]   = nt.[pdw_node_id]
-                                            AND rg.[distribution_id]    = nt.[distribution_id]
-    )
-    select *
-    from cte;
-    ```
-
-    In this query we are using the `sys.dm_pdw_nodes_db_column_store_row_group_physical_stats` DMV which provides current rowgroup-level information about all of the columnstore indexes in the current database.
-
-    The `state_desc` column provides useful information on the state of a row group:
-
-    Name | Description
-    ---|---
-    `INVISIBLE` | A rowgroup which is being compressed.
-    `OPEN` | A deltastore rowgroup that is accepting new rows. It is important to remember that an open rowgroup is still in rowstore format and has not been compressed to columnstore format.
-    `CLOSED` | A deltastore rowgroup that contains the maximum number of rows, and is waiting for the tuple mover process to compress it to the columnstore.
-    `COMPRESSED` | A row group that is compressed with columnstore compression and stored in the columnstore.
-    `TOMBSTONE` | A row group that was formerly in the deltastore and is no longer used.
-
-    The `trim_reason_desc` column describes the reason that triggered the `COMPRESSED` rowgroup to have less than the maximum number of rows:
-
-    Name | Description
-    ---|---
-    `UNKNOWN_UPGRADED_FROM_PREVIOUS_VERSION` | Occurred when upgrading from the previous version of SQL Server.
-    `NO_TRIM` | The row group was not trimmed. The row group was compressed with the maximum of 1,048,476 rows. The number of rows could be less if a subset of rows was deleted after delta rowgroup was closed.
-    `BULKLOAD` | The bulk-load batch size limited the number of rows. This is what you should be looking for when optimizing data loading, as it is an indicator of resource starvation during the loading process.
-    `REORG` | Forced compression as part of REORG command.
-    `DICTIONARY_SIZE` | Dictionary size grew too large to compress all of the rows together.
-    `MEMORY_LIMITATION` | Not enough available memory to compress all the rows together.
-    `RESIDUAL_ROW_GROUP` | Closed as part of last row group with rows < 1 million during index build operation.
-
-### Task 2 - Explore column store storage details
-
-1. Explore the statistics of the columnstore for the `Sale_Partition01` table using the following query:
-
-    ```sql
-    SELECT
-        *
-    FROM
-        [wwi_perf].[vColumnStoreRowGroupStats]
-    WHERE
-        Logical_Table_Name = 'Sale_Partition01'
-    ```
-
-2. Explore the results of the query:
-
-    ![Column store row group statistics for Sale_Partition01](./media/lab4_column_store_row_groups.png)
-
-    Browse through the results and get an overview of the rowgroup states. Notice the `COMPRESSED` and `OPEN` states of some of the row groups.
-
-3. Explore the statistics of the columnstore for the `Sale_Hash_Ordered` table using the same query:
-
-    ```sql
-    SELECT
-        *
-    FROM
-        [wwi_perf].[vColumnStoreRowGroupStats]
-    WHERE
-        Logical_Table_Name = 'Sale_Hash_Ordered'
-    ```
-
-4. Explore the results of the query:
-
-    ![Column store row group statistics for Sale_Hash_Ordered](./media/lab4_column_store_row_groups_2.png)
-
-    There is a significant difference in the rowgroup states from the previous one. This highlights one of the potential advantages of ordered CCIs.
-
-## Exercise 3 - Study the impact of wrong choices for column data types
-
-### Task 1 - Create and populate tables with optimal column data types
-
-Use the following query to create two tables (`Sale_Hash_Projection` and `Sale_Hash_Projection2`) which contain a subset of the columns from `Sale_Heap`:
-
-```sql
-CREATE TABLE [wwi_perf].[Sale_Hash_Projection]
-WITH
-(
-	DISTRIBUTION = HASH ( [CustomerId] ),
-	HEAP
-)
-AS
-SELECT
-	[CustomerId]
-	,[ProductId]
-	,[Quantity]
-FROM
-	[wwi_perf].[Sale_Heap]
-
-CREATE TABLE [wwi_perf].[Sale_Hash_Projection2]
-WITH
-(
-	DISTRIBUTION = HASH ( [CustomerId] ),
-	CLUSTERED COLUMNSTORE INDEX
-)
-AS
-SELECT
-	[CustomerId]
-	,[ProductId]
-	,[Quantity]
-FROM
-	[wwi_perf].[Sale_Heap]
-```
-
-The query should finish execution in a few minutes.
-
-### Task 2 - Create and populate tables with sub-optimal column data types
-
-Use the following query to create two additional tables (`Sale_Hash_Projection_Big` and `Sale_Hash_Projection_Big2`) that have the same columns, but with different (sub_optimal) data types:
-
-```sql
-CREATE TABLE [wwi_perf].[Sale_Hash_Projection_Big]
-WITH
-(
-	DISTRIBUTION = HASH ( [CustomerId] ),
-	HEAP
-)
-AS
-SELECT
-	[CustomerId]
-	,CAST([ProductId] as bigint) as [ProductId]
-	,CAST([Quantity] as bigint) as [Quantity]
-FROM
-	[wwi_perf].[Sale_Heap]
-
-CREATE TABLE [wwi_perf].[Sale_Hash_Projection_Big2]
-WITH
-(
-	DISTRIBUTION = HASH ( [CustomerId] ),
-	CLUSTERED COLUMNSTORE INDEX
-)
-AS
-SELECT
-	[CustomerId]
-	,CAST([ProductId] as bigint) as [ProductId]
-	,CAST([Quantity] as bigint) as [Quantity]
-FROM
-	[wwi_perf].[Sale_Heap]
-```
-
-### Task 3 - Compare storage requirements
-
-1. Verify that the four tables have the same number of rows (there should be 339,507,246 rows in each):
-
-    ```sql
-    SELECT 'Sale_Hash_Projection', COUNT_BIG(*) FROM [wwi_perf].[Sale_Hash_Projection]
-    UNION
-    SELECT 'Sale_Hash_Projection2', COUNT_BIG(*) FROM [wwi_perf].[Sale_Hash_Projection2]
-    UNION
-    SELECT 'Sale_Hash_Projection_Big', COUNT_BIG(*) FROM [wwi_perf].[Sale_Hash_Projection_Big]
-    UNION
-    SELECT 'Sale_Hash_Projection_Big2', COUNT_BIG(*) FROM [wwi_perf].[Sale_Hash_Projection_Big2]
-    ```
-
-2. Run the following query to compare the storage requirements for the three tables:
-
-    ```sql
-    SELECT
-        database_name
-    ,    schema_name
-    ,    table_name
-    ,    distribution_policy_name
-    ,      distribution_column
-    ,    index_type_desc
-    ,    COUNT(distinct partition_nmbr) as nbr_partitions
-    ,    SUM(row_count)                 as table_row_count
-    ,    SUM(reserved_space_GB)         as table_reserved_space_GB
-    ,    SUM(data_space_GB)             as table_data_space_GB
-    ,    SUM(index_space_GB)            as table_index_space_GB
-    ,    SUM(unused_space_GB)           as table_unused_space_GB
-    FROM
-        [wwi_perf].[vTableSizes]
-    WHERE
-        schema_name = 'wwi_perf'
-        and table_name in ('Sale_Hash_Projection', 'Sale_Hash_Projection2',
-            'Sale_Hash_Projection_Big', 'Sale_Hash_Projection_Big2')
-    GROUP BY
-        database_name
-    ,    schema_name
-    ,    table_name
-    ,    distribution_policy_name
-    ,      distribution_column
-    ,    index_type_desc
-    ORDER BY
-        table_reserved_space_GB desc
-    ```
-
-3. Analyze the results:
-
-    ![Data type selection impact on table storage](./media/lab4_data_type_selection.png)
-
-    There are two important conclusions to draw here:
-    - In the case of `HEAP` tables, the storage impact of using `BIGINT` instead of `SMALLINT`(for `ProductId`) and `TINYINT` (for `QUANTITY`) is almost 1 GB (0.8941 GB). We're talking here about only two columns and a moderate number of rows (2.9 billion).
-    - Even in the case of `CLUSTERED COLUMNSTORE` tables, where compression will offset some of the differences, there is still a difference of 12.7 MB.
-
-Minimizing the size of data types shortens the row length, which leads to better query performance. Use the smallest data type that works for your data:
-
-- Avoid defining character columns with a large default length. For example, if the longest value is 25 characters, then define your column as VARCHAR(25).
-- Avoid using [NVARCHAR][NVARCHAR] when you only need VARCHAR.
-- When possible, use NVARCHAR(4000) or VARCHAR(8000) instead of NVARCHAR(MAX) or VARCHAR(MAX).
-
->**Note**
->
->If you are using PolyBase external tables to load your SQL pool tables, the defined length of the table row cannot exceed 1 MB. When a row with variable-length data exceeds 1 MB, you can load the row with BCP, but not with PolyBase.
-
-## Exercise 4 - Study the impact of materialized views
-
-### Task 1 - Analyze the execution plan of a query
-
-1. Run again the query to find the number of customers in each bucket of per-customer transaction items counts:
-
-    ```sql
-    SELECT
-        T.TransactionItemsCountBucket
-        ,count(*) as CustomersCount
-    FROM
-        (
-            SELECT
-                CustomerId,
-                (count(*) - 184) / 100 as TransactionItemsCountBucket
-            FROM
-                [wwi_perf].[Sale_Hash]
-            GROUP BY
-                CustomerId
-        ) T
-    GROUP BY
-        T.TransactionItemsCountBucket
-    ORDER BY
-        T.TransactionItemsCountBucket
-    ```
-
-2. Improve the query by adding support to calculate the lower margin of the first per-customer transactions items count bucket:
-
-    ```sql
-    SELECT
-        T.TransactionItemsCountBucket
-        ,count(*) as CustomersCount
-    FROM
-        (
-            SELECT
-                CustomerId,
-                (
-                    COUNT(*) -
-                    (
-                        SELECT
-                            MIN(TransactionItemsCount)
-                        FROM
-                        (
-                            SELECT
-                                COUNT(*) as TransactionItemsCount
-                            FROM
-                                [wwi_perf].[Sale_Hash]
-                            GROUP BY
-                                CustomerId
-                        ) X
-                    )
-                ) / 100 as TransactionItemsCountBucket
-            FROM
-                [wwi_perf].[Sale_Hash]
-            GROUP BY
-                CustomerId
-        ) T
-    GROUP BY
-        T.TransactionItemsCountBucket
-    ORDER BY
-        T.TransactionItemsCountBucket
-    ```
-
-### Task 2 - Improve the execution plan of the query with a materialized view
-
-1. Run the query with the `EXPLAIN` directive (note the `WITH_RECOMMENDATIONS` option as well):
-
-    ```sql
-    EXPLAIN WITH_RECOMMENDATIONS
-    SELECT
-        T.TransactionItemsCountBucket
-        ,count(*) as CustomersCount
-    FROM
-        (
-            SELECT
-                CustomerId,
-                (
-                    COUNT(*) - 
-                    (
-                        SELECT 
-                            MIN(TransactionItemsCount)
-                        FROM 
-                        (
-                            SELECT 
-                                COUNT(*) as TransactionItemsCount
-                            FROM 
-                                [wwi_perf].[Sale_Hash] 
-                            GROUP BY 
-                                CustomerId 
-                        ) X 
-                    )
-                ) / 100 as TransactionItemsCountBucket
-            FROM
-                [wwi_perf].[Sale_Hash]
-            GROUP BY
-                CustomerId
-        ) T
-    GROUP BY
-        T.TransactionItemsCountBucket
-    ORDER BY
-        T.TransactionItemsCountBucket
-    ```
-
-2. Analyze the resulting execution plan. Take a close look to the `<materialized_view_candidates>` section which suggests possible materialized views you can create to improve the performance of the query.
-
-    ```xml
-    <?xml version="1.0" encoding="utf-8"?>
-    <dsql_query number_nodes="5" number_distributions="60" number_distributions_per_node="12">
-    <sql>SELECT
-        T.TransactionItemsCountBucket
-        ,count(*) as CustomersCount
-    FROM
-        (
-            SELECT
-                CustomerId,
-                (
-                    COUNT(*) -
-                    (
-                        SELECT
-                            MIN(TransactionItemsCount)
-                        FROM
-                        (
-                            SELECT
-                                COUNT(*) as TransactionItemsCount
-                            FROM
-                                [wwi_perf].[Sale_Hash]
-                            GROUP BY
-                                CustomerId
-                        ) X
-                    )
-                ) / 100 as TransactionItemsCountBucket
-            FROM
-                [wwi_perf].[Sale_Hash]
-            GROUP BY
-                CustomerId
-        ) T
-    GROUP BY
-        T.TransactionItemsCountBucket
-    ORDER BY
-        T.TransactionItemsCountBucket</sql>
-    <materialized_view_candidates>
-        <materialized_view_candidates with_constants="False">CREATE MATERIALIZED VIEW View1 WITH (DISTRIBUTION = HASH([Expr0])) AS
-    SELECT [SQLPool01].[wwi_perf].[Sale_Hash].[CustomerId] AS [Expr0],
-        COUNT(*) AS [Expr1]
-    FROM [wwi_perf].[Sale_Hash]
-    GROUP BY [SQLPool01].[wwi_perf].[Sale_Hash].[CustomerId]</materialized_view_candidates>
-    </materialized_view_candidates>
-    <dsql_operations total_cost="0.0242811172881356" total_number_operations="9">
-        <dsql_operation operation_type="RND_ID">
-        <identifier>TEMP_ID_99</identifier>
-        </dsql_operation>
-        <dsql_operation operation_type="ON">
-        <location permanent="false" distribution="AllComputeNodes" />
-        <sql_operations>
-            <sql_operation type="statement">CREATE TABLE [qtabledb].[dbo].[TEMP_ID_99] ([col] INT ) WITH(DISTRIBUTED_MOVE_FILE='');</sql_operation>
-        </sql_operations>
-        </dsql_operation>
-        <dsql_operation operation_type="BROADCAST_MOVE">
-        <operation_cost cost="0.00096" accumulative_cost="0.00096" average_rowsize="4" output_rows="1" GroupNumber="69" />
-        <source_statement>SELECT [T1_1].[col] AS [col] FROM (SELECT MIN([T2_1].[col]) AS [col] FROM (SELECT COUNT(CAST ((0) AS INT)) AS [col], 0 AS [col1] FROM [SQLPool01].[wwi_perf].[Sale_Hash] AS T3_1 GROUP BY [T3_1].[CustomerId]) AS T2_1 GROUP BY [T2_1].[col1]) AS T1_1
-    OPTION (MAXDOP 6, MIN_GRANT_PERCENT = [MIN_GRANT], DISTRIBUTED_MOVE(N''))</source_statement>
-        <destination_table>[TEMP_ID_99]</destination_table>
-        </dsql_operation>
-        <dsql_operation operation_type="RND_ID">
-        <identifier>TEMP_ID_100</identifier>
-        </dsql_operation>
-        <dsql_operation operation_type="ON">
-        <location permanent="false" distribution="AllDistributions" />
-        <sql_operations>
-            <sql_operation type="statement">CREATE TABLE [qtabledb].[dbo].[TEMP_ID_100] ([col] INT, [col1] BIGINT ) WITH(DISTRIBUTED_MOVE_FILE='');</sql_operation>
-        </sql_operations>
-        </dsql_operation>
-        <dsql_operation operation_type="SHUFFLE_MOVE">
-        <operation_cost cost="0.0233211172881356" accumulative_cost="0.0242811172881356" average_rowsize="12" output_rows="95.5518" GroupNumber="75" />
-        <source_statement>SELECT [T1_1].[col1] AS [col], [T1_1].[col] AS [col1] FROM (SELECT COUNT_BIG(CAST ((0) AS INT)) AS [col], [T2_1].[col] AS [col1] FROM (SELECT (([T3_2].[col] - [T3_1].[col]) / CAST ((100) AS INT)) AS [col] FROM (SELECT MIN([T4_1].[col]) AS [col] FROM [qtabledb].[dbo].[TEMP_ID_99] AS T4_1) AS T3_1 INNER JOIN
-    (SELECT COUNT(CAST ((0) AS INT)) AS [col] FROM [SQLPool01].[wwi_perf].[Sale_Hash] AS T4_1 GROUP BY [T4_1].[CustomerId]) AS T3_2
-    ON (0 = 0)) AS T2_1 GROUP BY [T2_1].[col]) AS T1_1
-    OPTION (MAXDOP 6, MIN_GRANT_PERCENT = [MIN_GRANT], DISTRIBUTED_MOVE(N''))</source_statement>
-        <destination_table>[TEMP_ID_100]</destination_table>
-        <shuffle_columns>col;</shuffle_columns>
-        </dsql_operation>
-        <dsql_operation operation_type="RETURN">
-        <location distribution="AllDistributions" />
-        <select>SELECT [T1_1].[col1] AS [col], [T1_1].[col] AS [col1] FROM (SELECT CONVERT (INT, [T2_1].[col], 0) AS [col], [T2_1].[col1] AS [col1] FROM (SELECT ISNULL([T3_1].[col], CONVERT (BIGINT, 0, 0)) AS [col], [T3_1].[col1] AS [col1] FROM (SELECT SUM([T4_1].[col1]) AS [col], [T4_1].[col] AS [col1] FROM [qtabledb].[dbo].[TEMP_ID_100] AS T4_1 GROUP BY [T4_1].[col]) AS T3_1) AS T2_1) AS T1_1 ORDER BY [T1_1].[col1] ASC
-    OPTION (MAXDOP 6, MIN_GRANT_PERCENT = [MIN_GRANT])</select>
-        </dsql_operation>
-        <dsql_operation operation_type="ON">
-        <location permanent="false" distribution="AllDistributions" />
-        <sql_operations>
-            <sql_operation type="statement">DROP TABLE [qtabledb].[dbo].[TEMP_ID_100]</sql_operation>
-        </sql_operations>
-        </dsql_operation>
-        <dsql_operation operation_type="ON">
-        <location permanent="false" distribution="AllComputeNodes" />
-        <sql_operations>
-            <sql_operation type="statement">DROP TABLE [qtabledb].[dbo].[TEMP_ID_99]</sql_operation>
-        </sql_operations>
-        </dsql_operation>
-    </dsql_operations>
-    </dsql_query>
-    ```
-
-3. Create the suggested materialized view:
-
-    ```sql
-    CREATE MATERIALIZED VIEW
-        mvTransactionItemsCounts
-    WITH
-    (
-        DISTRIBUTION = HASH([CustomerId])
-    )
-    AS
-    SELECT
-        CustomerId
-        ,COUNT(*) AS ItemsCount
-    FROM
-        [wwi_perf].[Sale_Hash]
-    GROUP BY
-        CustomerId
-    ```
-
-4. Check the execution plan again:
-
-    ```sql
-    EXPLAIN WITH_RECOMMENDATIONS
-    SELECT
-        T.TransactionItemsCountBucket
-        ,count(*) as CustomersCount
-    FROM
-        (
-            SELECT
-                CustomerId,
-                (
-                    COUNT(*) - 
-                    (
-                        SELECT 
-                            MIN(TransactionItemsCount)
-                        FROM 
-                        (
-                            SELECT 
-                                COUNT(*) as TransactionItemsCount
-                            FROM 
-                                [wwi_perf].[Sale_Hash] 
-                            GROUP BY 
-                                CustomerId 
-                        ) X 
-                    )
-                ) / 100 as TransactionItemsCountBucket
-            FROM
-                [wwi_perf].[Sale_Hash]
-            GROUP BY
-                CustomerId
-        ) T
-    GROUP BY
-        T.TransactionItemsCountBucket
-    ORDER BY
-        T.TransactionItemsCountBucket
-    ```
-
-    The resulting execution plan indicates now the use of the `mvTransactionItemsCounts` (the `BROADCAST_MOVE` distributed SQL operation) materialized view which provides improvements to the query execution time:
-
-    ```xml
-    <?xml version="1.0" encoding="utf-8"?>
-    <dsql_query number_nodes="5" number_distributions="60" number_distributions_per_node="12">
-    <sql>SELECT
-        T.TransactionItemsCountBucket
-        ,count(*) as CustomersCount
-    FROM
-        (
-            SELECT
-                CustomerId,
-                (
-                    COUNT(*) -
-                    (
-                        SELECT
-                            MIN(TransactionItemsCount)
-                        FROM
-                        (
-                            SELECT
-                                COUNT(*) as TransactionItemsCount
-                            FROM
-                                [wwi_perf].[Sale_Hash]
-                            GROUP BY
-                                CustomerId
-                        ) X
-                    )
-                ) / 100 as TransactionItemsCountBucket
-            FROM
-                [wwi_perf].[Sale_Hash]
-            GROUP BY
-                CustomerId
-        ) T
-    GROUP BY
-        T.TransactionItemsCountBucket
-    ORDER BY
-        T.TransactionItemsCountBucket</sql>
-    <materialized_view_candidates>
-        <materialized_view_candidates with_constants="False">CREATE MATERIALIZED VIEW View1 WITH (DISTRIBUTION = HASH([Expr0])) AS
-    SELECT [SQLPool01].[wwi_perf].[Sale_Hash].[CustomerId] AS [Expr0],
-        COUNT(*) AS [Expr1]
-    FROM [wwi_perf].[Sale_Hash]
-    GROUP BY [SQLPool01].[wwi_perf].[Sale_Hash].[CustomerId]</materialized_view_candidates>
-    </materialized_view_candidates>
-    <dsql_operations total_cost="0.0242811172881356" total_number_operations="9">
-        <dsql_operation operation_type="RND_ID">
-        <identifier>TEMP_ID_111</identifier>
-        </dsql_operation>
-        <dsql_operation operation_type="ON">
-        <location permanent="false" distribution="AllComputeNodes" />
-        <sql_operations>
-            <sql_operation type="statement">CREATE TABLE [qtabledb].[dbo].[TEMP_ID_111] ([col] INT ) WITH(DISTRIBUTED_MOVE_FILE='');</sql_operation>
-        </sql_operations>
-        </dsql_operation>
-        <dsql_operation operation_type="BROADCAST_MOVE">
-        <operation_cost cost="0.00096" accumulative_cost="0.00096" average_rowsize="4" output_rows="1" GroupNumber="134" />
-        <source_statement>SELECT [T1_1].[col] AS [col] FROM (SELECT MIN([T2_1].[col]) AS [col] FROM (SELECT CONVERT (INT, [T3_1].[col], 0) AS [col], 0 AS [col1] FROM (SELECT ISNULL([T4_1].[col], CONVERT (BIGINT, 0, 0)) AS [col] FROM (SELECT SUM([T5_1].[ItemsCount]) AS [col] FROM (SELECT [T6_1].[CustomerId] AS [CustomerId], [T6_1].[ItemsCount] AS [ItemsCount] FROM [SQLPool01].[dbo].[mvTransactionItemsCounts] AS T6_1) AS T5_1 GROUP BY [T5_1].[CustomerId]) AS T4_1) AS T3_1 WHERE ([T3_1].[col] != CAST ((0) AS BIGINT))) AS T2_1 GROUP BY [T2_1].[col1]) AS T1_1
-    OPTION (MAXDOP 6, MIN_GRANT_PERCENT = [MIN_GRANT], DISTRIBUTED_MOVE(N''))</source_statement>
-        <destination_table>[TEMP_ID_111]</destination_table>
-        </dsql_operation>
-        <dsql_operation operation_type="RND_ID">
-        <identifier>TEMP_ID_112</identifier>
-        </dsql_operation>
-        <dsql_operation operation_type="ON">
-        <location permanent="false" distribution="AllDistributions" />
-        <sql_operations>
-            <sql_operation type="statement">CREATE TABLE [qtabledb].[dbo].[TEMP_ID_112] ([col] INT, [col1] BIGINT ) WITH(DISTRIBUTED_MOVE_FILE='');</sql_operation>
-        </sql_operations>
-        </dsql_operation>
-        <dsql_operation operation_type="SHUFFLE_MOVE">
-        <operation_cost cost="0.0233211172881356" accumulative_cost="0.0242811172881356" average_rowsize="12" output_rows="95.5518" GroupNumber="140" />
-        <source_statement>SELECT [T1_1].[col1] AS [col], [T1_1].[col] AS [col1] FROM (SELECT COUNT_BIG(CAST ((0) AS INT)) AS [col], [T2_1].[col] AS [col1] FROM (SELECT (([T3_2].[col] - [T3_1].[col]) / CAST ((100) AS INT)) AS [col] FROM (SELECT MIN([T4_1].[col]) AS [col] FROM [qtabledb].[dbo].[TEMP_ID_111] AS T4_1) AS T3_1 INNER JOIN
-    (SELECT CONVERT (INT, [T4_1].[col], 0) AS [col] FROM (SELECT ISNULL([T5_1].[col], CONVERT (BIGINT, 0, 0)) AS [col] FROM (SELECT SUM([T6_1].[ItemsCount]) AS [col] FROM (SELECT [T7_1].[CustomerId] AS [CustomerId], [T7_1].[ItemsCount] AS [ItemsCount] FROM [SQLPool01].[dbo].[mvTransactionItemsCounts] AS T7_1) AS T6_1 GROUP BY [T6_1].[CustomerId]) AS T5_1) AS T4_1 WHERE ([T4_1].[col] != CAST ((0) AS BIGINT))) AS T3_2
-    ON (0 = 0)) AS T2_1 GROUP BY [T2_1].[col]) AS T1_1
-    OPTION (MAXDOP 6, MIN_GRANT_PERCENT = [MIN_GRANT], DISTRIBUTED_MOVE(N''))</source_statement>
-        <destination_table>[TEMP_ID_112]</destination_table>
-        <shuffle_columns>col;</shuffle_columns>
-        </dsql_operation>
-        <dsql_operation operation_type="RETURN">
-        <location distribution="AllDistributions" />
-        <select>SELECT [T1_1].[col1] AS [col], [T1_1].[col] AS [col1] FROM (SELECT CONVERT (INT, [T2_1].[col], 0) AS [col], [T2_1].[col1] AS [col1] FROM (SELECT ISNULL([T3_1].[col], CONVERT (BIGINT, 0, 0)) AS [col], [T3_1].[col1] AS [col1] FROM (SELECT SUM([T4_1].[col1]) AS [col], [T4_1].[col] AS [col1] FROM [qtabledb].[dbo].[TEMP_ID_112] AS T4_1 GROUP BY [T4_1].[col]) AS T3_1) AS T2_1) AS T1_1 ORDER BY [T1_1].[col1] ASC
-    OPTION (MAXDOP 6, MIN_GRANT_PERCENT = [MIN_GRANT])</select>
-        </dsql_operation>
-        <dsql_operation operation_type="ON">
-        <location permanent="false" distribution="AllDistributions" />
-        <sql_operations>
-            <sql_operation type="statement">DROP TABLE [qtabledb].[dbo].[TEMP_ID_112]</sql_operation>
-        </sql_operations>
-        </dsql_operation>
-        <dsql_operation operation_type="ON">
-        <location permanent="false" distribution="AllComputeNodes" />
-        <sql_operations>
-            <sql_operation type="statement">DROP TABLE [qtabledb].[dbo].[TEMP_ID_111]</sql_operation>
-        </sql_operations>
-        </dsql_operation>
-    </dsql_operations>
-    </dsql_query>
-    ```
-
-## Exercise 5 - Avoid extensive logging
-
-### Task 1 - Explore rules for minimally logged operations
-
-The following operations are capable of being minimally logged:
-
-- CREATE TABLE AS SELECT (CTAS)
-- INSERT..SELECT
-- CREATE INDEX
-- ALTER INDEX REBUILD
-- DROP INDEX
-- TRUNCATE TABLE
-- DROP TABLE
-- ALTER TABLE SWITCH PARTITION
-
-**Minimal logging with bulk load**
-  
-CTAS and INSERT...SELECT are both bulk load operations. However, both are influenced by the target table definition and depend on the load scenario. The following table explains when bulk operations are fully or minimally logged:  
-
-| Primary Index | Load Scenario | Logging Mode |
-| --- | --- | --- |
-| Heap |Any |**Minimal** |
-| Clustered Index |Empty target table |**Minimal** |
-| Clustered Index |Loaded rows do not overlap with existing pages in target |**Minimal** |
-| Clustered Index |Loaded rows overlap with existing pages in target |Full |
-| Clustered Columnstore Index |Batch size >= 102,400 per partition aligned distribution |**Minimal** |
-| Clustered Columnstore Index |Batch size < 102,400 per partition aligned distribution |Full |
-
-It is worth noting that any writes to update secondary or non-clustered indexes will always be fully logged operations.
-
-> **IMPORTANT**
-> 
-> A Synapse Analytics SQL pool has 60 distributions. Therefore, assuming all rows are evenly distributed and landing in a single partition, your batch will need to contain 6,144,000 rows or larger to be minimally logged when writing to a Clustered Columnstore Index. If the table is partitioned and the rows being inserted span partition boundaries, then you will need 6,144,000 rows per partition boundary assuming even data distribution. Each partition in each distribution must independently exceed the 102,400 row threshold for the insert to be minimally logged into the distribution.
-
-Loading data into a non-empty table with a clustered index can often contain a mixture of fully logged and minimally logged rows. A clustered index is a balanced tree (b-tree) of pages. If the page being written to already contains rows from another transaction, then these writes will be fully logged. However, if the page is empty then the write to that page will be minimally logged.
-
-### Task 2 - Optimizing a delete operation
-
-1. Check the number of transaction items for customers with ids lower than 900000 using the following query:
-
-    ```sql
-    SELECT
-        COUNT_BIG(*) as TransactionItemsCount
-    FROM
-        [wwi_perf].[Sale_Hash]
-    WHERE
-        CustomerId < 900000
-    ```
-
-2. Implement a minimal logging approach to delete transaction items for customers with ids lower than 900000. Use the following CTAS query to isolate the transaction items that should be kept:
-
-    ```sql
-    CREATE TABLE [wwi_perf].[Sale_Hash_v2]
-    WITH
-    (
-        DISTRIBUTION = ROUND_ROBIN,
-        HEAP
-    )
+    CREATE VIEW UserProfileHTAP
     AS
     SELECT
         *
-    FROM
-        [wwi_perf].[Sale_Hash]
-    WHERE
-        CustomerId >= 900000
+    FROM OPENROWSET(
+        'CosmosDB',
+        N'account=YOUR_ACCOUNT_NAME;database=CustomerProfile;key=YOUR_ACCOUNT_KEY',
+        UserProfileHTAP
+    )
+    WITH (
+        userId bigint,
+        cartId varchar(50),
+        preferredProducts varchar(max),
+        productReviews varchar(max)
+    ) AS profiles
+    CROSS APPLY OPENJSON (productReviews)
+    WITH (
+        productId bigint,
+        reviewText varchar(1000)
+    ) AS reviews
+    GO
     ```
 
-    The query should execute within about a minute. All that would remain to complete the process would be to delete the `Sale_Heap` table and rename `Sale_Heap_v2` to `Sale_Heap`.
+    Your completed query should look similar to the following:
 
-3. Compare the previous operation with a classical delete:
+    ![The create view portion of the query and the results are displayed.](media/htap-view.png "SQL query")
 
-    ```sql
-    DELETE
-        [wwi_perf].[Sale_Hash]
-    WHERE
-        CustomerId < 900000
-    ```
+    The query starts out by creating a new serverless SQL pool database named `Profiles` if it does not exist, then executes `USE Profiles` to run the rest of the script contents against the `Profiles` database. Next, it drops the `UserProfileHTAP` view if it exists. Finally, it performs the following:
 
-    >**Note**
-    >
-    >The query will run for a potentially long time. Once the time exceeds significantly the time to run the previous CTAS query, you can cancel it (as you can already see the benefit of the CTAS-based approach).
+    - **1.** Creates a SQL view named `UserProfileHTAP`.
+    - **2.** Uses the `OPENROWSET` statement to set the data source type to `CosmosDB`, sets the account details, and specifies that we want to create the view over the Azure Cosmos DB analytical store container named `UserProfileHTAP`.
+    - **3.** The `WITH` clause matches the property names in the JSON documents and applies the appropriate SQL data types. Notice that we set the `preferredProducts` and `productReviews` fields to `varchar(max)`. This is because both of these properties contain JSON-formatted data within.
+    - **4.** Since the `productReviews` property in the JSON documents contain nested subarrays, we want to "join" the properties from the document with all elements of the array. Synapse SQL enables us to flatten the nested structure by applying the `OPENJSON` function on the nested array. We flatten the values within `productReviews` like we did using the Python `explode` function earlier in the Synapse Notebook.
+    - **5.** The output shows that the statements successfully executed.
+
+6. Navigate to the **Data** hub.
+
+    ![Data hub.](media/data-hub.png "Data hub")
+
+7. Select the **Workspace** tab **(1)** and expand the Databases group. Expand the **Profiles** SQL on-demand database **(2)**. If you do not see this on the list, refresh the Databases list. Expand Views, then right-click on the **`UserProfileHTAP`** view **(3)**. Select **New SQL script (4)**, then **Select TOP 100 rows (5)**.
+
+    ![The select top 100 rows query option is highlighted.](media/new-select-query.png "New select query")
+
+8. **Run** the query and take note of the results.
+
+    ![The view results are displayed.](media/select-htap-view.png "Select HTAP view")
+
+    The `preferredProducts` **(1)** and `productReviews` **(2)** fields are included in the query, which both contain JSON-formatted values. Notice how the CROSS APPLY OPENJSON statement in the view successfully flattened the nested subarray values in the `productReviews` **(2)** field by extracting the `productId` and `reviewText` values into new fields.

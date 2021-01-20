@@ -1,339 +1,551 @@
-# Module 4 - Support Hybrid Transactional Analytical Processing with Azure Synapse Link
+# Module 4 - Running interactive queries using serverless SQL 
 
-In this lab, we show how Azure Synapse Link enables you to seamlessly connect an Azure Cosmos DB account to your Synapse workspace. We walk through how to enable and configure Synapse link, then how to query the Azure Cosmos DB analytical store using Apache Spark and SQL Serverless. The following table of contents describes and links to the elements of the lab:
+In this module, students will learn how to work with files stored in the data lake and external file sources, through T-SQL statements executed by a serverless SQL pool in Azure Synapse Analytics. Students will query Parquet files stored in a data lake, as well as CSV files stored in an external data store. Next, they will create Azure Active Directory security groups and enforce access to files in the data lake through Role-Based Access Control (RBAC) and Access Control Lists (ACLs).
+
+In this module, the student will be able to:
+
+- Query Parquet data with serverless SQL pools
+- Create external tables for Parquet and CSV files
+- Create views with serverless SQL pools
+- Secure access to data in a data lake when using serverless SQL pools
+- Configure data lake security using Role-Based Access Control (RBAC) and Access Control Lists (ACLs)
 
 ## Lab details
 
-- [Module 4 - Support Hybrid Transactional Analytical Processing with Azure Synapse Link](#module-4---support-hybrid-transactional-analytical-processing-with-azure-synapse-link)
+- [Module 4 - Running interactive queries using serverless SQL](#module-4---running-interactive-queries-using-serverless-sql)
   - [Lab details](#lab-details)
   - [Lab prerequisites](#lab-prerequisites)
-  - [Configuring Azure Synapse Link with Cosmos DB](#configuring-azure-synapse-link-with-cosmos-db)
-    - [Enable Azure Synapse Link](#enable-azure-synapse-link)
-    - [Create a new Azure Cosmos DB container](#create-a-new-azure-cosmos-db-container)
-    - [Create and run a copy pipeline](#create-and-run-a-copy-pipeline)
-  - [Querying Azure Cosmos DB with Apache Spark for Synapse Analytics](#querying-azure-cosmos-db-with-apache-spark-for-synapse-analytics)
-  - [Querying Azure Cosmos DB with serverless SQL pool for Azure Synapse Analytics](#querying-azure-cosmos-db-with-serverless-sql-pool-for-azure-synapse-analytics)
+  - [Querying a Data Lake Store using serverless SQL pools in Azure Synapse Analytics](#querying-a-data-lake-store-using-serverless-sql-pools-in-azure-synapse-analytics)
+    - [Query sales Parquet data with serverless SQL pools](#query-sales-parquet-data-with-serverless-sql-pools)
+    - [Create an external table for 2019 sales data](#create-an-external-table-for-2019-sales-data)
+    - [Create an external table for CSV files](#create-an-external-table-for-csv-files)
+    - [Create a view with a serverless SQL pool](#create-a-view-with-a-serverless-sql-pool)
+  - [Securing access to data through using a serverless SQL pool in Azure Synapse Analytics](#securing-access-to-data-through-using-a-serverless-sql-pool-in-azure-synapse-analytics)
+    - [Create Azure Active Directory security groups](#create-azure-active-directory-security-groups)
+    - [Add group members](#add-group-members)
+    - [Configure data lake security - Role-Based Access Control (RBAC)](#configure-data-lake-security---role-based-access-control-rbac)
+    - [Configure data lake security - Access Control Lists (ACLs)](#configure-data-lake-security---access-control-lists-acls)
+    - [Test permissions](#test-permissions)
+
+Tailwind Trader's Data Engineers want a way to explore the data lake, transform and prepare data, and simplify their data transformation pipelines. In addition, they want their Data Analysts to explore data in the lake and Spark external tables created by Data Scientists or Data Engineers, using familiar T-SQL language or their favorite tools, which can connect to SQL endpoints.
 
 ## Lab prerequisites
 
-- You have created the Azure Cosmos DB linked service.
-- You have created the `asal400_customerprofile_cosmosdb` integration data set.
+You must have permissions to create new Azure Active Directory security groups and assign members to them.
 
-## Configuring Azure Synapse Link with Cosmos DB
+## Querying a Data Lake Store using serverless SQL pools in Azure Synapse Analytics
 
-Tailwind Traders uses Azure Cosmos DB to store user profile data from their eCommerce site. The NoSQL document store provided by the Azure Cosmos DB SQL API provides the familiarity of managing their data using SQL syntax, while being able to read and write the files at a massive, global scale.
+Understanding data through data exploration is one of the core challenges faced today by data engineers and data scientists as well. Depending on the underlying structure of the data as well as the specific requirements of the exploration process, different data processing engines will offer varying degrees of performance, complexity, and flexibility.
 
-While Tailwind Traders is happy with the capabilities and performance of Azure Cosmos DB, they are concerned about the cost of executing a large volume of analytical queries over multiple partitions (cross-partition queries) from their data warehouse. They want to efficiently access all the data without needing to increase the Azure Cosmos DB request units (RUs). They have looked at options for extracting data from their containers to the data lake as it changes, through the Azure Cosmos DB change feed mechanism. The problem with this approach is the extra service and code dependencies and long-term maintenance of the solution. They could perform bulk exports from a Synapse Pipeline, but then they won't have the most up-to-date information at any given moment.
+In Azure Synapse Analytics, you can use either SQL, Apache Spark for Synapse, or both. Which service you use mostly depends on your personal preference and expertise. When conducting data engineering tasks, both options can be equally valid in many cases. However, there are certain situations where harnessing the power of Apache Spark can help you overcome problems with the source data. This is because in a Synapse Notebook, you can import from a large number of free libraries that add functionality to your environment when working with data. There are other situations where it is much more convenient and faster using serveless SQL pool to explore the data, or to expose data in the data lake through a SQL view that can be accessed from external tools, like Power BI.
 
-You decide to enable Azure Synapse Link for Cosmos DB and enable the analytical store on their Azure Cosmos DB containers. With this configuration, all transactional data is automatically stored in a fully isolated column store. This store enables large-scale analytics against the operational data in Azure Cosmos DB, without impacting the transactional workloads or incurring resource unit (RU) costs. Azure Synapse Link for Cosmos DB creates a tight integration between Azure Cosmos DB and Azure Synapse Analytics, which enables Tailwind Traders to run near real-time analytics over their operational data with no-ETL and full performance isolation from their transactional workloads.
+In this exercise, you will explore the data lake using both options.
 
-By combining the distributed scale of Cosmos DB's transactional processing with the built-in analytical store and the computing power of Azure Synapse Analytics, Azure Synapse Link enables a Hybrid Transactional/Analytical Processing (HTAP) architecture for optimizing Tailwind Trader's business processes. This integration eliminates ETL processes, enabling business analysts, data engineers & data scientists to self-serve and run near real-time BI, analytics, and Machine Learning pipelines over operational data.
+### Query sales Parquet data with serverless SQL pools
 
-### Enable Azure Synapse Link
+When you query Parquet files using serverless SQL pools, you can explore the data with T-SQL syntax.
 
-1. Navigate to the Azure portal (<https://portal.azure.com>) and open the `synapse-in-a-day` resource group (or whichever resource group you are using for the demo).
+1. Open Synapse Studio (<https://web.azuresynapse.net/>), and then navigate to the **Data** hub.
 
-2. Select the **Azure Cosmos DB account**.
+    ![The Data menu item is highlighted.](media/data-hub.png "Data hub")
 
-    ![The Azure Cosmos DB account is highlighted.](media/resource-group-cosmos.png "Azure Cosmos DB account")
+2. Select the **Linked** tab **(1)** and expand **Azure Data Lake Storage Gen2**. Expand the `asaworkspaceXX` primary ADLS Gen2 account **(2)** and select the **`wwi-02`** container **(3)**. Navigate to the `sale-small/Year=2016/Quarter=Q4/Month=12/Day=20161231` folder **(4)**. Right-click on the `sale-small-20161231-snappy.parquet` file **(5)**, select **New SQL script (6)**, then **Select TOP 100 rows (7)**.
 
-3. Select **Features** in the left-hand menu **(1)**, then select **Azure Synapse Link (2)**.
+    ![The Data hub is displayed with the options highlighted.](media/data-hub-parquet-select-rows.png "Select TOP 100 rows")
 
-    ![The Features blade is displayed.](media/cosmos-db-features.png "Features")
+3. Ensure **Built-in** is selected **(1)** in the `Connect to` dropdown list above the query window, then run the query **(2)**. Data is loaded by the serverless SQL endpoint and processed as if was coming from any regular relational database.
 
-4. Select **Enable**.
+    ![The Built-in connection is highlighted.](media/built-in-selected.png "SQL Built-in")
 
-    ![Enable is highlighted.](media/synapse-link-enable.png "Azure Synapse Link")
+    The cell output shows the query results from the Parquet file.
 
-    Before we can create an Azure Cosmos DB container with an analytical store, we must first enable Azure Synapse Link.
+    ![The cell output is displayed.](media/sql-on-demand-output.png "SQL output")
 
-5. You must wait for this operation to complete before continuing. Check the status by selecting the Azure **Notifications** icon.
-
-    ![The Enabling Synapse Link process is running.](media/notifications-running.png "Notifications")
-
-    You will see a green checkmark next to "Enabling Synapse Link" when it successfully completes.
-
-    ![The operation completed successfully.](media/notifications-completed.png "Notifications")
-### Create a new Azure Cosmos DB container
-
-Tailwind Traders has an Azure Cosmos DB container named `OnlineUserProfile01`. Since we enabled the Azure Synapse Link feature _after_ the container was already created, we cannot enable the analytical store on the container. We will create a new container that has the same partition key and enable the analytical store.
-
-After creating the container, we will create a new Synapse Pipeline to copy data from the `OnlineUserProfile01` container to the new one.
-
-1. Select **Data Explorer** on the left-hand menu.
-
-    ![The menu item is selected.](media/data-explorer-link.png "Data Explorer")
-
-2. Select **New Container**.
-
-    ![The button is highlighted.](media/new-container-button.png "New Container")
-
-3. For **Database id**, select **Use existing**, then select **`CustomerProfile` (1)**. Enter **`UserProfileHTAP`** for the **Container id (2)**, then enter **`/userId`** for the **Partition key (3)**. For **Throughput**, select **Autoscale (4)**, then enter **`4000`** for the **Max RU/s** value **(5)**. Finally, set **Analytical store** to **On (6)**, then select **OK**.
-
-    ![The form is configured as described.](media/new-container.png "New container")
-
-    Here we set the `partition key` value to `customerId`, because it is a field we use most often in queries and contains a relatively high cardinality (number of unique values) for good partitioning performance. We set the throughput to Autoscale with a maximum value of 4,000 request units (RUs). This means that the container will have a minimum of 400 RUs allocated (10% of the maximum number), and will scale up to a maximum of 4,000 when the scale engine detects a high enough demand to warrant increasing the throughput. Finally, we enable the **analytical store** on the container, which allows us to take full advantage of the Hybrid Transactional/Analytical Processing (HTAP) architecture from within Synapse Analytics.
-
-    Let's take a quick look at the data we will copy over to the new container.
-
-4. Expand the `OnlineUserProfile01` container underneath the **CustomerProfile** database, then select **Items (1)**. Select one of the documents **(2)** and view its contents **(3)**. The documents are stored in JSON format.
-
-    ![The container items are displayed.](media/existing-items.png "Container items")
-
-5. Select **Keys** in the left-hand menu **(1)**, then copy the **Primary Key** value **(2)** and save it to Notepad or similar for later reference. Copy the Azure Cosmos DB **account name** in the upper-left corner **(3)** and also save it to Notepad or similar text editor for later.
-
-    ![The primary key is highlighted.](media/cosmos-keys.png "Keys")
-
-    > **Note**: Take note of these values. You will need this information when creating the SQL view toward the end of the demo.
-
-### Create and run a copy pipeline
-
-Now that we have the new Azure Cosmos DB container with the analytical store enabled, we need to copy the contents of the existing container by using a Synapse Pipeline.
-
-1. Open Synapse Studio (<https://web.azuresynapse.net/>), and then navigate to the **Integrate** hub.
-
-    ![The Integrate menu item is highlighted.](media/integrate-hub.png "Integrate hub")
-
-2. Select **+ (1)**, then **Pipeline (2)**.
-
-    ![The new pipeline link is highlighted.](media/new-pipeline.png "New pipeline")
-
-3. Under Activities, expand the `Move & transform` group, then drag the **Copy data** activity onto the canvas **(1)**. Set the **Name** to **`Copy Cosmos DB Container`** in the Properties blade **(2)**.
-
-    ![The new copy activity is displayed.](media/add-copy-pipeline.png "Add copy activity")
-
-4. Select the new Copy activity that you added to the canvas, then select the **Source** tab **(1)**. Select the **`asal400_customerprofile_cosmosdb`** source dataset from the list **(2)**.
-
-    ![The source is selected.](media/copy-source.png "Source")
-
-5. Select the **Sink** tab **(1)**, then select **+ New (2)**.
-
-    ![The sink is selected.](media/copy-sink.png "Sink")
-
-6. Select the **Azure Cosmos DB (SQL API)** dataset type **(1)**, then select **Continue (2)**.
-
-    ![Azure Cosmos DB is selected.](media/dataset-type.png "New dataset")
-
-7. For **Name**, enter **`cosmos_db_htap` (1)**. Select the **`asacosmosdb01` (2)** **Linked service**. Select **From connection/store** under **Import schema (3)**, then select **OK (4)**.
-
-    ![The form is configured as described.](media/dataset-properties.png "Set properties")
-
-8. Underneath the new sink dataset you just added, select the **Insert** write behavior.
-
-    ![The sink tab is displayed.](media/sink-insert.png "Sink tab")
-
-9. Select **Publish all**, then **Publish** to save the new pipeline.
-
-    ![Publish all.](media/publish-all-1.png "Publish")
-
-10. Above the pipeline canvas, select **Add trigger (1)**, then **Trigger now (2)**. Select **OK** to trigger the run.
-
-    ![The trigger menu is shown.](media/pipeline-trigger.png "Trigger now")
-
-11. Navigate to the **Monitor** hub.
-
-    ![Monitor hub.](media/monitor-hub.png "Monitor hub")
-
-12. Select **Pipeline runs (1)** and wait until the pipeline run has successfully completed **(2)**. You may have to select **Refresh (3)** a few times.
-
-    ![The pipeline run is shown as successfully completed.](media/pipeline-run-status.png "Pipeline runs")
-
-    > This may take around 4 minutes to complete.
-
-## Querying Azure Cosmos DB with Apache Spark for Synapse Analytics
-
-Tailwind Traders wants to use Apache Spark to run analytical queries against the new Azure Cosmos DB container. In this segment, we will use built-in gestures in Synapse Studio to quickly create a Synapse Notebook that loads data from the analytical store of the HTAP-enabled container, without impacting the transactional store.
-
-Tailwind Traders is trying to solve how they can use the list of preferred products identified with each user, coupled with any matching product IDs in their review history, to show a list of all preferred product reviews.
-
-1. Navigate to the **Data** hub.
-
-    ![Data hub.](media/data-hub.png "Data hub")
-
-2. Select the **Linked** tab **(1)** and expand the **Azure Cosmos DB** section, then the **asacosmosdb01 (CustomerProfile)** linked service **(2)**. Right-click on the **UserProfileHTAP** container **(3)**, select the **New notebook** gesture **(4)**, then select **Load to DataFrame (5)**.
-
-    ![The new notebook gesture is highlighted.](media/new-notebook.png "New notebook")
-
-    Notice that the `UserProfileHTAP` container that we created has a slightly different icon than the other two containers. This indicates that the analytical store is enabled.
-
-3. Select **Run all (1)**.
-
-    ![Thew new notebook is shown with the cell 1 output.](media/notebook-cell1.png "Cell 1")
-
-    > It will take a few minutes to start the Spark session the first time.
-
-    In the generated code within Cell 1, notice that the `spark.read` format is set to **`cosmos.olap` (2)**. This instructs Synapse Link to use the container's analytical store. If we wanted to connect to the transactional store instead, like to read from the change feed or write to the container, we'd use `cosmos.oltp` instead.
-
-    > **Note:** You cannot write to the analytical store, only read from it. If you want to load data into the container, you need to connect to the transactional store.
-
-    The first `option` configures the name of the Azure Cosmos DB linked service **(3)**. The second `option` defines the Azure Cosmos DB container from which we want to read **(4)**.
-
-4. Hover your mouse underneath the cell, then select **{} Add code**.
-
-    ![The add code button is highlighted.](media/add-code.png "Add code")
-
-5. The DataFrame contains extra columns that we don't need. Let's remove the unwanted columns and create a clean version of the DataFrame. To do this, enter the following in the new cell and **run** it:
-
-    ```python
-    unwanted_cols = {'_attachments','_etag','_rid','_self','_ts','collectionType','id'}
-
-    # Remove unwanted columns from the columns collection
-    cols = list(set(df.columns) - unwanted_cols)
-
-    profiles = df.select(cols)
-
-    display(profiles.limit(10))
-    ```
-
-    The output now only contains the columns that we want. Notice that the `preferredProducts` **(1)** and `productReviews` **2** columns contain child elements. Expand the values on a row to view them. You may recall seeing the raw JSON format in the `UserProfiles01` container within the Azure Cosmos DB Data Explorer.
-
-    ![The cell's output is displayed.](media/cell2.png "Cell 2 output")
-
-6. We should know how many records we're dealing with. To do this, enter the following in a new cell and **run** it:
-
-    ```python
-    profiles.count()
-    ```
-
-    You should see a count result of 100,000.
-
-7. We want to use the `preferredProducts` column array and `productReviews` column array for each user and create a graph of products that are from their preferred list that match with products that they have reviewed. To do this, we need to create two new DataFrames that contain flattened values from those two columns so we can join them in a later step. Enter the following in a new cell and **run** it:
-
-    ```python
-    from pyspark.sql.functions import udf, explode
-
-    preferredProductsFlat=profiles.select('userId',explode('preferredProducts').alias('productId'))
-    productReviewsFlat=profiles.select('userId',explode('productReviews').alias('productReviews'))
-    display(productReviewsFlat.limit(10))
-    ```
-
-    In this cell, we imported the special PySpark [`explode` function](https://spark.apache.org/docs/latest/api/python/pyspark.sql.html?highlight=explode#pyspark.sql.functions.explode), which returns a new row for each element of the array. This function helps flatten the `preferredProducts` and `productReviews` columns for better readability or for easier querying.
-
-    ![Cell output.](media/cell4.png "Cell 4 output")
-
-    Observe the cell output where we display the `productReviewFlat` DataFrame contents. We see a new `productReviews` column that contains the `productId` we want to match to the preferred products list for the user, as well as the `reviewText` that we want to display or save.
-
-8. Let's look at the `preferredProductsFlat` DataFrame contents. To do this, enter the following in a new cell and **run** it:
-
-    ```python
-    display(preferredProductsFlat.limit(20))
-    ```
-
-    ![Cell output.](media/cell5.png "Cell 5 results")
-
-    Since we used the `explode` function on the preferred products array, we have flattened the column values to `userId` and `productId` rows, ordered by user.
-
-9. Now we need to further flatten the `productReviewFlat` DataFrame contents to extract the `productReviews.productId` and `productReviews.reviewText` fields and create new rows for each data combination. To do this, enter the following in a new cell and **run** it:
-
-    ```python
-    productReviews = (productReviewsFlat.select('userId','productReviews.productId','productReviews.reviewText')
-        .orderBy('userId'))
-
-    display(productReviews.limit(10))
-    ```
-
-    In the output, notice that we now have multiple rows for each `userId`.
-
-    ![Cell output.](media/cell6.png "Cell 6 results")
-
-10. The final step is to join the `preferredProductsFlat` and `productReviews` DataFrames on the `userId` and `productId` values to build our graph of preferred product reviews. To do this, enter the following in a new cell and **run** it:
-
-    ```python
-    preferredProductReviews = (preferredProductsFlat.join(productReviews,
-        (preferredProductsFlat.userId == productReviews.userId) &
-        (preferredProductsFlat.productId == productReviews.productId))
-    )
-
-    display(preferredProductReviews.limit(100))
-    ```
-
-    > **Note**: Feel free to click on the column headers in the Table view to sort the result set.
-
-    ![Cell output.](media/cell7.png "Cell 7 results")
-
-## Querying Azure Cosmos DB with serverless SQL pool for Azure Synapse Analytics
-
-Tailwind Traders wants to explore the Azure Cosmos DB analytical store with T-SQL. Ideally, they can create views that can then be used for joins with other analytical store containers, files from the data lake, or accessed by external tools, like Power BI.
-
-1. Navigate to the **Develop** hub.
-
-    ![Develop hub.](media/develop-hub.png "Develop hub")
-
-2. Select **+ (1)**, then **SQL script (2)**.
-
-    ![The SQL script button is highlighted.](media/new-script.png "SQL script")
-
-3. When the script opens, you will see the **Properties** pane to the right **(1)**. Enter **`User Profile HTAP`** for the **Name (2)**, then select the **Properties** button to close the pane **(1)**.
-
-    ![The properties pane is displayed.](media/new-script-properties.png "Properties")
-
-4. Verify that the serverless SQL pool (**Built-in**) is selected.
-
-    ![The serverless SQL pool is selected.](media/built-in-htap.png "Built-in")
-
-5. Paste the following SQL query. In the OPENROWSET statement, replace **`YOUR_ACCOUNT_NAME`** with the Azure Cosmos DB account name and **`YOUR_ACCOUNT_KEY`** with the Azure Cosmos DB Primary Key value you copied in step 5 above after you created the container.
+4. Modify the SQL query to perform aggregates and grouping operations to better understand the data. Replace the query with the following, making sure that the file path in `OPENROWSET` matches the current file path:
 
     ```sql
-    USE master
-    GO
-
-    IF DB_ID (N'Profiles') IS NULL
-    BEGIN
-        CREATE DATABASE Profiles;
-    END
-    GO
-
-    USE Profiles
-    GO
-
-    DROP VIEW IF EXISTS UserProfileHTAP;
-    GO
-
-    CREATE VIEW UserProfileHTAP
-    AS
     SELECT
-        *
-    FROM OPENROWSET(
-        'CosmosDB',
-        N'account=YOUR_ACCOUNT_NAME;database=CustomerProfile;key=YOUR_ACCOUNT_KEY',
-        UserProfileHTAP
+        TransactionDate, ProductId,
+            CAST(SUM(ProfitAmount) AS decimal(18,2)) AS [(sum) Profit],
+            CAST(AVG(ProfitAmount) AS decimal(18,2)) AS [(avg) Profit],
+            SUM(Quantity) AS [(sum) Quantity]
+    FROM
+        OPENROWSET(
+            BULK 'https://asadatalakeSUFFIX.dfs.core.windows.net/wwi-02/sale-small/Year=2016/Quarter=Q4/Month=12/Day=20161231/sale-small-20161231-snappy.parquet',
+            FORMAT='PARQUET'
+        ) AS [r] GROUP BY r.TransactionDate, r.ProductId;
+    ```
+
+    ![The T-SQL query above is displayed within the query window.](media/sql-serverless-aggregates.png "Query window")
+
+5. Let's move on from this single file from 2016 and transition to a newer data set. We want to figure out how many records are contained within the Parquet files for all 2019 data. This information is important for planning how we optimize for importing the data into Azure Synapse Analytics. To do this, we'll replace the query with the following (be sure to update the name of your data lake in the BULK statement, by replacing `[asadatalakeSUFFIX]`):
+
+    ```sql
+    SELECT
+        COUNT(*)
+    FROM
+        OPENROWSET(
+            BULK 'https://asadatalakeSUFFIX.dfs.core.windows.net/wwi-02/sale-small/Year=2019/*/*/*/*',
+            FORMAT='PARQUET'
+        ) AS [r];
+    ```
+
+    > Notice how we updated the path to include all Parquet files in all subfolders of `sale-small/Year=2019`.
+
+    The output should be **339507246** records.
+
+### Create an external table for 2019 sales data
+
+Rather than creating a script with `OPENROWSET` and a path to the root 2019 folder every time we want to query the Parquet files, we can create an external table.
+
+1. In Synapse Studio, navigate to the **Data** hub.
+
+    ![The Data menu item is highlighted.](media/data-hub.png "Data hub")
+
+2. Select the **Linked** tab **(1)** and expand **Azure Data Lake Storage Gen2**. Expand the `asaworkspaceXX` primary ADLS Gen2 account **(2)** and select the **`wwi-02`** container **(3)**. Navigate to the `sale-small/Year=2019/Quarter=Q1/Month=1/Day=20190101` folder **(4)**. Right-click on the `sale-small-20190101-snappy.parquet` file **(5)**, select **New SQL script (6)**, then **Create external table (7)**.
+
+    ![The create external link is highlighted.](media/create-external-table.png "Create external table")
+
+3. Make sure **`Built-in`** is selected for the **SQL pool (1)**. Under **Select a database**, select **+ New** and enter `demo` **(2)**. For **External table name**, enter `All2019Sales` **(3)**. Under **Create external table**, select **Using SQL script (4)**, then select **Create (5)**.
+
+    ![The create external table form is displayed.](media/create-external-table-form.png "Create external table")
+
+    > **Note**: Make sure the script is connected to the serverless SQL pool (`Built-in`) **(1)** and the database is set to `demo` **(2)**.
+
+    ![The Built-in pool and demo database are selected.](media/built-in-and-demo.png "Script toolbar")
+
+    The generated script contains the following components:
+
+    - **1)** The script begins with creating the `SynapseParquetFormat` external file format with a `FORMAT_TYPE` of `PARQUET`.
+    - **2)** Next, the external data source is created, pointing to the `wwi-02` container of the data lake storage account.
+    - **3)** The CREATE EXTERNAL TABLE `WITH` statement specifies the file location and refers to the new external file format and data source created above.
+    - **4)** Finally, we select the top 100 results from the `2019Sales` external table.
+
+    ![The SQL script is displayed.](media/create-external-table-script.png "Create external table script")
+
+4. Replace the `LOCATION` value in the `CREATE EXTERNAL TABLE` statement with **`sale-small/Year=2019/*/*/*/*.parquet`**.
+
+    ![The Location value is highlighted.](media/create-external-table-location.png "Create external table")
+
+5. **Run** the script.
+
+    ![The Run button is highlighted.](media/create-external-table-run.png "Run")
+
+    After running the script, we can see the output of the SELECT query against the `All2019Sales` external table. This displays the first 100 records from the Parquet files located in the `YEAR=2019` folder.
+
+    ![The query output is displayed.](media/create-external-table-output.png "Query output")
+
+### Create an external table for CSV files
+
+Tailwind Traders found an open data source for country population data that they want to use. They do not want to merely copy the data since it is regularly updated with projected populations in future years.
+
+You decide to create an external table that connects to the external data source.
+
+1. Replace the SQL script with the following:
+
+    ```sql
+    IF NOT EXISTS (SELECT * FROM sys.symmetric_keys) BEGIN
+        declare @pasword nvarchar(400) = CAST(newid() as VARCHAR(400));
+        EXEC('CREATE MASTER KEY ENCRYPTION BY PASSWORD = ''' + @pasword + '''')
+    END
+
+    CREATE DATABASE SCOPED CREDENTIAL [sqlondemand]
+    WITH IDENTITY='SHARED ACCESS SIGNATURE',  
+    SECRET = 'sv=2018-03-28&ss=bf&srt=sco&sp=rl&st=2019-10-14T12%3A10%3A25Z&se=2061-12-31T12%3A10%3A00Z&sig=KlSU2ullCscyTS0An0nozEpo4tO5JAgGBvw%2FJX2lguw%3D'
+    GO
+
+    -- Create external data source secured using credential
+    CREATE EXTERNAL DATA SOURCE SqlOnDemandDemo WITH (
+        LOCATION = 'https://sqlondemandstorage.blob.core.windows.net',
+        CREDENTIAL = sqlondemand
+    );
+    GO
+
+    CREATE EXTERNAL FILE FORMAT QuotedCsvWithHeader
+    WITH (  
+        FORMAT_TYPE = DELIMITEDTEXT,
+        FORMAT_OPTIONS (
+            FIELD_TERMINATOR = ',',
+            STRING_DELIMITER = '"',
+            FIRST_ROW = 2
+        )
+    );
+    GO
+
+    CREATE EXTERNAL TABLE [population]
+    (
+        [country_code] VARCHAR (5) COLLATE Latin1_General_BIN2,
+        [country_name] VARCHAR (100) COLLATE Latin1_General_BIN2,
+        [year] smallint,
+        [population] bigint
     )
     WITH (
-        userId bigint,
-        cartId varchar(50),
-        preferredProducts varchar(max),
-        productReviews varchar(max)
-    ) AS profiles
-    CROSS APPLY OPENJSON (productReviews)
-    WITH (
-        productId bigint,
-        reviewText varchar(1000)
-    ) AS reviews
+        LOCATION = 'csv/population/population.csv',
+        DATA_SOURCE = SqlOnDemandDemo,
+        FILE_FORMAT = QuotedCsvWithHeader
+    );
     GO
     ```
 
-    Your completed query should look similar to the following:
+    At the top of the script, we create a `MASTER KEY` with a random password **(1)**. Next, we create a database-scoped credential for the containers in the external storage account **(2)**, using a shared access signature (SAS) for delegated access. This credential is used when we create the `SqlOnDemandDemo` external data source **(3)** that points to the location of the external storage account that contains the population data:
 
-    ![The create view portion of the query and the results are displayed.](media/htap-view.png "SQL query")
+    ![The script is displayed.](media/script1.png "Create master key and credential")
 
-    The query starts out by creating a new serverless SQL pool database named `Profiles` if it does not exist, then executes `USE Profiles` to run the rest of the script contents against the `Profiles` database. Next, it drops the `UserProfileHTAP` view if it exists. Finally, it performs the following:
+    > Database-scoped credentials are used when any principal calls the OPENROWSET function with a DATA_SOURCE or selects data from an external table that doesn't access public files. The database scoped credential doesn't need to match the name of storage account because it will be explicitly used in the DATA SOURCE that defines the storage location.
 
-    - **1.** Creates a SQL view named `UserProfileHTAP`.
-    - **2.** Uses the `OPENROWSET` statement to set the data source type to `CosmosDB`, sets the account details, and specifies that we want to create the view over the Azure Cosmos DB analytical store container named `UserProfileHTAP`.
-    - **3.** The `WITH` clause matches the property names in the JSON documents and applies the appropriate SQL data types. Notice that we set the `preferredProducts` and `productReviews` fields to `varchar(max)`. This is because both of these properties contain JSON-formatted data within.
-    - **4.** Since the `productReviews` property in the JSON documents contain nested subarrays, we want to "join" the properties from the document with all elements of the array. Synapse SQL enables us to flatten the nested structure by applying the `OPENJSON` function on the nested array. We flatten the values within `productReviews` like we did using the Python `explode` function earlier in the Synapse Notebook.
-    - **5.** The output shows that the statements successfully executed.
+    In the next part of the script, we create an external file format called `QuotedCsvWithHeader`. Creating an external file format is a prerequisite for creating an External Table. By creating an External File Format, you specify the actual layout of the data referenced by an external table. Here we specify the CSV field terminator, string delimiter, and set the `FIRST_ROW` value to 2 since the file contains a header row:
 
-6. Navigate to the **Data** hub.
+    ![The script is displayed.](media/script2.png "Create external file format")
 
-    ![Data hub.](media/data-hub.png "Data hub")
+    Finally, at the bottom of the script, we create an external table named `population`. The `WITH` clause specifies the relative location of the CSV file, points to the data source created above, as well as the `QuotedCsvWithHeader` file format:
 
-7. Select the **Workspace** tab **(1)** and expand the Databases group. Expand the **Profiles** SQL on-demand database **(2)**. If you do not see this on the list, refresh the Databases list. Expand Views, then right-click on the **`UserProfileHTAP`** view **(3)**. Select **New SQL script (4)**, then **Select TOP 100 rows (5)**.
+    ![The script is displayed.](media/script3.png "Create external table")
 
-    ![The select top 100 rows query option is highlighted.](media/new-select-query.png "New select query")
+2. **Run** the script.
 
-8. **Run** the query and take note of the results.
+    ![The run button is highlighted.](media/sql-run.png "Run")
 
-    ![The view results are displayed.](media/select-htap-view.png "Select HTAP view")
+    Please note that there are no data results for this query. You should see messages similar to the following:
 
-    The `preferredProducts` **(1)** and `productReviews` **(2)** fields are included in the query, which both contain JSON-formatted values. Notice how the CROSS APPLY OPENJSON statement in the view successfully flattened the nested subarray values in the `productReviews` **(2)** field by extracting the `productId` and `reviewText` values into new fields.
+    ```text
+    Started executing query at Line 1
+
+    (Affected rows: 0)
+    (Affected rows: 0)
+    (Affected rows: 0)
+    (Affected rows: 0)
+    Total execution time: 00:00:00.240
+    ```
+
+3. Replace the SQL script with the following to select from the population external table, filtered by 2019 data where the population is greater than 100 million:
+
+    ```sql
+    SELECT [country_code]
+        ,[country_name]
+        ,[year]
+        ,[population]
+    FROM [dbo].[population]
+    WHERE [year] = 2019 and population > 100000000
+    ```
+
+4. **Run** the script.
+
+    ![The run button is highlighted.](media/sql-run.png "Run")
+
+5. In the query results, select the **Chart** view, then configure it as follows:
+
+    - **Chart type**: Select `Bar`.
+    - **Category column**: Select `country_name`.
+    - **Legend (series) columns**: Select `population`.
+    - **Legend position**: Select `center - bottom`.
+
+    ![The chart is displayed.](media/population-chart.png "Population chart")
+
+### Create a view with a serverless SQL pool
+
+Let's create a view to wrap a SQL query. Views allow you to reuse queries and are needed if you want to use tools, such as Power BI, in conjunction with serverless SQL pools.
+
+1. In Synapse Studio, navigate to the **Data** hub.
+
+    ![The Data menu item is highlighted.](media/data-hub.png "Data hub")
+
+2. Select the **Linked** tab **(1)** and expand **Azure Data Lake Storage Gen2**. Expand the `asaworkspaceXX` primary ADLS Gen2 account **(2)** and select the **`wwi-02`** container **(3)**. Navigate to the `customer-info` folder **(4)**. Right-click on the `customerinfo.csv` file **(5)**, select **New SQL script (6)**, then **Select TOP 100 rows (7)**.
+
+    ![The Data hub is displayed with the options highlighted.](media/customerinfo-select-rows.png "Select TOP 100 rows")
+
+3. Select **Run** to execute the script **(1)**. Notice that the first row of the CSV file is the column header row **(2)**.
+
+    ![The CSV results are displayed.](media/select-customerinfo.png "customerinfo.csv file")
+
+4. Update the script with the following and **make sure you replace YOUR_DATALAKE_NAME (1)** (your primary data lake storage account) in the OPENROWSET BULK path with the value in the in the previous select statement. Set the **Use database** value to **`demo` (2)** (use the refresh button to the right if needed):
+
+    ```sql
+    CREATE VIEW CustomerInfo AS
+        SELECT * 
+    FROM OPENROWSET(
+            BULK 'https://YOUR_DATALAKE_NAME.dfs.core.windows.net/wwi-02/customer-info/customerinfo.csv',
+            FORMAT = 'CSV',
+            PARSER_VERSION='2.0',
+            FIRSTROW=2
+        )
+    WITH (
+        [UserName] VARCHAR (50),
+        [Gender] VARCHAR (10),
+        [Phone] VARCHAR (50),
+        [Email] VARCHAR (100),
+        [CreditCard] VARCHAR (50)
+    ) AS [r];
+    GO
+
+    SELECT * FROM CustomerInfo;
+    GO
+    ```
+
+    ![The script is displayed.](media/create-view-script.png "Create view script")
+
+5. Select **Run** to execute the script.
+
+    ![The run button is highlighted.](media/sql-run.png "Run")
+
+    We just created the view to wrap the SQL query that selects data from the CSV file, then selected rows from the view:
+
+    ![The query results are displayed.](media/create-view-script-results.png "Query results")
+
+    Notice that the first row no longer contains the column headers. This is because we used the `FIRSTROW=2` setting in the `OPENROWSET` statement when we created the view.
+
+6. Within the **Data** hub, select the **Workspace** tab **(1)**. Select the actions ellipses **(...)** to the right of the Databases group **(2)**, then select **Refresh (3)**.
+
+    ![The refresh button is highlighted.](media/refresh-databases.png "Refresh databases")
+
+7. Expand the `demo` SQL database.
+
+    ![The demo database is displayed.](media/demo-database.png "Demo database")
+
+    The database contains the following objects that we created in our earlier steps:
+
+    - **1) External tables**: `All2019Sales` and `population`.
+    - **2) External data sources**: `SqlOnDemandDemo` and `wwi-02_asadatalakeinadayXXX_dfs_core_windows_net`.
+    - **3) External file formats**: `QuotedCsvWithHeader` and `SynapseParquetFormat`.
+    - **4) Views**: `CustomerInfo`. 
+
+## Securing access to data through using a serverless SQL pool in Azure Synapse Analytics
+
+Tailwind Traders wants to enforce that any kind of modifications to sales data can happen in the current year only, while allowing all authorized users to query the entirety of data. They have a small group of admins who can modify historic data if needed.
+
+- Tailwind Traders should create a security group in AAD, for example called `tailwind-history-owners`, with the intent that all users who belong to this group will have permissions to modify data from previous years.
+- The `tailwind-history-owners` security group needs to be assigned to the Azure Storage built-in RBAC role `Storage Blob Data Owner` for the Azure Storage account containing the data lake. This allows AAD user and service principals that are added to this role to have the ability to modify all data from previous years.
+- They need to add the user security principals who will have have permissions to modify all historical data to the `tailwind-history-owners` security group.
+- Tailwind Traders should create another security group in AAD, for example called `tailwind-readers`, with the intent that all users who belong to this group will have permissions to read all contents of the file system (`prod` in this case), including all historical data.
+- The `tailwind-readers` security group needs to be assigned to the Azure Storage built-in RBAC role `Storage Blob Data Reader` for the Azure Storage account containing the data lake. This allows AAD user and service principals that are added to this security group to have the ability to read all data in the file system, but not to modify it.
+- Tailwind Traders should create another security group in AAD, for example called `tailwind-2020-writers`, with the intent that all users who belong to this group will have permissions to modify data only from the year 2020.
+- They would create a another security group, for example called `tailwind-current-writers`, with the intent that only security groups would be added to this group. This group will have permissions to modify data only from the current year, set using ACLs.
+- They need to add the `tailwind-readers` security group to the `tailwind-current-writers` security group.
+- At the start of the year 2020, Tailwind Traders would add `tailwind-current-writers` to the `tailwind-2020-writers` security group.
+- At the start of the year 2020, on the `2020` folder, Tailwind Traders would set the read, write and execute ACL permissions for the `tailwind-2020-writers` security group.
+- At the start of the year 2021, to revoke write access to the 2020 data they would remove the `tailwind-current-writers` security group from the `tailwind-2020-writers` group. Members of `tailwind-readers` would continue to be able to read the contents of the file system because they have been granted read and execute (list) permissions not by the ACLs but by the RBAC built in role at the level of the file system.
+- This approach takes into account that current changes to ACLs do not inherit permissions, so removing the write permission would require writing code that traverses all of its content removing the permission at each folder and file object.
+- This approach is relatively fast. RBAC role assignments may take up to five minutes to propagate, regardless of the volume of data being secured.
+
+### Create Azure Active Directory security groups
+
+In this segment, we will create security groups as described above. However, our data set ends in 2019, so we will create a `tailwind-2019-writers` group instead of 2020.
+
+> **Note**: Since other students may be using the same Azure AD tenant, the four `tailwind-XXX` groups may already exist. If you find a group already exists, move on to the next step.
+
+1. Switch back to the Azure portal (<https://portal.azure.com>) in a different browser tab, leaving Synapse Studio open.
+
+2. Select the Azure menu **(1)**, then select **Azure Active Directory (2)**.
+
+    ![The menu item is highlighted.](media/azure-ad-menu.png "Azure Active Directory")
+
+3. Select **Groups** in the left-hand menu.
+
+    ![Groups is highlighted.](media/aad-groups-link.png "Azure Active Directory")
+
+4. Select **+ New group**.
+
+    ![New group button.](media/new-group.png "New group")
+
+5. Select `Security` from **Group type**. Enter `tailwind-history-owners` for the **Group name**, then select **Create**.
+
+    ![The form is configured as described.](media/new-group-history-owners.png "New Group")
+
+6. Select **+ New group**.
+
+    ![New group button.](media/new-group.png "New group")
+
+7. Select `Security` from **Group type**. Enter `tailwind-readers` for the **Group name**, then select **Create**.
+
+    ![The form is configured as described.](media/new-group-readers.png "New Group")
+
+8. Select **+ New group**.
+
+    ![New group button.](media/new-group.png "New group")
+
+9. Select `Security` from **Group type**. Enter `tailwind-current-writers` for the **Group name**, then select **Create**.
+
+    ![The form is configured as described.](media/new-group-current-writers.png "New Group")
+
+10. Select **+ New group**.
+
+    ![New group button.](media/new-group.png "New group")
+
+11. Select `Security` from **Group type**. Enter `tailwind-2019-writers` for the **Group name**, then select **Create**.
+
+    ![The form is configured as described.](media/new-group-2019-writers.png "New Group")
+
+### Add group members
+
+To test out the permissions, we will add our own account to the `tailwind-readers` group.
+
+1. Open the newly created **`tailwind-readers`** group.
+
+2. Select **Members (1)** on the left, then select **+ Add members (2)**.
+
+    ![The group is displayed and add members is highlighted.](media/tailwind-readers.png "tailwind-readers group")
+
+3. Add your user account that you are signed into for the lab, then select **Select**.
+
+    ![The form is displayed.](media/add-members.png "Add members")
+
+4. Open the **`tailwind-2019-writers`** group.
+
+5. Select **Members (1)** on the left, then select **+ Add members (2)**.
+
+    ![The group is displayed and add members is highlighted.](media/tailwind-2019-writers.png "tailwind-2019-writers group")
+
+6. Search for `tailwind`, select the **`tailwind-current-writers`** group, then select **Select**.
+
+    ![The form is displayed as described.](media/add-members-writers.png "Add members")
+
+7. Select **Overview** in the left-hand menu, then **copy** the **Object Id**.
+
+    ![The group is displayed and the Object Id is highlighted.](media/tailwind-2019-writers-overview.png "tailwind-2019-writers group")
+
+    > **Note**: Save the **Object Id** value to Notepad or similar text editor. This will be used in a later step when you assign access control in the storage account.
+
+### Configure data lake security - Role-Based Access Control (RBAC)
+
+1. Open the `synapse-in-a-day-demos` Azure resource group.
+
+2. Open the default data lake storage account.
+
+    ![The storage account is selected.](media/resource-group-storage-account.png "Resource group")
+
+3. Select **Access Control (IAM)** in the left-hand menu.
+
+    ![Access Control is selected.](media/storage-access-control.png "Access Control")
+
+4. Select the **Role assignments** tab.
+
+    ![Role assignments is selected.](media/role-assignments-tab.png "Role assignments")
+
+5. Select **+ Add**, then **Add role assignment**.
+
+    ![Add role assignment is highlighted.](media/add-role-assignment.png "Add role assignment")
+
+6. For **Role**, select **`Storage Blob Data Reader`**. Search for **`tailwind-readers`** and select it from the results, then select **Save**.
+
+    ![The form is displayed as described.](media/add-tailwind-readers.png "Add role assignment")
+
+    Since our user account is added to this group, we will have read access to all files in the blob containers of this account. Tailwind Traders will need to add all users to the `tailwind-readers` security group.
+
+7. Select **+ Add**, then **Add role assignment**.
+
+    ![Add role assignment is highlighted.](media/add-role-assignment.png "Add role assignment")
+
+8. For **Role**, select **`Storage Blob Data Owner`**. Search for **`tailwind`** and select **`tailwind-history-owners`** from the results, then select **Save**.
+
+    ![The form is displayed as described.](media/add-tailwind-history-owners.png "Add role assignment")
+
+    The `tailwind-history-owners` security group is now assigned to the Azure Storage built-in RBAC role `Storage Blob Data Owner` for the Azure Storage account containing the data lake. This allows Azure AD user and service principals that are added to this role to have the ability to modify all data.
+
+    Tailwind Traders needs to add the user security principals who will have have permissions to modify all historical data to the `tailwind-history-owners` security group.
+
+9. In the **Access Control (IAM)** list for the storage account, select your Azure user account under the **Storage Blob Data Owner** role **(1)**, then select **Remove (2)**.
+
+    ![The Access Control settings are displayed.](media/storage-access-control-updated.png "Access Control updated")
+
+    Notice that the `tailwind-history-owners` group is assigned to the **Storage Blob Data Owner** group **(3)**, and `tailwind-readers` is assigned to the **Storage Blob Data Reader** group **(4)**.
+
+### Configure data lake security - Access Control Lists (ACLs)
+
+1. Select **Storage Explorer (preview)** on the left-hand menu **(1)**. Expand CONTAINERS and select the **wwi-02** container **(2)**. Open the **sale-small** folder **(3)**, right-click on the **Year=2019** folder **(4)**, then select **Manage Access.. (5)**.
+
+    ![The 2019 folder is highlighted and Manage Access is selected.](media/manage-access-2019.png "Storage Explorer")
+
+2. Paste the **Object Id** value you copied from the **`tailwind-2019-writers`** security group into the **Add user, group, or service principal** text box, then select **Add**.
+
+    ![The Object Id value is pasted in the field.](media/manage-access-2019-object-id.png "Manage Access")
+
+3. Now you should see that the `tailwind-2019-writers` group is selected in the Manage Access dialog **(1)**. Check the **Access** and **Default** check boxes and the **Read**, **Write**, and **Execute** checkboxes for each **(2)**, then select **Save**.
+
+    ![The permissions are configured as described.](media/manage-access-2019-permissions.png "Manage Access")
+
+    Now the security ACLs have been set to allow any users added to the `tailwind-current` security group to write to the `Year=2019` folder, by way of the `tailwind-2019-writers` group. These users can only manage current (2019 in this case) sales files.
+
+    At the start of the following year, to revoke write access to the 2019 data they would remove the `tailwind-current-writers` security group from the `tailwind-2019-writers` group. Members of `tailwind-readers` would continue to be able to read the contents of the file system because they have been granted read and execute (list) permissions not by the ACLs but by the RBAC built in role at the level of the file system.
+
+    Notice that we configured both the _access_ ACLs and _default_ ACLs in this configuration.
+
+    *Access* ACLs control access to an object. Files and directories both have access ACLs.
+
+    *Default* ACLs are templates of ACLs associated with a directory that determine the access ACLs for any child items that are created under that directory. Files do not have default ACLs.
+
+    Both access ACLs and default ACLs have the same structure.
+
+### Test permissions
+
+1. In Synapse Studio, navigate to the **Data** hub.
+
+    ![The Data menu item is highlighted.](media/data-hub.png "Data hub")
+
+2. Select the **Linked** tab **(1)** and expand **Azure Data Lake Storage Gen2**. Expand the `asaworkspaceXX` primary ADLS Gen2 account **(2)** and select the **`wwi-02`** container **(3)**. Navigate to the `sale-small/Year=2016/Quarter=Q4/Month=12/Day=20161231` folder **(4)**. Right-click on the `sale-small-20161231-snappy.parquet` file **(5)**, select **New SQL script (6)**, then **Select TOP 100 rows (7)**.
+
+    ![The Data hub is displayed with the options highlighted.](media/data-hub-parquet-select-rows.png "Select TOP 100 rows")
+
+3. Ensure **Built-in** is selected **(1)** in the `Connect to` dropdown list above the query window, then run the query **(2)**. Data is loaded by the serverless SQL pool endpoint and processed as if was coming from any regular relational database.
+
+    ![The Built-in connection is highlighted.](media/built-in-selected.png "Built-in SQL pool")
+
+    The cell output shows the query results from the Parquet file.
+
+    ![The cell output is displayed.](media/sql-on-demand-output.png "SQL output")
+
+    The read permissions to the Parquet file assigned to us through the `tailwind-readers` security group, which then is granted RBAC permissions on the storage account through the **Storage Blob Data Reader** role assignment, is what enabled us to view the file contents.
+
+    However, since we removed our account from the **Storage Blob Data Owner** role, and we did not add our account to the `tailwind-history-owners` security group, what if we try to write to this directory?
+
+    Let's give it a try.
+
+4. In the **Data** hub, once again select the **Linked** tab **(1)** and expand **Azure Data Lake Storage Gen2**. Expand the `asaworkspaceXX` primary ADLS Gen2 account **(2)** and select the **`wwi-02`** container **(3)**. Navigate to the `sale-small/Year=2016/Quarter=Q4/Month=12/Day=20161231` folder **(4)**. Right-click on the `sale-small-20161231-snappy.parquet` file **(5)**, select **New Notebook (6)**, then select **Load to DataFrame (7)**.
+
+    ![The Data hub is displayed with the options highlighted.](media/data-hub-parquet-new-notebook.png "New notebook")
+
+5. In the notebook, select **{} Add code** underneath Cell 1 **(1)**. Enter the following in the new cell, then **copy the Parquet path from cell 1** and paste the value to replace `REPLACE_WITH_PATH` **(2)**. Rename the Parquet file by adding `-test` to the end of the file name **(3)**:
+
+    ```python
+    df.write.parquet('REPLACE_WITH_PATH')
+    ```
+
+    ![The notebook is displayed with the new cell.](media/new-cell.png "New cell")
+
+6. Select **Run all** in the toolbar to run both cells. After a few minutes when the Spark pool starts and the cells run, you should see the file data in the output from cell 1 **(1)**. However, you should see a **403 error** in the output of cell 2 **(2)**.
+
+    ![The error is displayed in Cell 2's output.](media/notebook-error.png "Notebook error")
+
+    As expected, we do not have write permissions. The error returned by cell 2 is, `This request is not authorized to perform this operation using this permission.`, with a status code of 403.
+
+7. Leave the notebook open and switch back to the Azure portal (<https://portal.azure.com>) in another tab.
+
+8. Select the Azure menu **(1)**, then select **Azure Active Directory (2)**.
+
+    ![The menu item is highlighted.](media/azure-ad-menu.png "Azure Active Directory")
+
+9. Select **Groups** in the left-hand menu.
+
+    ![Groups is highlighted.](media/aad-groups-link.png "Azure Active Directory")
+
+10. Type **`tailwind`** in the search box **(1)**, then select **`tailwind-history-owners`** in the results **(2)**.
+
+    ![The tailwind groups are displayed.](media/tailwind-groups.png "All groups")
+
+11. Select **Members (1)** on the left, then select **+ Add members (2)**.
+
+    ![The group is displayed and add members is highlighted.](media/tailwind-history-owners.png "tailwind-history-owners group")
+
+12. Add your user account that you are signed into for the lab, then select **Select**.
+
+    ![The form is displayed.](media/add-members.png "Add members")
+
+13. Switch back to the open Synapse Notebook in Synapse Studio, then **Run** cell 2 once more **(1)**. You should see a status of **Succeeded (2)** after a few moments.
+
+    ![Cell 2 succeeded.](media/notebook-succeeded.png "Notebook")
+
+    The cell succeeded this time because we added our account to the `tailwind-history-owners` group, which is assigned the **Storage Blob Data Owner** role.
+
+    Now let's verify that the file was written to the data lake.
+
+14. Navigate back to the `sale-small/Year=2016/Quarter=Q4/Month=12/Day=20161231` folder. You should now see a folder for the new `sale-small-20161231-snappy-test.parquet` file we wrote from the notebook **(1)**. If you don't see it listed here, select **... More** in the toolbar **(2)**, then select **Refresh (3)**.
+
+    ![The test Parquet file is displayed.](media/test-parquet-file.png "Test parquet file")

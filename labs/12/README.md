@@ -12,7 +12,9 @@ In this module, the student will be able to:
 
 - [Module 12 - Support Hybrid Transactional Analytical Processing (HTAP) with Azure Synapse Link](#module-12---support-hybrid-transactional-analytical-processing-htap-with-azure-synapse-link)
   - [Lab details](#lab-details)
-  - [Lab prerequisites](#lab-prerequisites)
+  - [Lab setup](#lab-setup)
+    - [Create linked service](#create-linked-service)
+    - [Create dataset](#create-dataset)
   - [Configuring Azure Synapse Link with Azure Cosmos DB](#configuring-azure-synapse-link-with-azure-cosmos-db)
     - [Enable Azure Synapse Link](#enable-azure-synapse-link)
     - [Create a new Azure Cosmos DB container](#create-a-new-azure-cosmos-db-container)
@@ -20,10 +22,63 @@ In this module, the student will be able to:
   - [Querying Azure Cosmos DB with Apache Spark for Synapse Analytics](#querying-azure-cosmos-db-with-apache-spark-for-synapse-analytics)
   - [Querying Azure Cosmos DB with serverless SQL pool for Azure Synapse Analytics](#querying-azure-cosmos-db-with-serverless-sql-pool-for-azure-synapse-analytics)
 
-## Lab prerequisites
+## Lab setup
 
-- You have created the Azure Cosmos DB linked service.
-- You have created the `asal400_customerprofile_cosmosdb` integration data set.
+### Create linked service
+
+Complete the steps below to create an Azure Cosmos DB linked service.
+
+> **Note to presenter**: Skip this section if you have already created a Cosmos DB linked service.
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>), and then navigate to the **Manage** hub.
+
+    ![The Manage menu item is highlighted.](media/manage-hub.png "Manage hub")
+
+2. Open **Linked services** and select **+ New** to create a new linked service. Select **Azure Cosmos DB (SQL API)** in the list of options, then select **Continue**.
+
+    ![Manage, New, and the Azure Cosmos DB linked service option are highlighted.](media/create-cosmos-db-linked-service-step1.png "New linked service")
+
+3. Name the linked service `asacosmosdb01` **(1)**, select the **Cosmos DB account name** (`asacosmosdbSUFFIX`) and set the **Database name** value to `CustomerProfile` **(2)**. Select **Test connection** to ensure success **(3)**, then select **Create (4)**.
+
+    ![New Azure Cosmos DB linked service.](media/create-cosmos-db-linked-service.png "New linked service")
+
+### Create dataset
+
+Complete the steps below to create the `asal400_customerprofile_cosmosdb` dataset.
+
+> **Note to presenter**: Skip this section if you have already completed Module 4.
+
+1. Navigate to the **Data** hub.
+
+    ![The Data menu item is highlighted.](media/data-hub.png "Data hub")
+
+2. Select **+** in the toolbar **(1)**, then select **Integration dataset (2)** to create a new dataset.
+
+    ![Create new Dataset.](media/new-dataset.png "New Dataset")
+
+3. Select **Azure Cosmos DB (SQL API)** from the list **(1)**, then select **Continue (2)**.
+
+    ![The Azure Cosmos DB SQL API option is highlighted.](media/new-cosmos-db-dataset.png "Integration dataset")
+
+4. Configure the dataset with the following characteristics, then select **OK (4)**:
+
+    - **Name**: Enter `asal400_customerprofile_cosmosdb` **(1)**.
+    - **Linked service**: Select the Azure Cosmos DB linked service **(2)**.
+    - **Collection**: Select `OnlineUserProfile01` **(3)**.
+
+    ![New Azure Cosmos DB dataset.](media/create-cosmos-db-dataset.png "New Cosmos DB dataset")
+
+5. After creating the dataset, select **Preview data** under its **Connection** tab.
+
+    ![The preview data button on the dataset is highlighted.](media/cosmos-dataset-preview-data-link.png "Preview data")
+
+6. Preview data queries the selected Azure Cosmos DB collection and returns a sample of the documents within. The documents are stored in JSON format and include a `userId` field, `cartId`, `preferredProducts` (an array of product IDs that may be empty), and `productReviews` (an array of written product reviews that may be empty).
+
+    ![A preview of the Azure Cosmos DB data is displayed.](media/cosmos-db-dataset-preview-data.png "Preview data")
+
+7. Select **Publish all** then **Publish** to save your new resources.
+
+    ![Publish all is highlighted.](media/publish-all-1.png "Publish all")
 
 ## Configuring Azure Synapse Link with Azure Cosmos DB
 

@@ -1,4 +1,4 @@
-# Module 4 - Running interactive queries using serverless SQL 
+# Module 4 - Running interactive queries using serverless SQL
 
 In this module, students will learn how to work with files stored in the data lake and external file sources, through T-SQL statements executed by a serverless SQL pool in Azure Synapse Analytics. Students will query Parquet files stored in a data lake, as well as CSV files stored in an external data store. Next, they will create Azure Active Directory security groups and enforce access to files in the data lake through Role-Based Access Control (RBAC) and Access Control Lists (ACLs).
 
@@ -543,6 +543,8 @@ To test out the permissions, we will add our own account to the `tailwind-reader
     ![Cell 2 succeeded.](media/notebook-succeeded.png "Notebook")
 
     The cell succeeded this time because we added our account to the `tailwind-history-owners` group, which is assigned the **Storage Blob Data Owner** role.
+
+    > **Note**: If you encounter the same error this time, stop the Spark session on the notebook, then select **Publish all**, then Publish. After publishing your changes, select your user profile on the top-right corner of the page and log out. Close the browser tab after logout is successful, then re-launch Synapse Studio, re-open the notebook, then re-run the cell. This may be needed because you must refresh the security token for the auth changes to take place.
 
     Now let's verify that the file was written to the data lake.
 

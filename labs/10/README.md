@@ -568,6 +568,8 @@ Let's start by experimenting with different parameters.
     ORDER BY submit_time, status
     ```
 
+    > **Note:** If there are still active queries, wait a minute or two. They are configured to time out after two minutes since canceling the pipeline does not always cancel the queries.
+
 6. Select **Run** from the toolbar menu to execute the SQL command.
 
     ![The run button is highlighted in the query toolbar.](media/synapse-studio-query-toolbar-run.png "Run")
@@ -984,7 +986,7 @@ Let's start by experimenting with different parameters.
 
     ![The run button is highlighted in the query toolbar.](media/synapse-studio-query-toolbar-run.png "Run")
 
-    You should see a performance improvement executing against the new Hash table compared to the first time we ran the script against the Heap table. In our case, the query executed in about 35 seconds.
+    You should see a performance improvement executing against the new Hash table compared to the first time we ran the script against the Heap table. In our case, the query executed in about 7 seconds.
 
     ![The script run time of 6 seconds is highlighted in the query results.](media/sale-hash-result.png "Hash table results")
 

@@ -667,10 +667,6 @@ To do this, you will build a mapping data flow that performs the following tasks
 
     ![The flatten settings are configured as described.](media/data-flow-user-profiles-flatten2-settings.png "Flatten settings")
 
-    > **Note**: Add the second column by selecting **+** to the right of the first column, then selecting **Fixed mapping**.
-
-    ![The plus and fixed mapping menu items are highlighted.](media/data-flow-add-fixed-mapping.png "Add fixed mapping")
-
     These settings provide a flattened view of the data source with one or more rows per `userId`. Using data preview requires you to enable Debug mode, which we are not enabling for this lab. *The following screenshot is for illustration only*:
 
     ![The data preview tab is displayed with a sample of the file contents.](media/data-flow-user-profiles-flatten2-data-preview.png "Data preview")

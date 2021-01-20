@@ -563,7 +563,7 @@ You recommend using Synapse Notebooks to explore and apply data transformations 
         .agg(sum("itemsPurchasedLast12Months").alias("totalItemsPurchased"))
         .orderBy("visitorId") )
 
-    groupedTopPurchases.show(100)
+    display(groupedTopPurchases.limit(100))
     ```
 
     Here we group by `visitorId` once again, but now we use a **`sum`** over the `itemsPurchasedLast12Months` column in the **`agg`** method. Notice that we included the `itemsPurchasedLast12Months` column in the `select` statement so we could use it in the `sum`.

@@ -585,6 +585,8 @@ To do this, you will build a mapping data flow that performs the following tasks
         | topProductPurchases.productId | `productId` |
         | topProductPurchases.itemsPurchasedLast12Months | `itemsPurchasedLast12Months` |
 
+        > Select **+ Add mapping**, then select **Fixed mapping** to add each new column mapping.
+
     ![The flatten settings are configured as described.](media/data-flow-user-profiles-flatten-settings.png "Flatten settings")
 
     These settings provide a flattened view of the data source with one or more rows per `visitorId`, similar to when we explored the data within the Spark notebook in the previous module. Using data preview requires you to enable Debug mode, which we are not enabling for this lab. *The following screenshot is for illustration only*:
@@ -664,6 +666,8 @@ To do this, you will build a mapping data flow that performs the following tasks
         | --- | --- |
         | [] preferredProducts | `preferredProductId` |
         | userId | `userId` |
+
+        > Select **+ Add mapping**, then select **Fixed mapping** to add each new column mapping.
 
     ![The flatten settings are configured as described.](media/data-flow-user-profiles-flatten2-settings.png "Flatten settings")
 
@@ -879,7 +883,7 @@ Let's start by executing our new Mapping Data Flow. In order to run the new data
 
     ![The settings are configured as described.](media/data-flow-activity-settings1.png "Settings")
 
-9. Expand **PolyBase** and configure the following:
+9. Expand **staging** and configure the following:
 
     - **Staging linked service**: Select the `asadatalakeSUFFIX` linked service.
     - **Staging storage folder**: Enter `staging/userprofiles`. The `userprofiles` folder will be automatically created for you during the first pipeline run.

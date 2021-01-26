@@ -124,9 +124,9 @@ namespace TransactionGenerator
                     _eventHubTotalElapsedTime += _eventHubElapsedTime;
                     _eventHubRequestsSucceeded += _eventHubRequestsSucceededInBatch;
 
-                    // Random delay every 1000 messages that are sent.
+                    // Random delay every 500 messages that are sent.
                     //await Task.Delay(random.Next(100, 1000), externalCancellationToken).ConfigureAwait(false);
-                    await Task.Delay(5000, externalCancellationToken);
+                    await Task.Delay(random.Next(1000, 3000), externalCancellationToken);
 
                     // The obvious and recommended method for sending a lot of data is to do so in batches. This method can
                     // multiply the amount of data sent with each request by hundreds or thousands.
@@ -139,11 +139,12 @@ namespace TransactionGenerator
                     //  - Pending are items in the bulkhead queue. This amount will continue to grow if the service is unable to keep up with demand.
                     //  - Accumulative failed requests that encountered an exception.
                     messages.Enqueue(new ColoredMessage(string.Empty));
-                    messages.Enqueue(new ColoredMessage($"Event Hub: inserted {_eventHubRequestsSucceededInBatch:00} docs @ {(_eventHubRequestsSucceededInBatch / (_eventHubElapsedTime * .001)):0.00} writes/s ", Color.White));
+                    messages.Enqueue(new ColoredMessage($"Event Hub: sent {_eventHubRequestsSucceededInBatch:00} events this batch @ {(_eventHubRequestsSucceededInBatch / (_eventHubElapsedTime * .001)):0.00} writes/s ", Color.White));
+                    messages.Enqueue(new ColoredMessage($"Event Hub: total events sent {_eventHubRequestsMade:00} ", Color.Green));
                     messages.Enqueue(new ColoredMessage($"Event Hub: processing time {_eventHubElapsedTime} ms", Color.Magenta));
                     messages.Enqueue(new ColoredMessage($"Event Hub: total elapsed time {(_eventHubTotalElapsedTime * .001):0.00} seconds", Color.Magenta));
-                    messages.Enqueue(new ColoredMessage($"Event Hub: total succeeded {_eventHubRequestsSucceeded:00} ", Color.Green));
-                    messages.Enqueue(new ColoredMessage($"Event Hub: total pending {_eventHubRequestsMade - _eventHubRequestsSucceeded - _eventHubRequestsFailed:00} ", Color.Yellow));
+                    //messages.Enqueue(new ColoredMessage($"Event Hub: total succeeded {_eventHubRequestsSucceeded:00} ", Color.Green));
+                    //messages.Enqueue(new ColoredMessage($"Event Hub: total pending {_eventHubRequestsMade - _eventHubRequestsSucceeded - _eventHubRequestsFailed:00} ", Color.Yellow));
                     messages.Enqueue(new ColoredMessage($"Event Hub: total failed {_eventHubRequestsFailed:00}", Color.Red));
 
                     eventHubsTimer.Restart();
@@ -154,7 +155,8 @@ namespace TransactionGenerator
                     progress.Report(ProgressWithMessages(ConsumeAsEnumerable(messages)));
                 }
 
-                //await Task.Delay(random.Next(200, 500), externalCancellationToken).ConfigureAwait(false);
+                // Add short delay to prevent pumping too many events too fast.
+                await Task.Delay(random.Next(5, 15), externalCancellationToken).ConfigureAwait(false);
             }
 
             messages.Enqueue(new ColoredMessage("Data generation complete", Color.Magenta));

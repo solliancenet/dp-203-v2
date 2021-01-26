@@ -23,12 +23,8 @@ In this module, the student will be able to:
   - [Task 2: Configure Synapse Analytics](#task-2-configure-synapse-analytics)
   - [Task 3: Configure Stream Analytics](#task-3-configure-stream-analytics)
   - [Task 4: Run data generator](#task-4-run-data-generator)
-  - [Task 6: View published functions](#task-6-view-published-functions)
-  - [Task 7: View output from functions in App Insights](#task-7-view-output-from-functions-in-app-insights)
-  - [Task 8: Create Power BI dashboard](#task-8-create-power-bi-dashboard)
-  - [Task 9: View aggregate data in Cosmos DB](#task-9-view-aggregate-data-in-cosmos-db)
-  - [Wrap-up](#wrap-up)
-  - [Additional resources and more information](#additional-resources-and-more-information)
+  - [Task 5: Create Power BI dashboard](#task-5-create-power-bi-dashboard)
+  - [Task 6: View aggregate data in Cosmos DB](#task-6-view-aggregate-data-in-cosmos-db)
 
 > **TODO**: Use the vehicle telemetry generator executable from experience 6 instead of requiring Visual Studio: https://github.com/solliancenet/tech-immersion-data-ai/blob/master/data-exp6/README.md
 > 
@@ -254,7 +250,7 @@ In this task, you will configure Stream Analytics to use the event hub you creat
     - **Output alias:** Enter "powerBIAlerts".
     - **Authentication mode:** Select "User token".
     - **Group workspace:** Select "My Workspace" (if you do not see this option, select the "User token" authentication mode first).
-    - **Dataset name:** Enter "VehicleAnomalies".
+    - **Dataset name:** Enter "ContosoAutoVehicleAnomalies".
     - **Table name:** Enter "Alerts".
 
     ![The New Output form is filled out with the previously mentioned settings entered into the appropriate fields.](media/stream-analytics-new-output.png 'New Output')
@@ -386,186 +382,89 @@ The data generator console application creates and sends simulated vehicle senso
 
 In this task, you will configure and run the data generator. The data generator saves simulated vehicle telemetry data to Event Hubs, prompting your Stream Analytics job to aggregate and analyze the enriched data and send it to Power BI and Synapse Analytics. The final step will be to create the Power BI report in the task that follows.
 
-1. Open File Explorer and navigate to `C:\lab-files\data\4`. Double-click on **TechImmersion.sln** to open the solution in Visual Studio. **NOTE:** If you are prompted by Visual Studio to log in, log in with your Azure Active Directory credentials you are using for this lab (they are called `Username` and `Password` under the heading Azure Credentials in the documentation).
+1. On your lab VM or computer, download the [TransactionGeneratorExecutable.zip](https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/TransactionGeneratorExecutable.zip) file.
 
-    ![The TechImmersion.sln file is highlighted in the C:\tech-immersion folder.](media/vs-solution.png 'Windows explorer')
+2. Extract the zip file to your machine, making note of the extraction location.
 
-    The Visual Studio solution contains the following projects:
+3. Open the folder containing the extracted files, then open either the `linux-x64`, `osx-x64`, or `win-x64` subfolder, based on your environment.
 
-    - **TechImmersion.CarEventProcessor**: Azure Function App project from which you will publish the Azure function that processes Cosmos DB documents as they arrive, and sends them to Event Hubs.
-    - **TechImmersion.Common**: Common library that contains models and structs used by the other projects within the solution.
-    - **TransactionGenerator**: Console app that generates simulated vehicle telemetry and writes it to Cosmos DB.
+4. Within the appropriate subfolder, open the **appsettings.json** file. Paste your `telemetry` Event Hub connection string value next to `EVENT_HUB_CONNECTION_STRING`. Make sure you have quotes ("") around the value, as shown. **Save** the file.
 
-2. Select the **Build** menu item, then select **Build Solution**. You should see a message in the output window on the bottom of the Visual Studio window that the build successfully completed. One of the operations that completes during this process is to download and install all NuGet packages.
-
-    ![The Build menu item and Build Solution sub-menu item are highlighted.](media/vs-build-solution.png 'Build Solution')
-
-3. You will see the projects listed within the Solution Explorer in Visual Studio. Right-click the **TechImmersion.CarEventProcessor** solution, then select **Publish...** in the context menu.
-
-    ![The TechImmersion.CarEventProcessor project and the Publish menu item are highlighted.](media/vs-publish-link.png 'Solution Explorer')
-
-4. Select **Select Existing** underneath Azure App Service since you will be publishing this to an existing Function App. Check **Run from package file**. This configures the Function App to run from the zip file rather than extracting and copying all the files for each instance of your functions. Click **Publish** on the bottom of the dialog window. If you are prompted to log into your Azure Account, log in with the Azure account you are using for this lab.
-
-    ![The Select Existing radio button and Publish button are highlighted.](media/vs-publish-target.png 'Pick a publish target')
-
-5. In the App Service dialog that follows, make sure your Azure **Subscription** for this lab is selected, then find and expand the **tech-immersion-YOUR_UNIQUE_IDENTIFIER** resource group. Select your Function App that includes **day1** in its name, then click **OK** on the bottom of the dialog window
-
-    ![The Function App and OK button are highlighted.](media/vs-publish-app-service.png 'App Service')
-
-6. The Function App will start publishing in a moment. You can watch the output window for the publish status. When it is done publishing, you should see a "Publish completed" message on the bottom of the output window.
-
-    ![The Publish Succeeded and Publish Completed messages are highlighted in the output window.](media/vs-publish-output.png 'Publish output')
-
-7. Expand the **TransactionGenerator** project within the Solution Explorer, then double-click on **appsettings.json** to open it.
-
-    ![The appsettings.json file is highlighted in Solution Explorer.](media/vs-appsettings-link.png 'Solution Explorer')
-
-8. Paste your Cosmos DB connection string value next to `COSMOS_DB_CONNECTION_STRING`. Make sure you have quotes ("") around the value, as shown. **Save** the file.
-
-    ![The Cosmos DB connection string is highlighted within the appsettings.json file.](media/vs-appsettings.png 'appsettings.json')
+    ![The Event Hub connection string is highlighted within the appsettings.json file.](media/appsettings.png "appsettings.json")
 
     `SECONDS_TO_LEAD` is the amount of time to wait before sending vehicle telemetry data. Default value is `0`.
 
     `SECONDS_TO_RUN` is the maximum amount of time to allow the generator to run before stopping transmission of data. The default value is `1800`. Data will also stop transmitting when you enter Ctrl+C while the generator is running, or if you close the window.
 
-9. Now you are ready to run the transaction generator. Select the **Debug** menu item, then select **Start Debugging**, or press _F-5_ on your keyboard.
+5. Execute the data generator using one of the following methods, based on your platform:
 
-    ![The Debug menu item and Start Debugging sub-menu item are selected](media/vs-debug.png 'Debug')
+   1. Windows:
 
-10. A new console window will open, and you should see it start to send data after a few seconds. Once you see that it is sending data to Cosmos DB, _minimize_ the window and keep it running in the background.
+      * Simply execute **DataGenerator.exe** inside the `win-x64` folder.
 
-    ![Screenshot of the console window.](media/vs-console.png 'Console window')
+   2. Linux:
 
-    The top of the output displays information about the Cosmos DB collection you created (telemetry), the requested RU/s as well as estimated hourly and monthly cost. After every 500 records are requested to be sent, you will see output statistics.
+      * Navigate to the `linux-x64` folder.
+      * Run `chmod 777 DataGenerator` to provide access to the binary.
+      * Run `./DataGenerator`.
 
----
+   3. MacOS:
 
-Some key areas to point out about the data generator code are as follows:
+      * Open a new terminal.
+      * Navigate to the `osx-x64` directory.
+      * Run `./DataGenerator`.
 
-Within the `Program.cs` file, we instantiate a new Cosmos DB client (`DocumentClient`), passing in the Cosmos DB service endpoint, authorization key, and connection policy (direct connect over TCP for fastest results). Next, we retrieve the Cosmos DB collection information and create an offer query (`CreateOfferQuery`) to pull statistics about the offered throughput in RU/s so we can estimate the monthly and hourly cost. Finally, we call the `SendData` method to start sending telemetry data to Cosmos DB.
+6.  A new console window will open, and you should see it start to send data after a few seconds. Once you see that it is sending data to Event Hubs, _minimize_ the window and keep it running in the background.
 
-![The telemetry generator code is displayed showing the Cosmos DB client instantiation.](media/telemetry-generator-code.png 'Telemetry generator code')
+    ![Screenshot of the console window.](media/transaction-generator.png 'Console window')
 
-The `SendData` method outputs statistics about how much data was sent to Cosmos DB and how long it took to send, which varies based on your available system resources and internet bandwidth. It sends the telemetry data (`carEvent`) in one line of code:
+    After every 500 records are requested to be sent, you will see output statistics.
 
-```csharp
-// Send to Cosmos DB:
-var response = await _cosmosDbClient.CreateDocumentAsync(collectionUri, carEvent)
-    .ConfigureAwait(false);
-```
-
-When you open the `TechImmersion.Common` project, then the `CarEvent.cs` file under the Models folder, you will see the model we use to hold the vehicle event data that we save to Cosmos DB. It contains a field named `CollectionType` with a value of "Telemetry". This allows us to indicate the type of document this is within the container, which enables consumers to query documents stored within the container by the type. This value is needed because a container can store any number of document types within since it does not enforce any sort of schema.
-
-```csharp
-public string collectionType => "Telemetry";
-```
-
-The last bit of interesting code within the generator is where we create the Cosmos DB database and collection if it does not exist. We also specify the collection partition key, indexing policy, and the throughput set to 15,000 RU/s:
-
-![The InitializeCosmosDB method code.](media/telemetry-generator-initialize-cosmos.png 'InitializeCosmosDB method')
-
-## Task 6: View published functions
-
-A few minutes ago, you published your Azure Function App from Visual Studio. This Function App contains a single function, `CarEventProcessor`. We will take a look at the published function in this task.
-
-You will notice that the Function App is now set to read-only. This is because you published a generated function.json file from Visual Studio. Function Apps adds this protection when you publish so you do not accidentally overwrite the function.json file or related files through the UI.
-
-1.  Navigate to the [Azure portal](https://portal.azure.com).
-
-2.  Select **Resource groups** from the left-hand menu. Then select the resource group named **tech-immersion-YOUR_UNIQUE_IDENTIFIER**.
-
-    ![The tech-immersion resource group is selected.](media/tech-immersion-rg.png 'Resource groups')
-
-3.  Select the **App Service** (Azure Function App) that includes **day1** in its name from the list of resources in your resource group.
-
-    ![The App Service Function App is selected in the resource group.](media/tech-immersion-rg-function-app.png 'tech-immersion resource group')
-
-4.  Expand **Functions (Read Only)** within the navigation tree to the left, then select **CarEventProcessorRegion1**.
-
-    ![The Functions node is expanded in the navigation tree, and the CarEventProcessor is selected.](media/function-app-tree.png 'Functions')
-
-5.  Looking at the **function.json** file to the right, notice that it was generated for you when you published from Visual Studio. Also notice how the `bindings` section lines up with the function method in `CarEventProcessorFunctions.cs`:
-
-    ```csharp
-    [FunctionName("CarEventProcessorRegion1")]
-    public static async Task CarEventProcessorRegion1([CosmosDBTrigger(
-        databaseName: "ContosoAuto",
-        collectionName: "telemetry",
-        // Uses the "Region1" application configuration value to pass in the region 1 name:
-        PreferredLocations = "%Region1%",
-        ConnectionStringSetting = "CosmosDbConnectionString",
-        LeaseCollectionName = "leases",
-        CreateLeaseCollectionIfNotExists = true)]IReadOnlyList<Document> input,
-        [EventHub("telemetry",
-            Connection="EventHubsConnectionString")]IAsyncCollector<EventData> eventHubOutput,
-        ILogger log)
-    ```
-
-    ![The function.json file is displayed with the bindings highlighted.](media/function-app-functions-json.png 'function.json')
-
-## Task 7: View output from functions in App Insights
-
-The Function App was configured to send telemetry to Application Insights. This allows you to view metrics and usage information about your functions, but also logging information. At the top of both functions, we create a log entry for the number of documents received from the Cosmos DB change feed for the configured region. For example: `log.LogInformation($"Cosmos DB processor received {input.Count} documents from Region 1");`. In this task, you will open Application Insights and look for these log entries. Please ensure that the **TransactionGenerator** is still running before continuing.
-
-1. Navigate back to your Day 1 Function App's Overview blade as you did in the previous task. Select **Application Insights** underneath Configured Features.
-
-   ![Application Insights is highlighted on the Function App's Overview blade.](media/function-app-app-insights.png 'Overview blade')
-
-2. Within Application Insights, select **Live Metrics Stream** from the left-hand menu.
-
-   ![The Live Metrics Stream link is highlighted.](media/app-insights-live-metrics-stream-link.png 'Live Metrics Stream')
-
-3. Look at the log output within the **Sample Telemetry** on the right-hand side. You should be able to find the log outputs from both of the functions, showing how many documents were received from its configured region.
-
-   ![Log outputs in the Sample Telemetry window are displayed.](media/app-insights-sample-telemetry.png 'Sample Telemetry')
-
-## Task 8: Create Power BI dashboard
+## Task 5: Create Power BI dashboard
 
 In this task, you will use Power BI to create a report showing captured vehicle anomaly data. Then you will pin that report to a live dashboard for near real-time updates.
 
-1.  Open your web browser and navigate to <https://powerbi.microsoft.com/>. Select **Sign in** on the upper-right.
+1. Open your web browser and navigate to <https://powerbi.microsoft.com/>. Select **Sign in** on the upper-right.
 
     ![The Power BI home page is shown with the Sign in link highlighted.](media/pbi-signin.png 'Power BI home page')
 
-2.  Enter your Power BI credentials you used when creating the Power BI output for Stream Analytics.
+2. Enter your Power BI credentials you used when creating the Power BI output for Stream Analytics.
 
-3.  After signing in, select **My Workspace** on the left-hand menu.
+3. After signing in, select **My Workspace** on the left-hand menu.
 
     ![The My Workspace link is selected on the left-hand menu.](media/pbi-my-workspace-link.png 'My Workspace')
 
-4.  Select the **Datasets** tab on top of the workspace. Locate the dataset named **VehicleAnomalies**, then select the **Create Report** action button to the right of the name. If you do not see the dataset, you may need to wait a few minutes and refresh the page.
+4. Select the **Datasets + dataflows** tab on top of the workspace. Locate the dataset named **ContosoAutoVehicleAnomalies**, then select the **Create Report** action button to the right of the name. If you do not see the dataset, you may need to wait a few minutes and refresh the page.
 
     ![The Datasets tab is selected in My Workspace and the VehicleAnomalies dataset is highlighted.](media/pbi-my-workspace.png 'Datasets')
 
     > **Note:** It can take several minutes for the dataset to appear. You may need to periodically refresh the page before you see the Datasets tab.
 
-5.  You should see a new blank report for VehicleAnomalies with the field list on the far right.
+5. You should see a new blank report for VehicleAnomalies with the field list on the far right.
 
     ![A new blank report is displayed with the field list on the right.](media/pbi-blank-report.png 'Blank report')
 
-6.  Select the **Map** visualization within the Visualizations section on the right.
+6. Select the **Map** visualization within the Visualizations section on the right.
 
     ![The Map visualization is highlighted.](media/pbi-map-vis.png 'Visualizations')
 
-7.  Drag the **city** field to **Location**, and **aggressivedriving** to **Size**. This will place points of different sizes over cities on the map, depending on how many aggressive driving records there are.
+7. Drag the **city** field to **Location**, and **aggressivedriving** to **Size**. This will place points of different sizes over cities on the map, depending on how many aggressive driving records there are.
 
     ![Screenshot displaying where to drag the fields onto the map settings.](media/pbi-map-fields.png 'Map settings')
 
-8.  Your map should look similar to the following:
+8. Your map should look similar to the following:
 
     ![The map is shown on the report.](media/pbi-map.png 'Map')
 
-9.  Select a blank area on the report to deselect the map. Now select the **Treemap** visualization.
+9. Select a blank area on the report to deselect the map. Now select the **Treemap** visualization.
 
     ![The Treemap visualization is highlighted.](media/pbi-treemap-vis.png 'Visualization')
 
 10. Drag the **enginetemperature** field to **Values**, then drag the **transmission_gear_position** field to **Group**. This will group the engine temperature values by the transmission gear position on the treemap so you can see which gears are associated with the hottest or coolest engine temperatures. The treemap sizes the groups according to the values, with the largest appearing on the upper-left and the lowest on the lower-right.
 
-
     ![Screenshot displaying where to drag the fields onto the treemap settings.](media/pbi-treemap-fields.png "Treemap settings")
 
 11. Select the down arrow next to the **enginetemperature** field under **Values**. Select **Average** from the menu to aggregate the values by average instead of the sum.
-
 
     ![The Average menu option is highlighted for the enginetemperature value.](media/pbi-treemap-average.png "Average engine temperature")
 
@@ -609,79 +508,54 @@ In this task, you will use Power BI to create a report showing captured vehicle 
 
     ![The save button is highlighted.](media/pbi-save.png 'Save')
 
-22. Enter a name, such as "Vehicle Anomalies", then select **Save**.
+22. Enter a name, such as "Contoso Auto Vehicle Anomalies", then select **Save**.
 
     ![Screenshot of the save dialog.](media/pbi-save-dialog.png 'Save dialog')
 
-23. Now let's add this report to a dashboard. Select **Pin Live Page** on the upper-right of the page.
+23. Now let's add this report to a dashboard. Select **Pin to a dashboard** at the top of the report (you may have to select the ellipses ...).
 
-    ![The Pin Live Page button is highlighted.](media/pbi-live.png 'Pin Live Page')
+    ![The pin to a dashboard button is highlighted.](media/pbi-live.png 'Pin to a dashboard')
 
-24. Select **New dashboard**, then enter a name, such as "Vehicle Anomalies Dashboard". Select **Pin live**. When prompted select the option to view the dashboard. Otherwise, you can find the dashboard under My Workspace on the left-hand menu.
+24. Select **New dashboard**, then enter a name, such as "Contoso Auto Vehicle Anomalies Dashboard". Select **Pin live**. When prompted select the option to view the dashboard. Otherwise, you can find the dashboard under My Workspace on the left-hand menu.
 
     ![Screenshot of the pin to dashboard dialog.](media/pbi-live-dialog.png 'Pin to dashboard dialog')
 
-25. The live dashboard will automatically refresh and update while data is being captured. You can hover over any point on a chart to view information about the item. Select one of the regions in the legend above the average speed chart. All other charts will filter by that region automatically. Click on a blank area of the chart to clear the filter.
+25. The live dashboard will automatically refresh and update while data is being captured. You can hover over any point on a chart to view information about the item. Select one of the regions in the legend above the average speed chart. All other charts will filter by that region automatically. Click on the region again to clear the filter.
 
     ![The live dashboard view.](media/pbi-dashboard.png 'Dashboard')
 
-## Task 9: View aggregate data in Cosmos DB
+## Task 6: View aggregate data in Cosmos DB
 
-As you recall, when you created the query in Stream Analytics, you aggregated the engine temperature and vehicle speed data over two-minute intervals and saved the document to Cosmos DB. This means that the aggregate data was saved back to the same Cosmos DB container in which the live vehicle telemetry data was being saved. This demonstrates the ability for Cosmos DB to handle ingesting streaming data at the same time as saving report data, and saving different entity types within the same container.
+As you recall, when you created the query in Stream Analytics, you aggregated the engine temperature and vehicle speed data over two-minute intervals and saved the data to Synapse Analytics. This capability demonstrates the Stream Analytics query's ability to write data to multiple outputs at varying intervals. Writing to a Synapse Analytics dedicated SQL pool enables us to retain the historic and current aggregate data as part of the data warehouse without requiring an ETL/ELT process.
 
-In this task, you will view the anomaly data within Cosmos DB.
+In this task, you will view the anomaly data within Synapse Analytics.
 
 1. If you have not yet done so, **stop** the **TransactionGenerator**.
 
-2. To start, open a new web browser window and navigate to <https://portal.azure.com>. Log in with the credentials provided to you for this lab.
+2. Navigate to the [Azure portal](https://portal.azure.com).
 
-3. After logging into the Azure portal, select **Resource groups** from the left-hand menu. Then select the resource group named **tech-immersion-YOUR_UNIQUE_IDENTIFIER**. The `YOUR_UNIQUE_IDENTIFIER` portion of the name is the unique identifier assigned to you for this lab.
+3. Select **Resource groups** from the left-hand menu. Then select the resource group named **ms-dataengineering-14**.
 
-   ![The tech-immersion resource group is selected.](media/tech-immersion-rg.png 'Resource groups')
+4. Select the **Synapse workspace** (`asaworkspaceYOUR_UNIQUE_ID`) from the list of resources in your resource group.
 
-4. Select the **Azure Cosmos DB account** from the list of resources in your resource group.
+    ![The Synapse workspace is selected in the resource group.](media/rg-synapse-workspace.png "resource group")
 
-   ![The Azure Cosmos DB account is selected in the resource group.](media/tech-immersion-rg-cosmos-db.png 'tech-immersion resource group')
+5. Select **Open** within the **Open Synapse Studio** box inside the Overview pane.
 
-5. Within the Cosmos DB account blade, select **Data Explorer** on the left-hand menu.
+    ![The Open link is highlighted.](media/open-synapse-studio.png "Open Synapse Studio")
 
-   ![The Data Explorer link located in the left-hand menu is highlighted.](media/cosmos-db-data-explorer-link.png 'Data Explorer link')
+6. Within Synapse Studio, select **Data** in the left-hand menu to navigate to the Data hub.
 
-6. Expand the **telemetry** container, then select **Items**. Select **Edit Filter** above the items list.
+    ![The Data hub is highlighted.](media/data-hub.png "Data hub")
 
-   ![The items menu item and Edit Filter button are both highlighted.](media/cosmos-db-edit-filter-button.png 'Data Explorer')
+7. Select the **Workspace** tab **(1)**, expand the `ContosoAuto` database, expand `Tables`, then right-click on the **dbo.VehicleAverages** table **(2)**. If you do not see the table listed, refresh the tables list. Select **New SQL script (3)**, then **Select TOP 100 rows (4)**.
 
-7. In the filter text box, enter the following, then select **Apply Filter**: `where c.collectionType = 'VehicleAverage'`
+    ![The Select TOP 100 rows menu item is selected.](media/select-top-100-rows.png "Select TOP 100 rows")
 
-   ![The filter is shown.](media/cosmos-db-apply-filter.png 'Filter')
+8. View the query results and observe the aggregate data stored in `AverageEngineTemperature` and `AverageSpeed`. The `Snapshot` value changes in two-minute intervals between these records.
 
-8. If the query above returns no results, try filtering by `c.collectiontype` (all lower case) instead. Sometimes Stream Analytics converts all property names to lower case. So the new filter would be `where c.collectiontype = 'VehicleAverage'`.
+   ![The VehicleAverages table output is displayed.](media/synapse-vehicleaverage-table.png "VehicleAverages results")
 
-8. Select a document from the list. Notice that it contains a `collectionType` value of "VehicleAverage", and the aggregate data stored in `averageEngineTemperature` and `averageSpeed`. The `snapshot` value changes in two-minute intervals between these documents. Right now, we're setting `vin` to "ALL" since it is our partition key and these aggregates are for all vehicles, but we could easily store these aggregates by vehicle, setting this value to each vehicle's VIN if we needed that level of granularity.
+9. Select the **Chart** view in the Results output, then set the chart type to **Area**. This visualization shows the average engine temperature correlated with the average speed over time. Feel free to experiment with the chart settings.
 
-   ![An anomaly document is displayed.](media/cosmos-db-vehicleaverage-document.png 'Data Explorer')
-
-## Wrap-up
-
-Thank you for participating in the Leveraging Cosmos DB for near real-time analytics experience! There are many aspects of Cosmos DB that make it suitable for ingesting and serving real-time data at a global scale, some of which we have covered here today. Of course, there are other services that work alongside Cosmos DB to complete the processing pipeline.
-
-To recap, you experienced:
-
-- How to configure and send real-time data to Cosmos DB.
-- Processing data as it is saved to Cosmos DB through the use of Azure functions, with the convenience of the Cosmos DB trigger to reduce code and automatically handle kicking off the processing logic as data arrives.
-- Using multiple regions in Cosmos DB, and processing the change feed of a specific region from an Azure function.
-- Ingesting processed data with Event Hubs and querying and reshaping that data with Azure Stream Analytics, then sending it to Power BI for reporting.
-- Storing aggregate data back to Cosmos DB from Stream Analytics, demonstrating a Cosmos DB container's ability to store entities of different types.
-- Rapidly creating a real-time dashboard in Power BI with interesting visualizations to view and explore vehicle anomaly data.
-
-## Additional resources and more information
-
-- [Introduction to Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/introduction)
-- [Overview of the Cosmos DB change feed](https://docs.microsoft.com/azure/cosmos-db/change-feed)
-- [High availability with Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/high-availability)
-- [Scaling throughput in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/scaling-throughput)
-- [Partitioning and horizontal scaling](https://docs.microsoft.com/azure/cosmos-db/partition-data) in Azure Cosmos DB, plus [guide for scaling throughput](https://docs.microsoft.com/azure/cosmos-db/scaling-throughput)
-- [About Event Hubs](https://docs.microsoft.com/azure/event-hubs/event-hubs-about)
-- [What is Azure Stream Analytics?](https://docs.microsoft.com/azure/stream-analytics/stream-analytics-introduction)
-- [Intro to Stream Analytics windowing functions](https://docs.microsoft.com/azure/stream-analytics/stream-analytics-window-functions)
-- [Trigger Azure Functions from Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/change-feed-functions)
+![The chart view is displayed.](media/synapse-vehicleaverage-chart.png "VehicleAverages chart")

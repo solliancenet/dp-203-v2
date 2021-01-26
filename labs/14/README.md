@@ -24,13 +24,7 @@ In this module, the student will be able to:
   - [Task 3: Configure Stream Analytics](#task-3-configure-stream-analytics)
   - [Task 4: Run data generator](#task-4-run-data-generator)
   - [Task 5: Create Power BI dashboard](#task-5-create-power-bi-dashboard)
-  - [Task 6: View aggregate data in Cosmos DB](#task-6-view-aggregate-data-in-cosmos-db)
-
-> **TODO**: Use the vehicle telemetry generator executable from experience 6 instead of requiring Visual Studio: https://github.com/solliancenet/tech-immersion-data-ai/blob/master/data-exp6/README.md
-> 
-> Bypass Cosmos DB and write directly to Event Hubs
-> 
-> Do not write to Cosmos DB from Stream Analytics. Instead, write to Synapse Analytics
+  - [Task 6: View aggregate data in Synapse Analytics](#task-6-view-aggregate-data-in-synapse-analytics)
 
 ## Technology overview
 
@@ -524,7 +518,7 @@ In this task, you will use Power BI to create a report showing captured vehicle 
 
     ![The live dashboard view.](media/pbi-dashboard.png 'Dashboard')
 
-## Task 6: View aggregate data in Cosmos DB
+## Task 6: View aggregate data in Synapse Analytics
 
 As you recall, when you created the query in Stream Analytics, you aggregated the engine temperature and vehicle speed data over two-minute intervals and saved the data to Synapse Analytics. This capability demonstrates the Stream Analytics query's ability to write data to multiple outputs at varying intervals. Writing to a Synapse Analytics dedicated SQL pool enables us to retain the historic and current aggregate data as part of the data warehouse without requiring an ETL/ELT process.
 

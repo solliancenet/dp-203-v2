@@ -14,7 +14,7 @@ The following requirements must be met before the deployment:
 
 - A unique suffix to be used when generating the name of the workspace. All workspaces deployed using the templates in this repo are named `asagaworkspace<unique_suffix>`, where `<unique_suffix>` gets replaced with the value you provide. Make sure the unique suffix is specific enough to avoid potential naming collisions (i.e. avoid using common values like `01`, `1`, `test`, etc.). Make sure you remember the unique suffix as you need to use it for additional configuration once the Azure Synapse Analytics workspace deployment is complete.
 - A password for the SQL admin account of the workspace. Make sure you save the password in a secure location (like a password manager) as you will need to use it later.
-- A GitHub account to access the content packs repository.
+- A GitHub account to access the GitHub repository.
 - A Power BI Pro subscription attached to the Azure AD account you will use to setup the Synapse Analytics workspace. In case you do not have a paid Power BI Pro subscription, you can get a 60 days trial by signing in to `https://powerbi.com` with your account and selecting `Try free`.
 - A Power BI Pro workspace (for details about creating a workspace in Power BI, see [Create the new workspaces in Power BI](https://docs.microsoft.com/en-us/azure/synapse-analytics/quickstart-power-bi)).
 
@@ -63,7 +63,7 @@ You should see next the `Custom deployment` screen where you need to provide the
 
 Select `Review + create` to validate the settings.
 
-![Synapse Analytics workspace deployment configuration](../media/asaworkspace-deploy-configure.png)
+![Synapse Analytics workspace deployment configuration](media/asaworkspace-deploy-configure.png)
 
 Once the validation is passed, select `Create` to start the deployment. You should see next an indication of the deployment progress:
 
@@ -127,7 +127,7 @@ Enter the name of the resource group where you deployed the Synapse Analytics wo
 
 ![Cloud Shell select resource group](media/cloudshell-setup-04.png)
 
-The setup script will now proceed to create all necesary Synapse Analytics artifacts in your environment.
+The setup script will now proceed to create all necessary Synapse Analytics artifacts in your environment.
 
 The process should take 5 to 10 minutes to finish. Wait until the setup script is finished before proceeding to the next steps.
 
@@ -152,7 +152,3 @@ Select `Create` to create the Power BI linked service.
 After the linked service is successfully created, select the `Develop` hub on the left side and expand the `Power BI` section. You should see your Power BI workspace listed.
 
 ![Check Power BI linked service configuration](media/asaworkspace-deploy-pbi-linked-service-03.png)
-
-## Report issues
-
-In case you encounter any issues with the content in this repository, please follow the [How to report issues](./../../report-issues.md) guideline. We will try to address them as soon as possible. Please check your open issues to learn about their status.

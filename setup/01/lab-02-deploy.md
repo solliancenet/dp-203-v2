@@ -10,7 +10,7 @@ You should see next the `Custom deployment` screen where you need to provide the
 
 Select `Review + create` to validate the settings.
 
-![Synapse Analytics workspace deployment configuration](../media/lab-02-deploy-configure.png)
+![Synapse Analytics workspace deployment configuration](media/lab-02-deploy-configure.png)
 
 Once the validation is passed, select `Create` to start the deployment. You should see next an indication of the deployment progress:
 
@@ -50,10 +50,6 @@ Enter the name of the resource group where you deployed the Synapse Analytics wo
 
 ![Cloud Shell select resource group](media/cloudshell-setup-04.png)
 
-The setup script will now proceed to create all necesary Synapse Analytics artifacts in your environment.
+The setup script will now proceed to create all necessary Synapse Analytics artifacts in your environment.
 
 The process should take a few minutes to finish. Once it completes successfully, you have completed the deployment of the lab.
-
-## Report issues
-
-In case you encounter any issues with the content in this repository, please follow the [How to report issues](./../../report-issues.md) guideline. We will try to address them as soon as possible. Please check your open issues to learn about their status.

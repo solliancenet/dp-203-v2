@@ -19,12 +19,16 @@ To complete this lab, you will need to deploy an Azure Databricks workspace in y
 
    - **Subscription**: Choose the Azure Subscription in which to deploy the workspace.
    - **Resource Group**: Leave at Create new and provide a name for the new resource group.
-   - **Location**: Select a location near you for deployment. For the list of regions supported by Azure Databricks, see [Azure services available by region](https://azure.microsoft.com/regions/services/).
-   - **Workspace Name**: Provide a name for your workspace.
+   - **Region**: Select a location near you for deployment. For the list of regions supported by Azure Databricks, see [Azure services available by region](https://azure.microsoft.com/regions/services/).
+   - **Workspace Name**: Enter a unique name for your workspace.
+   - **Enable No Public Ip**: Set to `false`.
    - **Pricing Tier**: Ensure `premium` is selected.
+   - **Location**: Leave this at the default `[resourceGroup()location]` value.
 
-1. Accept the terms and conditions.
-1. Select Purchase.
+   ![The form is configured as described.](media/databricks-arm-template.png "Deploy an Azure Databricks Workspace")
+
+1. Select **Review + create**.
+1. Select **Create**.
 1. The workspace creation takes a few minutes. During workspace creation, the portal displays the Submitting deployment for Azure Databricks tile on the right side. You may need to scroll right on your dashboard to see the tile. There is also a progress bar displayed near the top of the screen. You can watch either area for progress.
 
 ### Create a cluster
@@ -34,9 +38,9 @@ To complete this lab, you will need to deploy an Azure Databricks workspace in y
 1. In the left-hand menu of your Databricks workspace, select **Clusters**.
 1. Select **Create Cluster** to add a new cluster.
 
-    ![The create cluster page](media/create-a-cluster.PNG)
+    ![The create cluster page](media/create-a-cluster.png)
 
-1. Enter a name for your cluster. Use your name or initials to easily differentiate your cluster from your coworkers.
-1. Select the **Databricks RuntimeVersion**. We recommend the latest runtime and **Scala 2.11**.
+1. Enter a name for your cluster, such as `Test Cluster`.
+1. Select the **Databricks RuntimeVersion**. We recommend the latest runtime and **Scala 2.12**.
 1. Select the default values for the cluster configuration.
 1. Select **Create Cluster**.

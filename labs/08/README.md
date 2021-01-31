@@ -48,7 +48,7 @@ Additional benefits
 
 The Mapping Data Flow we will build will write user purchase data to a dedicated SQL pool. Tailwind Traders does not yet have a table to store this data. We will execute a SQL script to create this table as a pre-requisite.
 
-1. Navigate to the **Develop** hub.
+1. Open Synapse Analytics Studio (<https://web.azuresynapse.net/>), and then navigate to the **Develop** hub.
 
     ![The Develop menu item is highlighted.](media/develop-hub.png "Develop hub")
 

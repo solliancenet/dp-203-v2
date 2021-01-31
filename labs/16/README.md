@@ -46,7 +46,7 @@ For the remainder of this guide, the following terms will be used for various AS
 
 ### Task 1: Login to Power BI
 
-1. In a new browser tab, navigate to <https://powerbi.microsoft.com/en-us/>.
+1. In a new browser tab, navigate to <https://powerbi.microsoft.com/>.
 
 2. Sign in with the same account used to sign in to Azure by selecting the **Sign in** link on the upper-right corner.
 

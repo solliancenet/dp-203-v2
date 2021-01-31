@@ -58,7 +58,7 @@ In this experience, you will use Azure Event Hubs to ingest streaming vehicle te
 
 - Azure subscription
 - Power BI account (sign up at <https://powerbi.microsoft.com>)
-- [Lab environment setup](../../setup/14/README.md)
+- [Lab environment setup](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/setup/14/README.md)
 
 ## Task 1: Configure Event Hubs
 

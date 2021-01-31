@@ -28,7 +28,7 @@ In this module, the student will be able to:
 
 Complete the steps below to create an Azure Cosmos DB linked service.
 
-> **Note to presenter**: Skip this section if you have already created a Cosmos DB linked service.
+> **Note**: Skip this section if you have already created a Cosmos DB linked service.
 
 1. Open Synapse Studio (<https://web.azuresynapse.net/>), and then navigate to the **Manage** hub.
 

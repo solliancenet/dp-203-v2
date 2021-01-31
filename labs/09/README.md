@@ -23,7 +23,7 @@ In this segment of the lab, you will create a Synapse Spark notebook to make the
 
 > We will access the data from the data lake that was added as a second sink in the data flow, removing the dedicated SQL pool dependency.
 
-1. Navigate to the **Data** hub.
+1. Open Synapse Analytics Studio (<https://web.azuresynapse.net/>), and then navigate to the **Data** hub.
 
     ![The Data menu item is highlighted.](media/data-hub.png "Data hub")
 

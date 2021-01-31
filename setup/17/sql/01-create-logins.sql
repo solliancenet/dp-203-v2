@@ -1,1 +1,0 @@
-create login [asaga.sql.highperf] with password = '#PASSWORD#'

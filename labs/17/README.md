@@ -56,7 +56,7 @@ The Synapse Analytics linked service authenticates with Azure Machine Learning u
 >
 >In the labs provided by this repo, the Azure AD application is used in a single Azure AD tenant which means it has exactly one service principal associated to it. Consequently, we will use the terms Azure AD application and service principal interchangeably. For a detailed explanation on Azure AD applications and security principals, see [Application and service principal objects in Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals).
 
-To view the service principal, open the Azure portal and navigate to your instance of Azure Active directory. Select the `App registrations` section and you should see the `Azure Synapse Analytics GA Labs` application under the `Owned applications` tab.
+To view the service principal, open the Azure portal and navigate to your instance of Azure Active directory. Select the `App registrations` section and you should see the `Azure Synapse Analytics GA Labs SUFFIX` (where `SUFFIX` is your unique suffix used during lab deployment) application under the `Owned applications` tab.
 
 ![Azure Active Directory application and service principal](media/lab-01-ex-01-task-01-service-principal.png)
 
@@ -68,7 +68,7 @@ To view the secret, open the Azure Portal and navigate to the Azure Key Vault in
 
 ![Azure Key Vault secret for security principal](media/lab-01-ex-01-task-01-keyvault-secret.png)
 
-First, you need to make sure the service principal has permissions to work with the Azure Machine Learning workspace. Open the Azure Portal and navigate to the Azure Machine Learning workspace that has been created in your resource group. Select the `Access control (IAM)` section on the left, then select `+ Add` and `Add role assignment`. In the `Add role assignment` dialog, select the `Contributor` role, select `Azure Synapse Analytics GA Labs` service principal, and the select `Save`.
+First, you need to make sure the service principal has permissions to work with the Azure Machine Learning workspace. Open the Azure Portal and navigate to the Azure Machine Learning workspace that has been created in your resource group. Select the `Access control (IAM)` section on the left, then select `+ Add` and `Add role assignment`. In the `Add role assignment` dialog, select the `Contributor` role, select `Azure Synapse Analytics GA Labs SUFFIX` (where `SUFFIX` is your unique suffix used during lab deployment) service principal, and the select `Save`.
 
 ![Azure Machine Learning workspace permissions for security principal](media/lab-01-ex-01-task-01-mlworkspace-permissions.png)
 

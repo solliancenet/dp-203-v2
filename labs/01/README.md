@@ -108,7 +108,7 @@ The Synapse Analytics linked service authenticates with Azure Data Explorer usin
 >
 >In the labs provided by this repo, the Azure AD application is used in a single Azure AD tenant which means it has exactly one service principal associated to it. Consequently, we will use the terms Azure AD application and service principal interchangeably. For a detailed explanation on Azure AD applications and security principals, see [Application and service principal objects in Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals).
 
-To view the service principal, open the Azure portal and navigate to your instance of Azure Active directory. Select the `App registrations` section and you should see the `Azure Synapse Analytics GA Labs` application under the `Owned applications` tab.
+To view the service principal, open the Azure portal and navigate to your instance of Azure Active directory. Select the `App registrations` section and you should see the `Azure Synapse Analytics GA Labs SUFFIX` (where `SUFFIX` is your unique suffix used during lab deployment) application under the `Owned applications` tab.
 
 ![Azure Active Directory application and service principal](media/lab-02-ex-01-task-01-service-principal.png)
 
@@ -122,7 +122,7 @@ To view the secret, open the Azure Portal and navigate to the Azure Key Vault in
 
 First, you need to make sure the service principal has permissions to work with the Azure Data Explorer cluster and database. The setup procedure has already configured the necessary permissions, so you will just inspect them to make sure everything is in place.
 
-Open the Azure Portal and navigate to the Azure Data Explorer cluster that has been created in your resource group. Select the `Databases` section on the left, then select the `ASA-Data-Explorer-DB-01` from the list of databases, and then select the `Permissions` section on the left. You should see the `Azure Synapse Analytica GA Labs` application listed under the `Database Admin` role.
+Open the Azure Portal and navigate to the Azure Data Explorer cluster that has been created in your resource group. Select the `Databases` section on the left, then select the `ASA-Data-Explorer-DB-01` from the list of databases, and then select the `Permissions` section on the left. You should see the `Azure Synapse Analytica GA Labs SUFFIX` (where `SUFFIX` is your unique suffix used during lab deployment) application listed under the `Database Admin` role.
 
 ![Azure Data Explorer database permissions](media/lab-02-ex-01-task-01-database-permissions.png)
 

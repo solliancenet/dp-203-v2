@@ -39,7 +39,7 @@ Before stepping through the exercises in this lab, make sure you have access to 
 
 #### Task 1 - Create and configure the Azure Databricks workspace
 
-Follow the [lab 06 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/setup/06/lab-01-setup.md) to create and configure the workspace.
+Follow the [lab 06 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/06/lab-01-setup.md) to create and configure the workspace.
 
 #### Clone the Databricks archive
 

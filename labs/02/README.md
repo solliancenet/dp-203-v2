@@ -15,19 +15,25 @@ In this module, the student will be able to:
 
 2. Install [Azure Data Studio](https://docs.microsoft.com/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15) on your computer or lab virtual machine.
 
-### Open Synapse Studio
+### Implementing a Star Schema
 
-1. Sign in to the Azure portal (<https://portal.azure.com>).
+Star schema is a mature modeling approach widely adopted by relational data warehouses. It requires modelers to classify their model tables as either dimension or fact.
 
-2. Open the resource group for this lab, then select the **Synapse workspace**.
+**Dimension tables** describe business entities—the things you model. Entities can include products, people, places, and concepts including time itself. The most consistent table you'll find in a star schema is a date dimension table. A dimension table contains a key column (or columns) that acts as a unique identifier, and descriptive columns.
 
-    ![The workspace is highlighted in the resource group.](media/rg-synapse-workspace.png "Synapse workspace")
+Dimension tables contain attribute data that might change but usually changes infrequently. For example, a customer's name and address are stored in a dimension table and updated only when the customer's profile changes. To minimize the size of a large fact table, the customer's name and address don't need to be in every row of a fact table. Instead, the fact table and the dimension table can share a customer ID. A query can join the two tables to associate a customer's profile and transactions.
 
-3. In your Synapse workspace Overview blade, select the **Open** link within `Open Synapse Studio`.
+**Fact tables** store observations or events, and can be sales orders, stock balances, exchange rates, temperatures, etc. A fact table contains dimension key columns that relate to dimension tables, and numeric measure columns. The dimension key columns determine the dimensionality of a fact table, while the dimension key values determine the granularity of a fact table. For example, consider a fact table designed to store sale targets that has two dimension key columns `Date` and `ProductKey`. It's easy to understand that the table has two dimensions. The granularity, however, can't be determined without considering the dimension key values. In this example, consider that the values stored in the Date column are the first day of each month. In this case, the granularity is at month-product level.
 
-    ![The Open link is highlighted.](media/open-synapse-studio.png "Open Synapse Studio")
+Generally, dimension tables contain a relatively small number of rows. Fact tables, on the other hand, can contain a very large number of rows and continue to grow over time.
 
-### Connect to SQL database from Azure Data Studio
+Below is an example star schema, where the fact table is in the middle, surrounded by dimension tables:
+
+![Example star schema.](media/star-schema.png "Star schema")
+
+#### Task 1: Create star schema in SQL database
+
+In this task, you create a star schema in SQL database, using foreign key constraints. The first step is to create the base dimension and fact tables.
 
 1. Sign in to the Azure portal (<https://portal.azure.com>).
 
@@ -58,33 +64,11 @@ In this module, the student will be able to:
 
 7. Select **Connect**.
 
-### Implementing a Star Schema
-
-Star schema is a mature modeling approach widely adopted by relational data warehouses. It requires modelers to classify their model tables as either dimension or fact.
-
-**Dimension tables** describe business entities—the things you model. Entities can include products, people, places, and concepts including time itself. The most consistent table you'll find in a star schema is a date dimension table. A dimension table contains a key column (or columns) that acts as a unique identifier, and descriptive columns.
-
-Dimension tables contain attribute data that might change but usually changes infrequently. For example, a customer's name and address are stored in a dimension table and updated only when the customer's profile changes. To minimize the size of a large fact table, the customer's name and address don't need to be in every row of a fact table. Instead, the fact table and the dimension table can share a customer ID. A query can join the two tables to associate a customer's profile and transactions.
-
-**Fact tables** store observations or events, and can be sales orders, stock balances, exchange rates, temperatures, etc. A fact table contains dimension key columns that relate to dimension tables, and numeric measure columns. The dimension key columns determine the dimensionality of a fact table, while the dimension key values determine the granularity of a fact table. For example, consider a fact table designed to store sale targets that has two dimension key columns `Date` and `ProductKey`. It's easy to understand that the table has two dimensions. The granularity, however, can't be determined without considering the dimension key values. In this example, consider that the values stored in the Date column are the first day of each month. In this case, the granularity is at month-product level.
-
-Generally, dimension tables contain a relatively small number of rows. Fact tables, on the other hand, can contain a very large number of rows and continue to grow over time.
-
-Below is an example star schema, where the fact table is in the middle, surrounded by dimension tables:
-
-![Example star schema.](media/star-schema.png "Star schema")
-
-#### Task 1: Create star schema in SQL database
-
-In this task, you create a star schema in SQL database, using foreign key constraints. The first step is to create the base dimension and fact tables.
-
-1. Open Azure Data Explorer.
-
-2. Select **Servers** in the left-hand menu, then right-click the SQL server you added at the beginning of the lab. Select **New Query**.
+8. Select **Servers** in the left-hand menu, then right-click the SQL server you added at the beginning of the lab. Select **New Query**.
 
     ![The New Query link is highlighted.](media/ads-new-query.png "New Query")
 
-3. Paste the following into the query window to create the dimension and fact tables:
+9.  Paste the following into the query window to create the dimension and fact tables:
 
     ```sql
     CREATE TABLE [dbo].[DimReseller](
@@ -141,7 +125,8 @@ In this task, you create a star schema in SQL database, using foreign key constr
         [DepartmentName] [nvarchar](50) NULL,
         [StartDate] [date] NULL,
         [EndDate] [date] NULL,
-        [Status] [nvarchar](50) NULL
+        [Status] [nvarchar](50) NULL,
+	    [EmployeePhoto] [varbinary](max) NULL
     );
     GO
 
@@ -217,7 +202,7 @@ In this task, you create a star schema in SQL database, using foreign key constr
     GO
     ```
 
-4. Select **Run** or hit `F5` to execute the query.
+10. Select **Run** or hit `F5` to execute the query.
 
     ![The query and Run button are highlighted.](media/execute-setup-query.png "Execute query")
 
@@ -227,7 +212,7 @@ In this task, you create a star schema in SQL database, using foreign key constr
 
     However, since we are using a SQL database, we can add foreign key relationships and constraints to define relationships and enforce the table values.
 
-5. Replace **and execute** the query with the following to create the `DimReseller` primary key and constraints:
+11. Replace **and execute** the query with the following to create the `DimReseller` primary key and constraints:
 
     ```sql
     -- Create DimReseller PK
@@ -246,7 +231,7 @@ In this task, you create a star schema in SQL database, using foreign key constr
     GO
     ```
 
-6. Replace **and execute** the query with the following to create the `DimEmployee` primary key:
+12. Replace **and execute** the query with the following to create the `DimEmployee` primary key:
 
     ```sql
     -- Create DimEmployee PK
@@ -258,7 +243,7 @@ In this task, you create a star schema in SQL database, using foreign key constr
     GO
     ```
 
-7. Replace **and execute** the query with the following to create the `DimProduct` primary key and constraints:
+13. Replace **and execute** the query with the following to create the `DimProduct` primary key and constraints:
 
     ```sql
     -- Create DimProduct PK
@@ -280,7 +265,7 @@ In this task, you create a star schema in SQL database, using foreign key constr
 
     > Now we can create the relationships between our fact and dimension tables, clearly defining the star schema.
 
-8. Replace **and execute** the query with the following to create the `FactResellerSales` primary key and foreign key relationships:
+14. Replace **and execute** the query with the following to create the `FactResellerSales` primary key and foreign key relationships:
 
     ```sql
     -- Create FactResellerSales PK
@@ -698,16 +683,243 @@ You can populate time dimension tables in one of many ways, including T-SQL scri
 
     > In our environment, it took **less than one second** to execute the CTE query.
 
-### Designing a Slowly Changing Dimension in Azure Data Factory using the SQL Server Temporal Table
+#### Task 3: Load data into other tables
 
-Adapt from: <https://visualbi.com/blogs/microsoft/azure/designing-slowly-changing-dimension-scd-azure-data-factory-using-sql-server-temporal-tables/#:~:text=Designing%20a%20Slowly%20Changing%20Dimension%20%28SCD%29%20in%20Azure,Azure%20Data%20Factory.%20...%207%20Retention%20Policy.%20>
+In this task, you load the dimension and fact tables with data from a public data source.
 
-- Create a SQL temporal table
-- Create a stored procedure with a SQL MERGE statement to update the dimension table
-- Create a copy activity in ADF to execute the stored procedure
+1. Paste **and execute** the following into the query window to create a master key encryption, database scoped credential, and external data source that accesses the public blob storage account that contains the source data:
 
-### Updating slowly changing dimensions with ADF mapping data flows
+    ```sql
+    IF NOT EXISTS (SELECT * FROM sys.symmetric_keys) BEGIN
+        declare @pasword nvarchar(400) = CAST(newid() as VARCHAR(400));
+        EXEC('CREATE MASTER KEY ENCRYPTION BY PASSWORD = ''' + @pasword + '''')
+    END
 
-Adapt from: <https://www.mssqltips.com/sqlservertip/6074/azure-data-factory-mapping-data-flow-for-datawarehouse-etl/>
+    CREATE DATABASE SCOPED CREDENTIAL [dataengineering]
+    WITH IDENTITY='SHARED ACCESS SIGNATURE',  
+    SECRET = 'sv=2019-10-10&st=2021-02-01T01%3A23%3A35Z&se=2030-02-02T01%3A23%3A00Z&sr=c&sp=rl&sig=HuizuG29h8FOrEJwIsCm5wfPFc16N1Z2K3IPVoOrrhM%3D'
+    GO
 
-- ADF's template gallery has two templates for slowly changing dimensions that can be used as a starter. Change to output to a dedicated SQL pool instead of Azure SQL DB
+    -- Create external data source secured using credential
+    CREATE EXTERNAL DATA SOURCE PublicDataSource WITH (
+        TYPE = BLOB_STORAGE,
+        LOCATION = 'https://solliancepublicdata.blob.core.windows.net/dataengineering',
+        CREDENTIAL = dataengineering
+    );
+    GO
+    ```
+
+2. Replace **and execute** the query with the following to insert data into the fact and dimension tables:
+
+    ```sql
+    BULK INSERT[dbo].[DimGeography] FROM 'dp-203/awdata/DimGeography.csv'
+    WITH (
+        DATA_SOURCE='PublicDataSource',
+        CHECK_CONSTRAINTS,
+        DATAFILETYPE='widechar',
+        FIELDTERMINATOR='|',
+        ROWTERMINATOR='\n',
+        KEEPIDENTITY,
+        TABLOCK
+    );
+    GO
+
+    BULK INSERT[dbo].[DimCustomer] FROM 'dp-203/awdata/DimCustomer.csv'
+    WITH (
+        DATA_SOURCE='PublicDataSource',
+        CHECK_CONSTRAINTS,
+        DATAFILETYPE='widechar',
+        FIELDTERMINATOR='|',
+        ROWTERMINATOR='\n',
+        KEEPIDENTITY,
+        TABLOCK
+    );
+    GO
+
+    BULK INSERT[dbo].[DimReseller] FROM 'dp-203/awdata/DimReseller.csv'
+    WITH (
+        DATA_SOURCE='PublicDataSource',
+        CHECK_CONSTRAINTS,
+        DATAFILETYPE='widechar',
+        FIELDTERMINATOR='|',
+        ROWTERMINATOR='\n',
+        KEEPIDENTITY,
+        TABLOCK
+    );
+    GO
+
+    BULK INSERT[dbo].[DimEmployee] FROM 'dp-203/awdata/DimEmployee.csv'
+    WITH (
+        DATA_SOURCE='PublicDataSource',
+        CHECK_CONSTRAINTS,
+        DATAFILETYPE='widechar',
+        FIELDTERMINATOR='|',
+        ROWTERMINATOR='\n',
+        KEEPIDENTITY,
+        TABLOCK
+    );
+    GO
+
+    BULK INSERT[dbo].[DimProductCategory] FROM 'dp-203/awdata/DimProductCategory.csv'
+    WITH (
+        DATA_SOURCE='PublicDataSource',
+        CHECK_CONSTRAINTS,
+        DATAFILETYPE='widechar',
+        FIELDTERMINATOR='|',
+        ROWTERMINATOR='\n',
+        KEEPIDENTITY,
+        TABLOCK
+    );
+    GO
+
+    BULK INSERT[dbo].[DimProductSubcategory] FROM 'dp-203/awdata/DimProductSubcategory.csv'
+    WITH (
+        DATA_SOURCE='PublicDataSource',
+        CHECK_CONSTRAINTS,
+        DATAFILETYPE='widechar',
+        FIELDTERMINATOR='|',
+        ROWTERMINATOR='\n',
+        KEEPIDENTITY,
+        TABLOCK
+    );
+    GO
+
+    BULK INSERT[dbo].[DimProduct] FROM 'dp-203/awdata/DimProduct.csv'
+    WITH (
+        DATA_SOURCE='PublicDataSource',
+        CHECK_CONSTRAINTS,
+        DATAFILETYPE='widechar',
+        FIELDTERMINATOR='|',
+        ROWTERMINATOR='\n',
+        KEEPIDENTITY,
+        TABLOCK
+    );
+    GO
+
+    BULK INSERT[dbo].[FactResellerSales] FROM 'dp-203/awdata/FactResellerSales.csv'
+    WITH (
+        DATA_SOURCE='PublicDataSource',
+        CHECK_CONSTRAINTS,
+        DATAFILETYPE='widechar',
+        FIELDTERMINATOR='|',
+        ROWTERMINATOR='\n',
+        KEEPIDENTITY,
+        TABLOCK
+    );
+    GO
+    ```
+
+#### Task 4: Query data
+
+1. Paste **and execute** the following query to retrieve reseller sales data from the snowflake schema at the reseller, product, and month granularity:
+
+    ```sql
+    SELECT
+            pc.[EnglishProductCategoryName]
+            ,Coalesce(p.[ModelName], p.[EnglishProductName]) AS [Model]
+            ,CASE
+                WHEN e.[BaseRate] < 25 THEN 'Low'
+                WHEN e.[BaseRate] > 40 THEN 'High'
+                ELSE 'Moderate'
+            END AS [EmployeeIncomeGroup]
+            ,g.City AS ResellerCity
+            ,g.StateProvinceName AS StateProvince
+            ,r.[AnnualSales] AS ResellerAnnualSales
+            ,d.[CalendarYear]
+            ,d.[FiscalYear]
+            ,d.[MonthOfYear] AS [Month]
+            ,f.[SalesOrderNumber] AS [OrderNumber]
+            ,f.SalesOrderLineNumber AS LineNumber
+            ,f.OrderQuantity AS Quantity
+            ,f.ExtendedAmount AS Amount  
+        FROM
+            [dbo].[FactResellerSales] f
+        INNER JOIN [dbo].[DimReseller] r
+            ON f.ResellerKey = r.ResellerKey
+        INNER JOIN [dbo].[DimGeography] g
+            ON r.GeographyKey = g.GeographyKey
+        INNER JOIN [dbo].[DimEmployee] e
+            ON f.EmployeeKey = e.EmployeeKey
+        INNER JOIN [dbo].[DimDate] d
+            ON f.[OrderDateKey] = d.[DateKey]
+        INNER JOIN [dbo].[DimProduct] p
+            ON f.[ProductKey] = p.[ProductKey]
+        INNER JOIN [dbo].[DimProductSubcategory] psc
+            ON p.[ProductSubcategoryKey] = psc.[ProductSubcategoryKey]
+        INNER JOIN [dbo].[DimProductCategory] pc
+            ON psc.[ProductCategoryKey] = pc.[ProductCategoryKey]
+        ORDER BY Amount DESC
+    ```
+
+    You should see an output similar to the following:
+
+    ![The reseller query results are displayed.](media/reseller-query-results.png "Reseller query results")
+
+2. Replace **and execute** the query with the following to limit the results to October sales between the 2012 and 2013 fiscal years:
+
+    ```sql
+    SELECT
+            pc.[EnglishProductCategoryName]
+            ,Coalesce(p.[ModelName], p.[EnglishProductName]) AS [Model]
+            ,CASE
+                WHEN e.[BaseRate] < 25 THEN 'Low'
+                WHEN e.[BaseRate] > 40 THEN 'High'
+                ELSE 'Moderate'
+            END AS [EmployeeIncomeGroup]
+            ,g.City AS ResellerCity
+            ,g.StateProvinceName AS StateProvince
+            ,r.[AnnualSales] AS ResellerAnnualSales
+            ,d.[CalendarYear]
+            ,d.[FiscalYear]
+            ,d.[MonthOfYear] AS [Month]
+            ,f.[SalesOrderNumber] AS [OrderNumber]
+            ,f.SalesOrderLineNumber AS LineNumber
+            ,f.OrderQuantity AS Quantity
+            ,f.ExtendedAmount AS Amount  
+        FROM
+            [dbo].[FactResellerSales] f
+        INNER JOIN [dbo].[DimReseller] r
+            ON f.ResellerKey = r.ResellerKey
+        INNER JOIN [dbo].[DimGeography] g
+            ON r.GeographyKey = g.GeographyKey
+        INNER JOIN [dbo].[DimEmployee] e
+            ON f.EmployeeKey = e.EmployeeKey
+        INNER JOIN [dbo].[DimDate] d
+            ON f.[OrderDateKey] = d.[DateKey]
+        INNER JOIN [dbo].[DimProduct] p
+            ON f.[ProductKey] = p.[ProductKey]
+        INNER JOIN [dbo].[DimProductSubcategory] psc
+            ON p.[ProductSubcategoryKey] = psc.[ProductSubcategoryKey]
+        INNER JOIN [dbo].[DimProductCategory] pc
+            ON psc.[ProductCategoryKey] = pc.[ProductCategoryKey]
+        WHERE d.[MonthOfYear] = 10 AND d.[FiscalYear] IN (2012, 2013)
+        ORDER BY d.[FiscalYear]
+    ```
+
+    You should see an output similar to the following:
+
+    ![The query results are displayed in a table.](media/reseller-query-results-date-filter.png "Reseller query results with date filter")
+
+    > Notice how using the **time dimension table** makes filtering by specific date parts and logical dates (such as fiscal year) easier and more performant that calculating date functions on the fly.
+
+### Updating slowly changing dimensions with mapping data flows
+
+1. Sign in to the Azure portal (<https://portal.azure.com>).
+
+2. Open the resource group for this lab, then select the **Synapse workspace**.
+
+    ![The workspace is highlighted in the resource group.](media/rg-synapse-workspace.png "Synapse workspace")
+
+3. In your Synapse workspace Overview blade, select the **Open** link within `Open Synapse Studio`.
+
+    ![The Open link is highlighted.](media/open-synapse-studio.png "Open Synapse Studio")
+
+4. In Synapse Studio, navigate to the **Data** hub.
+
+    ![Data hub.](media/data-hub.png "Data hub")
+
+5. Select the **Workspace** tab **(1)**, expand Databases, then right-click on **SQLPool01 (2)**. Select **New SQL script (3)**, then select **Empty script (4)**.
+
+    ![The data hub is displayed with the context menus to create a new SQL script.](media/new-sql-script.png "New SQL script")
+
+

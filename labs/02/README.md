@@ -27,6 +27,10 @@ In this module, the student will be able to:
       - [Task 2: Create the Azure SQL Database linked service](#task-2-create-the-azure-sql-database-linked-service)
       - [Task 3: Create a mapping data flow](#task-3-create-a-mapping-data-flow)
       - [Task 4: Create a pipeline and run the data flow](#task-4-create-a-pipeline-and-run-the-data-flow)
+      - [Task 5: View inserted data](#task-5-view-inserted-data)
+      - [Task 6: Update a source customer record](#task-6-update-a-source-customer-record)
+      - [Task 7: Re-run mapping data flow](#task-7-re-run-mapping-data-flow)
+      - [Task 8: Verify record updated](#task-8-verify-record-updated)
 
 ### Lab setup and pre-requisites
 
@@ -87,7 +91,7 @@ In this task, you create a star schema in SQL database, using foreign key constr
 
     ![The New Query link is highlighted.](media/ads-new-query.png "New Query")
 
-9.  Paste the following into the query window to create the dimension and fact tables:
+9. Paste the following into the query window to create the dimension and fact tables:
 
     ```sql
     CREATE TABLE [dbo].[DimReseller](
@@ -1325,3 +1329,102 @@ In this task, you create a new Synapse integration pipeline to execute the mappi
 9. Navigate to the **Monitor** hub.
 
     ![Monitor hub.](media/monitor-hub.png "Monitor hub")
+
+10. Select **Pipeline runs** in the left-hand menu **(1)** and wait for the pipeline run to successfully complete **(2)**. You may have to select **Refresh (3)** several times until the pipeline run completes.
+
+    ![The pipeline run successfully completed.](media/pipeline-runs.png "Pipeline runs")
+
+#### Task 5: View inserted data
+
+1. Navigate to the **Data** hub.
+
+    ![Data hub.](media/data-hub.png "Data hub")
+
+2. Select the **Workspace** tab **(1)**, expand Databases, then right-click on **SQLPool01 (2)**. Select **New SQL script (3)**, then select **Empty script (4)**.
+
+    ![The data hub is displayed with the context menus to create a new SQL script.](media/new-sql-script.png "New SQL script")
+
+3. Paste the following in the query window, then select **Run** or hit F5 to execute the script and view the results:
+
+    ```sql
+    SELECT * FROM DimCustomer
+    ```
+
+    ![The script is displayed with the customer table output.](media/first-customer-script-run.png "Customer list output")
+
+#### Task 6: Update a source customer record
+
+1. Open Azure Data Studio, or switch back to it if still open.
+
+2. Select **Servers** in the left-hand menu, then right-click the SQL server you added at the beginning of the lab. Select **New Query**.
+
+    ![The New Query link is highlighted.](media/ads-new-query2.png "New Query")
+
+3. Paste the following into the query window to view the customer with a `CustomerID` of 10:
+
+    ```sql
+    SELECT * FROM [SalesLT].[Customer] WHERE CustomerID = 10
+    ```
+
+4. Select **Run** or hit `F5` to execute the query.
+
+    ![The output is shown and the last name value is highlighted.](media/customer-query-garza.png "Customer query output")
+
+    The customer for Ms. Kathleen M. Garza is displayed. Let's change the customer's last name.
+
+5. Replace **and execute** the query with the following to update the customer's last name:
+
+    ```sql
+    UPDATE [SalesLT].[Customer] SET LastName = 'Smith' WHERE CustomerID = 10
+    SELECT * FROM [SalesLT].[Customer] WHERE CustomerID = 10
+    ```
+
+    ![The customer's last name was changed to Smith.](media/customer-record-updated.png "Customer record updated")
+
+#### Task 7: Re-run mapping data flow
+
+1. Switch back to Synapse Studio.
+
+2. Navigate to the **Integrate** hub.
+
+    ![Integrate hub.](media/integrate-hub.png "Integrate hub")
+
+3. Select the **RunUpdateCustomerDimension** pipeline.
+
+    ![The pipeline is selected.](media/select-pipeline.png "Pipeline selected")
+
+4. Select **Add trigger** above the pipeline canvas, then select **Trigger now**.
+
+    ![The add trigger button and trigger now menu item are both highlighted.](media/pipeline-trigger.png "Pipeline trigger")
+
+5. Select **OK** in the `Pipeline run` dialog to trigger the pipeline.
+
+    ![The OK button is highlighted.](media/pipeline-run.png "Pipeline run")
+
+6. Navigate to the **Monitor** hub.
+
+    ![Monitor hub.](media/monitor-hub.png "Monitor hub")
+
+7. Select **Pipeline runs** in the left-hand menu **(1)** and wait for the pipeline run to successfully complete **(2)**. You may have to select **Refresh (3)** several times until the pipeline run completes.
+
+    ![The pipeline run successfully completed.](media/pipeline-runs2.png "Pipeline runs")
+
+#### Task 8: Verify record updated
+
+1. Navigate to the **Data** hub.
+
+    ![Data hub.](media/data-hub.png "Data hub")
+
+2. Select the **Workspace** tab **(1)**, expand Databases, then right-click on **SQLPool01 (2)**. Select **New SQL script (3)**, then select **Empty script (4)**.
+
+    ![The data hub is displayed with the context menus to create a new SQL script.](media/new-sql-script.png "New SQL script")
+
+3. Paste the following in the query window, then select **Run** or hit F5 to execute the script and view the results:
+
+    ```sql
+    SELECT * FROM DimCustomer WHERE CustomerID = 10
+    ```
+
+    ![The script is displayed with the updated customer table output.](media/second-customer-script-run.png "Updated customer output")
+
+    As we can see, the customer record successfully updated to modify the `LastName` value to match the source record.

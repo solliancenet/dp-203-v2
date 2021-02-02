@@ -556,7 +556,7 @@ In this task, you add the time dimension table and create foreign key relationsh
 
     ```sql
     CREATE TABLE DimDate
-        (DateKey int NOT NULL PRIMARY KEY NONCLUSTERED,
+        (DateKey int NOT NULL,
         DateAltKey datetime NOT NULL,
         CalendarYear int NOT NULL,
         CalendarQuarter int NOT NULL,

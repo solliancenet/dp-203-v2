@@ -12,22 +12,25 @@ In this module, the student will be able to:
 
 - [Module 8 - Transform Data with Synapse Pipelines](#module-8---transform-data-with-synapse-pipelines)
   - [Lab details](#lab-details)
-  - [Code-free transformation at scale with Azure Synapse Pipelines](#code-free-transformation-at-scale-with-azure-synapse-pipelines)
-    - [Create SQL table](#create-sql-table)
-    - [Create linked service](#create-linked-service)
-    - [Create data sets](#create-data-sets)
-      - [Create campaign analytics dataset](#create-campaign-analytics-dataset)
-    - [Create data pipeline to import poorly formatted CSV](#create-data-pipeline-to-import-poorly-formatted-csv)
-      - [Create campaign analytics data flow](#create-campaign-analytics-data-flow)
-      - [Create campaign analytics data pipeline](#create-campaign-analytics-data-pipeline)
-      - [Run the campaign analytics data pipeline](#run-the-campaign-analytics-data-pipeline)
-      - [View campaign analytics table contents](#view-campaign-analytics-table-contents)
-    - [Create Mapping Data Flow for top product purchases](#create-mapping-data-flow-for-top-product-purchases)
-  - [Orchestrate data movement and transformation in Azure Synapse Pipelines](#orchestrate-data-movement-and-transformation-in-azure-synapse-pipelines)
-    - [Create pipeline](#create-pipeline)
-    - [Trigger, monitor, and analyze the user profile data pipeline](#trigger-monitor-and-analyze-the-user-profile-data-pipeline)
+  - [Lab 1: Code-free transformation at scale with Azure Synapse Pipelines](#lab-1-code-free-transformation-at-scale-with-azure-synapse-pipelines)
+    - [Exercise 1: Create artifacts](#exercise-1-create-artifacts)
+      - [Task 1: Create SQL table](#task-1-create-sql-table)
+      - [Task 2: Create linked service](#task-2-create-linked-service)
+      - [Task 3: Create data sets](#task-3-create-data-sets)
+      - [Task 4: Create campaign analytics dataset](#task-4-create-campaign-analytics-dataset)
+    - [Exercise 2: Create data pipeline to import poorly formatted CSV](#exercise-2-create-data-pipeline-to-import-poorly-formatted-csv)
+      - [Task 1: Create campaign analytics data flow](#task-1-create-campaign-analytics-data-flow)
+      - [Task 2: Create campaign analytics data pipeline](#task-2-create-campaign-analytics-data-pipeline)
+      - [Task 3: Run the campaign analytics data pipeline](#task-3-run-the-campaign-analytics-data-pipeline)
+      - [Task 4: View campaign analytics table contents](#task-4-view-campaign-analytics-table-contents)
+    - [Exercise 3: Create Mapping Data Flow for top product purchases](#exercise-3-create-mapping-data-flow-for-top-product-purchases)
+      - [Task 1: Create Mapping Data Flow](#task-1-create-mapping-data-flow)
+  - [Lab 2: Orchestrate data movement and transformation in Azure Synapse Pipelines](#lab-2-orchestrate-data-movement-and-transformation-in-azure-synapse-pipelines)
+    - [Exercise 1: Create, trigger, and monitor pipeline](#exercise-1-create-trigger-and-monitor-pipeline)
+      - [Task 1: Create pipeline](#task-1-create-pipeline)
+      - [Task 2: Trigger, monitor, and analyze the user profile data pipeline](#task-2-trigger-monitor-and-analyze-the-user-profile-data-pipeline)
 
-## Code-free transformation at scale with Azure Synapse Pipelines
+## Lab 1: Code-free transformation at scale with Azure Synapse Pipelines
 
 Tailwind Traders would like code-free options for data engineering tasks. Their motivation is driven by the desire to allow junior-level data engineers who understand the data but do not have a lot of development experience build and maintain data transformation operations. The other driver for this requirement is to reduce fragility caused by complex code with reliance on libraries pinned to specific versions, remove code testing requirements, and improve ease of long-term maintenance.
 
@@ -44,7 +47,9 @@ Additional benefits
 - Flexibility to transform data per user’s comfort
 - Monitor and manage data flows from a single pane of glass
 
-### Create SQL table
+### Exercise 1: Create artifacts
+
+#### Task 1: Create SQL table
 
 The Mapping Data Flow we will build will write user purchase data to a dedicated SQL pool. Tailwind Traders does not yet have a table to store this data. We will execute a SQL script to create this table as a pre-requisite.
 
@@ -107,7 +112,7 @@ The Mapping Data Flow we will build will write user purchase data to a dedicated
 
     ![The run button is highlighted in the query toolbar.](media/synapse-studio-query-toolbar-run.png "Run")
 
-### Create linked service
+#### Task 2: Create linked service
 
 Azure Cosmos DB is one of the data sources that will be used in the Mapping Data Flow. Tailwind Traders has not yet created the linked service. Follow the steps in this section to create one.
 
@@ -125,7 +130,7 @@ Azure Cosmos DB is one of the data sources that will be used in the Mapping Data
 
     ![New Azure Cosmos DB linked service.](media/create-cosmos-db-linked-service.png "New linked service")
 
-### Create data sets
+#### Task 3: Create data sets
 
 User profile data comes from two different data sources, which we will create now: `asal400_ecommerce_userprofiles_source` and `asal400_customerprofile_cosmosdb`. The customer profile data from an e-commerce system that provides top product purchases for each visitor of the site (customer) over the past 12 months is stored within JSON files in the data lake. User profile data containing, among other things, product preferences and product reviews is stored as JSON documents in Cosmos DB.
 
@@ -216,7 +221,7 @@ Complete the steps below to create the following two datasets: `asal400_ecommerc
 
     ![The data set form is displayed with the described configuration.](media/new-dataset-campaignanalytics.png "Integration dataset")
 
-#### Create campaign analytics dataset
+#### Task 4: Create campaign analytics dataset
 
 Your organization was provided a poorly formatted CSV file containing marketing campaign data. The file was uploaded to the data lake and now it must be imported into the data warehouse.
 
@@ -273,9 +278,9 @@ Issues include invalid characters in the revenue currency data, and misaligned c
 
     ![Publish all is highlighted.](media/publish-all-1.png "Publish all")
 
-### Create data pipeline to import poorly formatted CSV
+### Exercise 2: Create data pipeline to import poorly formatted CSV
 
-#### Create campaign analytics data flow
+#### Task 1: Create campaign analytics data flow
 
 1. Navigate to the **Develop** hub.
 
@@ -419,7 +424,7 @@ Issues include invalid characters in the revenue currency data, and misaligned c
 
     ![Publish all is highlighted.](media/publish-all-1.png "Publish all")
 
-#### Create campaign analytics data pipeline
+#### Task 2: Create campaign analytics data pipeline
 
 In order to run the new data flow, you need to create a new pipeline and add a data flow activity to it.
 
@@ -447,7 +452,7 @@ In order to run the new data flow, you need to create a new pipeline and add a d
 
     ![Publish all is highlighted.](media/publish-all-1.png "Publish all")
 
-#### Run the campaign analytics data pipeline
+#### Task 3: Run the campaign analytics data pipeline
 
 1. Select **Add trigger**, and then select **Trigger now** in the toolbar at the top of the pipeline canvas.
 
@@ -465,7 +470,7 @@ In order to run the new data flow, you need to create a new pipeline and add a d
 
     ![The pipeline run succeeded.](media/pipeline-campaign-analysis-run-complete.png "Pipeline runs")
 
-#### View campaign analytics table contents
+#### Task 4: View campaign analytics table contents
 
 Now that the pipeline run is complete, let's take a look at the SQL table to verify the data successfully copied.
 
@@ -502,7 +507,7 @@ Now that the pipeline run is complete, let's take a look at the SQL table to ver
 
     ![The new query and chart view are displayed.](media/campaign-analytics-query-results-chart.png "Chart view")
 
-### Create Mapping Data Flow for top product purchases
+### Exercise 3: Create Mapping Data Flow for top product purchases
 
 Tailwind Traders needs to combine top product purchases imported as JSON files from their eCommerce system with user preferred products from profile data stored as JSON documents in Azure Cosmos DB. They want to store the combined data in a dedicated SQL pool as well as their data lake for further analysis and reporting.
 
@@ -516,6 +521,8 @@ To do this, you will build a mapping data flow that performs the following tasks
 - Filters null records for required fields
 - Writes to the dedicated SQL pool
 - Simultaneously writes to the data lake
+
+#### Task 1: Create Mapping Data Flow
 
 1. Navigate to the **Develop** hub.
 
@@ -841,7 +848,7 @@ To do this, you will build a mapping data flow that performs the following tasks
 
     ![Publish all is highlighted.](media/publish-all-1.png "Publish all")
 
-## Orchestrate data movement and transformation in Azure Synapse Pipelines
+## Lab 2: Orchestrate data movement and transformation in Azure Synapse Pipelines
 
 Tailwind Traders is familiar with Azure Data Factory (ADF) pipelines and wants to know if Azure Synapse Analytics can either integrate with ADF or has a similar capability. They want to orchestrate data ingest, transformation, and load activities across their entire data catalog, both internal and external to their data warehouse.
 
@@ -849,7 +856,9 @@ You recommend using Synapse Pipelines, which includes over 90 built-in connector
 
 By using Synapse Pipelines, Tailwind Traders can experience the same familiar interface as ADF without having to use an orchestration service outside of Azure Synapse Analytics.
 
-### Create pipeline
+### Exercise 1: Create, trigger, and monitor pipeline
+
+#### Task 1: Create pipeline
 
 Let's start by executing our new Mapping Data Flow. In order to run the new data flow, we need to create a new pipeline and add a data flow activity to it.
 
@@ -898,7 +907,7 @@ Let's start by executing our new Mapping Data Flow. In order to run the new data
 
     ![Publish all is highlighted.](media/publish-all-1.png "Publish all")
 
-### Trigger, monitor, and analyze the user profile data pipeline
+#### Task 2: Trigger, monitor, and analyze the user profile data pipeline
 
 Tailwind Traders wants to monitor all pipeline runs and view statistics for performance tuning and troubleshooting purposes.
 

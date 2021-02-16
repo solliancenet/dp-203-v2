@@ -13,23 +13,24 @@ In this module, the student will be able to:
 
 - [Module 5 - Exploring, Transforming, and Loading Data into the Data Warehouse using Apache Spark](#module-5---exploring-transforming-and-loading-data-into-the-data-warehouse-using-apache-spark)
   - [Lab details](#lab-details)
-  - [Perform Data Exploration in Synapse Studio](#perform-data-exploration-in-synapse-studio)
-    - [Exploring data using the Preview functionality of Synapse Studio](#exploring-data-using-the-preview-functionality-of-synapse-studio)
-    - [Using serverless SQL pools to explore files](#using-serverless-sql-pools-to-explore-files)
-    - [Exploring and fixing data with Synapse Spark](#exploring-and-fixing-data-with-synapse-spark)
-  - [Ingesting data with Spark notebooks in Azure Synapse Analytics](#ingesting-data-with-spark-notebooks-in-azure-synapse-analytics)
-    - [Ingest and explore Parquet files from a data lake with Apache Spark for Azure Synapse](#ingest-and-explore-parquet-files-from-a-data-lake-with-apache-spark-for-azure-synapse)
-  - [Transforming data with DataFrames in Spark pools in Azure Synapse Analytics](#transforming-data-with-dataframes-in-spark-pools-in-azure-synapse-analytics)
-    - [Query and transform JSON data with Apache Spark for Azure Synapse](#query-and-transform-json-data-with-apache-spark-for-azure-synapse)
-  - [Integrating SQL and Spark pools in Azure Synapse Analytics](#integrating-sql-and-spark-pools-in-azure-synapse-analytics)
+  - [Exercise 1: Perform Data Exploration in Synapse Studio](#exercise-1-perform-data-exploration-in-synapse-studio)
+    - [Task 1: Exploring data using the Preview functionality of Synapse Studio](#task-1-exploring-data-using-the-preview-functionality-of-synapse-studio)
+    - [Task 2: Using serverless SQL pools to explore files](#task-2-using-serverless-sql-pools-to-explore-files)
+    - [Task 3: Exploring and fixing data with Synapse Spark](#task-3-exploring-and-fixing-data-with-synapse-spark)
+  - [Exercise 2: Ingesting data with Spark notebooks in Azure Synapse Analytics](#exercise-2-ingesting-data-with-spark-notebooks-in-azure-synapse-analytics)
+    - [Task 1: Ingest and explore Parquet files from a data lake with Apache Spark for Azure Synapse](#task-1-ingest-and-explore-parquet-files-from-a-data-lake-with-apache-spark-for-azure-synapse)
+  - [Exercise 3: Transforming data with DataFrames in Spark pools in Azure Synapse Analytics](#exercise-3-transforming-data-with-dataframes-in-spark-pools-in-azure-synapse-analytics)
+    - [Task 1: Query and transform JSON data with Apache Spark for Azure Synapse](#task-1-query-and-transform-json-data-with-apache-spark-for-azure-synapse)
+  - [Exercise 4: Integrating SQL and Spark pools in Azure Synapse Analytics](#exercise-4-integrating-sql-and-spark-pools-in-azure-synapse-analytics)
+    - [Task 1: Update notebook](#task-1-update-notebook)
 
-## Perform Data Exploration in Synapse Studio
+## Exercise 1: Perform Data Exploration in Synapse Studio
 
 One of the first data engineering tasks typically performed during data ingestion is to explore the data that is to be imported. Data exploration allows engineers to understand better the contents of files being ingested. This process helps to identify any potential data quality issues that might hinder automated ingestion processes. Through exploration, we can gain insights into data types, data quality, and whether any processing needs to be performed on the files prior to importing the data into your data lake or using it for analytics workloads.
 
 The engineers at Tailspin Traders have run into issues ingesting some of their sales data into the data warehouse, and have requested assistance in understanding how Synapse Studio can be used to help them resolve these issues. As the first step of this process, you need to explore the data to understand what is causing the issues they've encountered, and then provide them with a solution.
 
-### Exploring data using the Preview functionality of Synapse Studio
+### Task 1: Exploring data using the Preview functionality of Synapse Studio
 
 Azure Synapse Studio provides numerous ways to explore data, from a simple preview interface to more complicated programmatic options using Synapse Spark notebooks. In this exercise, you will learn how to use these features to explore, identify, and fix problematic files. You will be exploring CSV files stored in the `wwi-02/sale-poc` folder of the data lake and learning about how to identify and fix issues.
 
@@ -95,7 +96,7 @@ Azure Synapse Studio provides numerous ways to explore data, from a simple previ
 
 16. Now, take a few minutes to preview a few of the other files in the `sale-poc` folder. Do they have the same structure as the files for May 1st and 3rd?
 
-### Using serverless SQL pools to explore files
+### Task 2: Using serverless SQL pools to explore files
 
 The **Preview** functionality in Synapse Studio enables quick exploration of files, but doesn't allow us to look deeper into the data or gain much in the way of insights into files with issues. In this task, we will use the **serverless SQL pools (built-in)** functionality of Synapse to explore these files using T-SQL.
 
@@ -217,7 +218,7 @@ The **Preview** functionality in Synapse Studio enables quick exploration of fil
 
 17. In order for us to fix the file, we need to use code. T-SQL and Synapse Pipelines do not have the ability to efficiently handle this type of issue. To address the problems with this file, we need to use a Synapse Spark notebook.
 
-### Exploring and fixing data with Synapse Spark
+### Task 3: Exploring and fixing data with Synapse Spark
 
 In this task, you will use a Synapse Spark notebook to explore a few of the files in the `wwi-02/sale-poc` folder in the data lake. You will also use Python code to fix the issues with the `sale-20170502.csv` file, so all the files in the directory can be ingested using a Synapse Pipeline later in this lab.
 
@@ -239,9 +240,9 @@ Tailwind Traders has unstructured and semi-structured files from various data so
 
 You recommend using Synapse Notebooks, which are integrated in the Azure Synapse Analytics workspace and used from within Synapse Studio.
 
-## Ingesting data with Spark notebooks in Azure Synapse Analytics
+## Exercise 2: Ingesting data with Spark notebooks in Azure Synapse Analytics
 
-### Ingest and explore Parquet files from a data lake with Apache Spark for Azure Synapse
+### Task 1: Ingest and explore Parquet files from a data lake with Apache Spark for Azure Synapse
 
 Tailwind Traders has Parquet files stored in their data lake. They want to know how they can quickly access the files and explore them using Apache Spark.
 
@@ -293,11 +294,11 @@ You recommend using the Data hub to view the Parquet files in the connected stor
 
     By default, the cell outputs to a table view when we use the `display()` function. We see in the output the sales transaction data stored in the Parquet file for December 31, 2010. Let's select the **Chart** visualization to see a different view of the data.
 
-8.  Select the **View options** button to the right.
+8. Select the **View options** button to the right.
 
     ![The button is highlighted.](media/2010-sale-parquet-chart-options-button.png "View options")
 
-9.  Set Key to **`ProductId`** and Values to **`TotalAmount` (1)**, then select **Apply (2)**.
+9. Set Key to **`ProductId`** and Values to **`TotalAmount` (1)**, then select **Apply (2)**.
 
     ![The options are configured as described.](media/2010-sale-parquet-chart-options.png "View options")
 
@@ -356,9 +357,9 @@ You recommend using the Data hub to view the Parquet files in the connected stor
 
     ![The aggregates output is displayed.](media/2010-sale-parquet-aggregates.png "Aggregates output")
 
-## Transforming data with DataFrames in Spark pools in Azure Synapse Analytics
+## Exercise 3: Transforming data with DataFrames in Spark pools in Azure Synapse Analytics
 
-### Query and transform JSON data with Apache Spark for Azure Synapse
+### Task 1: Query and transform JSON data with Apache Spark for Azure Synapse
 
 In addition to the sales data, Tailwind Traders has customer profile data from an e-commerce system that provides top product purchases for each visitor of the site (customer) over the past 12 months. This data is stored within JSON files in the data lake. They have struggled with ingesting, exploring, and transforming these JSON files and want your guidance. The files have a hierarchical structure that they want to flatten before loading into relational data stores. They also wish to apply grouping and aggregate operations as part of the data engineering process.
 
@@ -570,15 +571,17 @@ You recommend using Synapse Notebooks to explore and apply data transformations 
 
     ![The query output is displayed.](media/spark-grouped-top-purchases-total-items.png "Grouped top total items output")
 
-## Integrating SQL and Spark pools in Azure Synapse Analytics
+## Exercise 4: Integrating SQL and Spark pools in Azure Synapse Analytics
 
-Tailwind Traders wants to write to the SQL database assodicated with dedicated SQL pool after performing data engineering tasks in Spark, then reference that SQL database as a source for joining with Spark dataframes that contain data from other files.
+Tailwind Traders wants to write to the SQL database associated with dedicated SQL pool after performing data engineering tasks in Spark, then reference that SQL database as a source for joining with Spark dataframes that contain data from other files.
 
 You decide to use the Apache Spark to Synapse SQL connector to efficiently transfer data between Spark databases and SQL databases in Azure Synapse.
 
 Transferring data between Spark databases and SQL databases can be done using JDBC. However, given two distributed systems such as Spark pools and SQL pools, JDBC tends to be a bottleneck with serial data transfer.
 
 The Apache Spark pool to Synapse SQL connector is a data source implementation for Apache Spark. It uses the Azure Data Lake Storage Gen2 and PolyBase in dedicated SQL pools to efficiently transfer data between the Spark cluster and the Synapse SQL instance.
+
+### Task 1: Update notebook
 
 1. We have been using Python code in these cells up to this point. If we want to use the Apache Spark pool to Synapse SQL connector (`sqlanalytics`), one option is to create a temporary view of the data within the dataframe. Execute the following in a new cell to create a view named `top_purchases`:
 

@@ -19,12 +19,14 @@ In this module, the student will be able to:
     - [Power BI](#power-bi)
   - [Scenario overview](#scenario-overview)
   - [Experience requirements](#experience-requirements)
-  - [Task 1: Configure Event Hubs](#task-1-configure-event-hubs)
-  - [Task 2: Configure Synapse Analytics](#task-2-configure-synapse-analytics)
-  - [Task 3: Configure Stream Analytics](#task-3-configure-stream-analytics)
-  - [Task 4: Run data generator](#task-4-run-data-generator)
-  - [Task 5: Create Power BI dashboard](#task-5-create-power-bi-dashboard)
-  - [Task 6: View aggregate data in Synapse Analytics](#task-6-view-aggregate-data-in-synapse-analytics)
+  - [Exercise 1: Configure services](#exercise-1-configure-services)
+    - [Task 1: Configure Event Hubs](#task-1-configure-event-hubs)
+    - [Task 2: Configure Synapse Analytics](#task-2-configure-synapse-analytics)
+    - [Task 3: Configure Stream Analytics](#task-3-configure-stream-analytics)
+  - [Exercise 2: Generate and visualize data](#exercise-2-generate-and-visualize-data)
+    - [Task 1: Run data generator](#task-1-run-data-generator)
+    - [Task 2: Create Power BI dashboard](#task-2-create-power-bi-dashboard)
+    - [Task 3: View aggregate data in Synapse Analytics](#task-3-view-aggregate-data-in-synapse-analytics)
 
 ## Technology overview
 
@@ -60,7 +62,9 @@ In this experience, you will use Azure Event Hubs to ingest streaming vehicle te
 - Power BI account (sign up at <https://powerbi.microsoft.com>)
 - [Lab environment setup](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/tree/main/setup/14)
 
-## Task 1: Configure Event Hubs
+## Exercise 1: Configure services
+
+### Task 1: Configure Event Hubs
 
 Azure Event Hubs is a Big Data streaming platform and event ingestion service, capable of receiving and processing millions of events per second. We are using it to temporarily store vehicle telemetry data that is processed and ready to be sent to the real-time dashboard. As data flows into Event Hubs, Azure Stream Analytics will query the data, applying aggregates and tagging anomalies, then send it to Azure Synapse Analytics and Power BI.
 
@@ -122,7 +126,7 @@ In this task, you will create and configure a new event hub within the provided 
 
     ![The Write policy is selected and its blade displayed. The Copy button next to the Connection string - primary key field is highlighted.](media/event-hubs-write-policy-key.png 'SAS Policy: Write')
 
-## Task 2: Configure Synapse Analytics
+### Task 2: Configure Synapse Analytics
 
 Azure Synapse is an end-to-end analytics platform which combines SQL data warehousing, big data analytics, and data integration into a single integrated environment. It empowers users to gain quick access and insights across all of their data, enabling a whole new level of performance and scale that is simply unmatched in the industry.
 
@@ -164,9 +168,10 @@ In this task, you will create a table in a Synapse dedicated SQL pool to store a
     )
     GO
     ```
-    
+
     ![The script is displayed.](media/synapse-new-table-script.png "New table script")
-## Task 3: Configure Stream Analytics
+
+### Task 3: Configure Stream Analytics
 
 Azure Stream Analytics is an event-processing engine that allows you to examine high volumes of data streaming from devices. Incoming data can be from devices, sensors, web sites, social media feeds, applications, and more. It also supports extracting information from data streams, identifying patterns, and relationships. You can then use these patterns to trigger other actions downstream, such as create alerts, feed information to a reporting tool, or store it for later use.
 
@@ -370,7 +375,9 @@ In this task, you will configure Stream Analytics to use the event hub you creat
 
     ![The Now and Start buttons are highlighted within the Start job blade.](media/stream-analytics-start-job.png 'Start job')
 
-## Task 4: Run data generator
+## Exercise 2: Generate and visualize data
+
+### Task 1: Run data generator
 
 The data generator console application creates and sends simulated vehicle sensor telemetry for an array of vehicles (denoted by VIN (vehicle identification number)) directly to Event Hubs. For this to happen, you first need to configure it with the Event Hub connection string.
 
@@ -414,7 +421,7 @@ In this task, you will configure and run the data generator. The data generator 
 
     After every 500 records are requested to be sent, you will see output statistics.
 
-## Task 5: Create Power BI dashboard
+### Task 2: Create Power BI dashboard
 
 In this task, you will use Power BI to create a report showing captured vehicle anomaly data. Then you will pin that report to a live dashboard for near real-time updates.
 
@@ -518,7 +525,7 @@ In this task, you will use Power BI to create a report showing captured vehicle 
 
     ![The live dashboard view.](media/pbi-dashboard.png 'Dashboard')
 
-## Task 6: View aggregate data in Synapse Analytics
+### Task 3: View aggregate data in Synapse Analytics
 
 As you recall, when you created the query in Stream Analytics, you aggregated the engine temperature and vehicle speed data over two-minute intervals and saved the data to Synapse Analytics. This capability demonstrates the Stream Analytics query's ability to write data to multiple outputs at varying intervals. Writing to a Synapse Analytics dedicated SQL pool enables us to retain the historic and current aggregate data as part of the data warehouse without requiring an ETL/ELT process.
 

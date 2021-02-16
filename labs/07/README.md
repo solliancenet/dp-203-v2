@@ -12,18 +12,18 @@ In this module, the student will be able to:
 
 - [Module 7 - Ingesting and Loading Data into the Data Warehouse](#module-7---ingesting-and-loading-data-into-the-data-warehouse)
   - [Lab details](#lab-details)
-  - [Import data with PolyBase and COPY using T-SQL](#import-data-with-polybase-and-copy-using-t-sql)
-    - [Create staging tables](#create-staging-tables)
-    - [Configure and run PolyBase load operation](#configure-and-run-polybase-load-operation)
-    - [Configure and run the COPY statement](#configure-and-run-the-copy-statement)
-    - [Load data into the clustered columnstore table](#load-data-into-the-clustered-columnstore-table)
-    - [Use COPY to load text file with non-standard row delimiters](#use-copy-to-load-text-file-with-non-standard-row-delimiters)
-    - [Use PolyBase to load text file with non-standard row delimiters](#use-polybase-to-load-text-file-with-non-standard-row-delimiters)
-  - [Petabyte-scale ingestion with Azure Synapse Pipelines](#petabyte-scale-ingestion-with-azure-synapse-pipelines)
-    - [Configure workload management classification](#configure-workload-management-classification)
-    - [Create pipeline with copy activity](#create-pipeline-with-copy-activity)
+  - [Exercise 1: Import data with PolyBase and COPY using T-SQL](#exercise-1-import-data-with-polybase-and-copy-using-t-sql)
+    - [Task 1: Create staging tables](#task-1-create-staging-tables)
+    - [Task 2: Configure and run PolyBase load operation](#task-2-configure-and-run-polybase-load-operation)
+    - [Task 3: Configure and run the COPY statement](#task-3-configure-and-run-the-copy-statement)
+    - [Task 4: Load data into the clustered columnstore table](#task-4-load-data-into-the-clustered-columnstore-table)
+    - [Task 5: Use COPY to load text file with non-standard row delimiters](#task-5-use-copy-to-load-text-file-with-non-standard-row-delimiters)
+    - [Task 6: Use PolyBase to load text file with non-standard row delimiters](#task-6-use-polybase-to-load-text-file-with-non-standard-row-delimiters)
+  - [Exercise 2: Petabyte-scale ingestion with Azure Synapse Pipelines](#exercise-2-petabyte-scale-ingestion-with-azure-synapse-pipelines)
+    - [Task 1: Configure workload management classification](#task-1-configure-workload-management-classification)
+    - [Task 2: Create pipeline with copy activity](#task-2-create-pipeline-with-copy-activity)
 
-## Import data with PolyBase and COPY using T-SQL
+## Exercise 1: Import data with PolyBase and COPY using T-SQL
 
 There are different options for loading large amounts and varying types of data into Azure Synapse Analytics, such as through T-SQL commands using a Synapse SQL Pool, and with Azure Synapse pipelines. In our scenario, Wide World Importers stores most of their raw data in a data lake and in different formats. Among the data loading options available to them, WWI's data engineers are most comfortable using T-SQL.
 
@@ -42,7 +42,7 @@ WWI has heard that PolyBase is generally faster than COPY, especially when worki
 
 In this exercise, you will help WWI compare ease of setup, flexibility, and speed between these loading strategies.
 
-### Create staging tables
+### Task 1: Create staging tables
 
 The `Sale` table has a columnstore index to optimize for read-heavy workloads. It is also used heavily for reporting and ad-hoc queries. To achieve the fastest loading speed and minimize the impact of heavy data inserts on the `Sale` table, WWI has decided to create a staging table for loads.
 
@@ -130,7 +130,7 @@ You will also create a new `Sale` clustered columnstore table within the `wwi_st
 
 9. Select **Run** from the toolbar menu to execute the SQL command.
 
-### Configure and run PolyBase load operation
+### Task 2: Configure and run PolyBase load operation
 
 PolyBase requires the following elements:
 
@@ -203,7 +203,7 @@ PolyBase requires the following elements:
     FROM [wwi_external].[Sales]
     ```
 
-### Configure and run the COPY statement
+### Task 3: Configure and run the COPY statement
 
 Now let's see how to perform the same load operation with the COPY statement.
 
@@ -235,7 +235,7 @@ Now let's see how to perform the same load operation with the COPY statement.
 
 Do the number of rows match for both load operations? Which activity was fastest? You should see that both copied the same amount of data in roughly the same amount of time.
 
-### Load data into the clustered columnstore table
+### Task 4: Load data into the clustered columnstore table
 
 For both of the load operations above, we inserted data into the heap table. What if we inserted into the clustered columnstore table instead? Is there really a performance difference? Let's find out!
 
@@ -261,7 +261,7 @@ PolyBase vs. COPY (DW500) *(insert 2019 small data set (339,507,246 rows))*:
 - COPY (Heap: **5:08**, clustered columnstore: **6:52**)
 - PolyBase (Heap: **5:59**)
 
-### Use COPY to load text file with non-standard row delimiters
+### Task 5: Use COPY to load text file with non-standard row delimiters
 
 One of the advantages COPY has over PolyBase is that it supports custom column and row delimiters.
 
@@ -315,7 +315,7 @@ The data has the following fields: `Date`, `NorthAmerica`, `SouthAmerica`, `Euro
 
     ![The results are displayed in a chart.](media/daily-sales-counts-chart.png "DailySalesCounts chart")
 
-### Use PolyBase to load text file with non-standard row delimiters
+### Task 6: Use PolyBase to load text file with non-standard row delimiters
 
 Let's try this same operation using PolyBase.
 
@@ -364,7 +364,7 @@ Why is this? According to [PolyBase documentation](https://docs.microsoft.com/sq
 
 This is an example of where COPY's flexibility gives it an advantage over PolyBase.
 
-## Petabyte-scale ingestion with Azure Synapse Pipelines
+## Exercise 2: Petabyte-scale ingestion with Azure Synapse Pipelines
 
 Tailwind Traders needs to ingest large volumes of sales data into the data warehouse. They want a repeatable process that can efficiently load the data. When the data loads, they want to prioritize the data movement jobs so they take priority.
 
@@ -374,7 +374,7 @@ There is often a level of orchestration involved when moving data into a data wa
 
 > In this segment of the lab, we will focus on the orchestration aspect. The next segment will focus more on the transformation (data flow) pipelines.
 
-### Configure workload management classification
+### Task 1: Configure workload management classification
 
 When loading a large amount of data, it is best to run only one load job at a time for fastest performance. If this isn't possible, run a minimal number of loads concurrently. If you expect a large loading job, consider scaling up your dedicated SQL pool before the load.
 
@@ -444,7 +444,7 @@ To run loads with appropriate compute resources, create loading users designated
 
 11. Select **Cancel** to close the dialog, and select **Discard changes** when prompted.
 
-### Create pipeline with copy activity
+### Task 2: Create pipeline with copy activity
 
 1. Navigate to the **Integrate** hub.
 

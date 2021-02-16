@@ -10,18 +10,21 @@ In this module, the student will be able to:
 
 - [Module 9 - Integrate Data with Synapse Pipelines](#module-9---integrate-data-with-synapse-pipelines)
   - [Lab details](#lab-details)
-  - [Create Synapse Spark notebook to find top products](#create-synapse-spark-notebook-to-find-top-products)
-    - [Add the Notebook to the pipeline](#add-the-notebook-to-the-pipeline)
+  - [Exercise 1: Create Synapse Spark notebook to find top products](#exercise-1-create-synapse-spark-notebook-to-find-top-products)
+    - [Task 1: Create notebook](#task-1-create-notebook)
+    - [Task 2: Add the Notebook to the pipeline](#task-2-add-the-notebook-to-the-pipeline)
 
 > **TODO:** Include the data sources, mapping data flow, and pipeline from Module 9 in the setup for Module 10.
 
-## Create Synapse Spark notebook to find top products
+## Exercise 1: Create Synapse Spark notebook to find top products
 
 Tailwind Traders uses a Mapping Data flow in Synapse Analytics to process, join, and import user profile data. Now they want to find the top 5 products for each user, based on which ones are both preferred and top, and have the most purchases in the past 12 months. Then, they want to calculate the top 5 products overall.
 
 In this segment of the lab, you will create a Synapse Spark notebook to make these calculations.
 
 > We will access the data from the data lake that was added as a second sink in the data flow, removing the dedicated SQL pool dependency.
+
+### Task 1: Create notebook
 
 1. Open Synapse Analytics Studio (<https://web.azuresynapse.net/>), and then navigate to the **Data** hub.
 
@@ -207,7 +210,7 @@ In this segment of the lab, you will create a Synapse Spark notebook to make the
 
     The Parquet write method on the dataframe in the Notebook cell created this directory since it did not previously exist.
 
-### Add the Notebook to the pipeline
+### Task 2: Add the Notebook to the pipeline
 
 Tailwind Traders wants to execute this notebook after the Mapping Data Flow runs as part of their orchestration process. To do this, we will add this notebook to our pipeline as a new Notebook activity.
 

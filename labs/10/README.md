@@ -13,31 +13,31 @@ In this module, the student will be able to:
 - [Module 10 - Analyze Data and Optimize Query Performance with Dedicated SQL Pools in Azure Synapse](#module-10---analyze-data-and-optimize-query-performance-with-dedicated-sql-pools-in-azure-synapse)
   - [Lab details](#lab-details)
   - [Lab setup](#lab-setup)
-  - [Understanding developer features of Azure Synapse Analytics](#understanding-developer-features-of-azure-synapse-analytics)
-    - [Using window functions](#using-window-functions)
-      - [OVER clause](#over-clause)
-      - [Aggregate functions](#aggregate-functions)
-      - [Analytic functions](#analytic-functions)
-      - [ROWS clause](#rows-clause)
-    - [Approximate execution using HyperLogLog functions](#approximate-execution-using-hyperloglog-functions)
-  - [Using data loading best practices in Azure Synapse Analytics](#using-data-loading-best-practices-in-azure-synapse-analytics)
-    - [Implement workload management](#implement-workload-management)
-    - [Create a workload classifier to add importance to certain queries](#create-a-workload-classifier-to-add-importance-to-certain-queries)
-    - [Reserve resources for specific workloads through workload isolation](#reserve-resources-for-specific-workloads-through-workload-isolation)
-  - [Optimizing data warehouse query performance in Azure Synapse Analytics](#optimizing-data-warehouse-query-performance-in-azure-synapse-analytics)
-    - [Identify performance issues related to tables](#identify-performance-issues-related-to-tables)
-    - [Create hash distribution and columnstore index](#create-hash-distribution-and-columnstore-index)
-    - [Improve table structure with hash distribution and columnstore index](#improve-table-structure-with-hash-distribution-and-columnstore-index)
-    - [Improve further the table structure with partitioning](#improve-further-the-table-structure-with-partitioning)
-      - [Table distributions](#table-distributions)
-      - [Indexes](#indexes)
-      - [Partitioning](#partitioning)
-  - [Improve query performance](#improve-query-performance)
-    - [Use materialized views](#use-materialized-views)
-    - [Use result set caching](#use-result-set-caching)
-    - [Create and update statistics](#create-and-update-statistics)
-    - [Create and update indexes](#create-and-update-indexes)
-    - [Ordered Clustered Columnstore Indexes](#ordered-clustered-columnstore-indexes)
+  - [Exercise 1: Understanding developer features of Azure Synapse Analytics](#exercise-1-understanding-developer-features-of-azure-synapse-analytics)
+    - [Task 1: Using window functions](#task-1-using-window-functions)
+      - [Task 1.1: OVER clause](#task-11-over-clause)
+      - [Task 1.2: Aggregate functions](#task-12-aggregate-functions)
+      - [Task 1.3: Analytic functions](#task-13-analytic-functions)
+      - [Task 1.4: ROWS clause](#task-14-rows-clause)
+    - [Task 2: Approximate execution using HyperLogLog functions](#task-2-approximate-execution-using-hyperloglog-functions)
+  - [Exercise 2: Using data loading best practices in Azure Synapse Analytics](#exercise-2-using-data-loading-best-practices-in-azure-synapse-analytics)
+    - [Task 1: Implement workload management](#task-1-implement-workload-management)
+    - [Task 2: Create a workload classifier to add importance to certain queries](#task-2-create-a-workload-classifier-to-add-importance-to-certain-queries)
+    - [Task 3: Reserve resources for specific workloads through workload isolation](#task-3-reserve-resources-for-specific-workloads-through-workload-isolation)
+  - [Exercise 3: Optimizing data warehouse query performance in Azure Synapse Analytics](#exercise-3-optimizing-data-warehouse-query-performance-in-azure-synapse-analytics)
+    - [Task 1: Identify performance issues related to tables](#task-1-identify-performance-issues-related-to-tables)
+    - [Task 2: Create hash distribution and columnstore index](#task-2-create-hash-distribution-and-columnstore-index)
+    - [Task 3: Improve table structure with hash distribution and columnstore index](#task-3-improve-table-structure-with-hash-distribution-and-columnstore-index)
+    - [Task 4: Improve further the table structure with partitioning](#task-4-improve-further-the-table-structure-with-partitioning)
+      - [Task 4.1: Table distributions](#task-41-table-distributions)
+      - [Task 4.2: Indexes](#task-42-indexes)
+      - [Task 4.3: Partitioning](#task-43-partitioning)
+  - [Exercise 4: Improve query performance](#exercise-4-improve-query-performance)
+    - [Task 1: Use materialized views](#task-1-use-materialized-views)
+    - [Task 2: Use result set caching](#task-2-use-result-set-caching)
+    - [Task 3: Create and update statistics](#task-3-create-and-update-statistics)
+    - [Task 4: Create and update indexes](#task-4-create-and-update-indexes)
+    - [Task 5: Ordered Clustered Columnstore Indexes](#task-5-ordered-clustered-columnstore-indexes)
 
 ## Lab setup
 
@@ -170,15 +170,15 @@ Before you begin, we need to create a few new tables and load them with data.
 
     ![The successful query execution messages are displayed.](media/sql-query-create-tables-succeeded.png "Query executed successfully")
 
-## Understanding developer features of Azure Synapse Analytics
+## Exercise 1: Understanding developer features of Azure Synapse Analytics
 
-### Using window functions
+### Task 1: Using window functions
 
 Tailwind Traders is looking for ways to more efficiently analyze their sales data without relying on expensive cursors, subqueries, and other outdated methods they use today.
 
 You propose using window functions to perform calculations over a set of rows. With these functions, you treat groups of rows as an entity.
 
-#### OVER clause
+#### Task 1.1: OVER clause
 
 One of the key components of window functions is the **`OVER`** clause. This clause determines the partitioning and ordering of a rowset before the associated window function is applied. That is, the OVER clause defines a window or user-specified set of rows within a query result set. A window function then computes a value for each row in the window. You can use the OVER clause with functions to compute aggregated values such as moving averages, cumulative aggregates, running totals, or a top N per group results.
 
@@ -219,7 +219,7 @@ One of the key components of window functions is the **`OVER`** clause. This cla
 
     **Scroll down** in the results view until the **Row Number** count **(3)** starts over with a **different region (4)**. Since the partition is set to `Region`, the `ROW_NUMBER` resets when the region changes. Essentially, we've partitioned by region and have a result set identified by the number of rows in that region.
 
-#### Aggregate functions
+#### Task 1.2: Aggregate functions
 
 Now let's use aggregate functions with our window by expanding on our query that uses the OVER clause.
 
@@ -249,7 +249,7 @@ Now let's use aggregate functions with our window by expanding on our query that
 
     ![The script output is shown.](media/over-partition-aggregates.png "SQL script")
 
-#### Analytic functions
+#### Task 1.3: Analytic functions
 
 Analytic functions calculate an aggregate value based on a group of rows. Unlike aggregate functions, however, analytic functions can return multiple rows for each group. Use analytic functions to compute moving averages, running totals, percentages, or top-N results within a group.
 
@@ -313,7 +313,7 @@ To do this, you decide to build window functions that use the `PERCENTILE_CONT` 
 
     In this query, we use the **LAG function (1)** to return the **difference in sales (2)** for a specific product over peak sales hours (8-20). We also calculate the difference in sales from one row to the next **(3)**. Notice that because there is no lag value available for the first row, the default of zero (0) is returned.
 
-#### ROWS clause
+#### Task 1.4: ROWS clause
 
 The ROWS and RANGE clauses further limit the rows within the partition by specifying start and end points within the partition. This is done by specifying a range of rows with respect to the current row either by logical association or physical association. Physical association is achieved by using the ROWS clause.
 
@@ -344,7 +344,7 @@ To achieve this, you use ROWS in combination with UNBOUNDED PRECEDING to limit t
 
     In the result set, we can scroll through the list that of books by country, sorted by number of downloads in ascending order. Here we see that for Germany, `Harry Potter - The Ultimate Quiz Book` (not to be confused with `Harry Potter - The Ultimate Quiz`, which had the most) had the fewest downloads, and `Burn for Me` had the fewest in Sweden **(2)**.
 
-### Approximate execution using HyperLogLog functions
+### Task 2: Approximate execution using HyperLogLog functions
 
 As Tailwind Traders starts to work with very large data sets, they struggle with slow running queries. For instance, obtaining a distinct count of all customers in the early stages of data exploration slows down the process. How can they speed up these queries?
 
@@ -382,9 +382,9 @@ To understand their requirements, let's first execute a distinct count over the 
 
     This means, if COUNT (DISTINCT) returns `1,000,000`, HyperLogLog will return a value in the range of `999,736` to `1,016,234`.
 
-## Using data loading best practices in Azure Synapse Analytics
+## Exercise 2: Using data loading best practices in Azure Synapse Analytics
 
-### Implement workload management
+### Task 1: Implement workload management
 
 Running mixed workloads can pose resource challenges on busy systems. Solution Architects seek ways to separate classic data warehousing activities (such as loading, transforming, and querying data) to ensure that enough resources exist to hit SLAs.
 
@@ -394,7 +394,7 @@ Workload importance influences the order in which a request gets access to resou
 
 Workload isolation reserves resources for a workload group. Resources reserved in a workload group are held exclusively for that workload group to ensure execution. Workload groups also allow you to define the amount of resources that are assigned per request, much like resource classes do. Workload groups give you the ability to reserve or cap the amount of resources a set of requests can consume. Finally, workload groups are a mechanism to apply rules, such as query timeout, to requests.
 
-### Create a workload classifier to add importance to certain queries
+### Task 2: Create a workload classifier to add importance to certain queries
 
 Tailwind Traders has asked you if there is a way to mark queries executed by the CEO as more important than others, so they don't appear slow due to heavy data loading or other workloads in the queue. You decide to create a workload classifier and add importance to prioritize the CEO's queries.
 
@@ -512,7 +512,7 @@ Tailwind Traders has asked you if there is a way to mark queries executed by the
 
     > **Please note**: If you see that any of these pipeline activities failed, that is OK. The activities within have a 2-minute timeout so they do not disrupt the queries run during this lab.
 
-### Reserve resources for specific workloads through workload isolation
+### Task 3: Reserve resources for specific workloads through workload isolation
 
 Workload isolation means resources are reserved, exclusively, for a workload group. Workload groups are containers for a set of requests and are the basis for how workload management, including workload isolation, is configured on a system. A simple workload management configuration can manage data loads and user queries.
 
@@ -642,9 +642,9 @@ Let's start by experimenting with different parameters.
 
     ![The run button is highlighted in the query toolbar.](media/synapse-studio-query-toolbar-run.png "Run")
 
-## Optimizing data warehouse query performance in Azure Synapse Analytics
+## Exercise 3: Optimizing data warehouse query performance in Azure Synapse Analytics
 
-### Identify performance issues related to tables
+### Task 1: Identify performance issues related to tables
 
 1. Select the **Develop** hub.
 
@@ -924,7 +924,7 @@ Let's start by experimenting with different parameters.
 
     ![Query execution step data movement](./media/lab3_shuffle_move_4.png)
 
-### Create hash distribution and columnstore index
+### Task 2: Create hash distribution and columnstore index
 
 1. Select the **Develop** hub.
 
@@ -990,7 +990,7 @@ Let's start by experimenting with different parameters.
 
     ![The script run time of 6 seconds is highlighted in the query results.](media/sale-hash-result.png "Hash table results")
 
-### Improve table structure with hash distribution and columnstore index
+### Task 3: Improve table structure with hash distribution and columnstore index
 
 1. Create an improved version of the table using CTAS (Create Table As Select):
 
@@ -1099,7 +1099,7 @@ Let's start by experimenting with different parameters.
     ) T
     ```
 
-### Improve further the table structure with partitioning
+### Task 4: Improve further the table structure with partitioning
 
 Table partitions enable you to divide your data into smaller groups of data. Partitioning can benefit data maintenance and query performance. Whether it benefits both or just one is dependent on how data is loaded and whether the same column can be used for both purposes, since partitioning can only be done on one column.
 
@@ -1154,7 +1154,7 @@ Notice the two partitioning strategies we've used here. The first partitioning s
 
 ![The queries are highlighted as described.](media/partition-ctas.png "Partition CTAS queries")
 
-#### Table distributions
+#### Task 4.1: Table distributions
 
 As you can see, the two partitioned tables are hash-distributed **(1)**. A distributed table appears as a single table, but the rows are actually stored across 60 distributions. The rows are distributed with a hash or round-robin algorithm.
 
@@ -1175,7 +1175,7 @@ Dedicated SQL pool uses this knowledge to minimize data movement during queries,
 - The table size on disk is more than 2 GB.
 - The table has frequent insert, update, and delete operations.
 
-#### Indexes
+#### Task 4.2: Indexes
 
 Looking at the query, also notice that both partitioned tables are configured with a **clustered columnstore index (2)**. There are different types of indexes you can use in dedicated SQL pool:
 
@@ -1192,7 +1192,7 @@ There are a few scenarios where clustered columnstore may not be a good option:
 - Columnstore tables may be less efficient for transient data. Consider heap and perhaps even temporary tables.
 - Small tables with less than 100 million rows. Consider heap tables.
 
-#### Partitioning
+#### Task 4.3: Partitioning
 
 Again, with this query, we partition the two tables differently **(3)** so we can evaluate the performance difference and decide which partitioning strategy is best long-term. The one we ultimately go with depends on various factors with Tailwind Trader's data. You may decide to keep both to optimize query performance, but then you double the data storage and maintenance requirements for managing the data.
 
@@ -1213,9 +1213,9 @@ While partitioning can be used to improve performance, creating a table with to
 
 When creating partitions on clustered columnstore tables, it is important to consider how many rows belong to each partition. For optimal compression and performance of clustered columnstore tables, a minimum of 1 million rows per distribution and partition is needed. Before partitions are created, dedicated SQL pools already divides each table into 60 distributed databases. Any partitioning added to a table is in addition to the distributions created behind the scenes. Using this example, if the sales fact table contained 36 monthly partitions, and given that dedicated SQL pool has 60 distributions, then the sales fact table should contain 60 million rows per month, or 2.1 billion rows when all months are populated. If a table contains fewer than the recommended minimum number of rows per partition, consider using fewer partitions in order to increase the number of rows per partition.
 
-## Improve query performance
+## Exercise 4: Improve query performance
 
-### Use materialized views
+### Task 1: Use materialized views
 
 As opposed to a standard view, a materialized view pre-computes, stores, and maintains its data in a dedicated SQL pool just like a table. Here is a basic comparison between standard and materialized views:
 
@@ -1448,7 +1448,7 @@ As opposed to a standard view, a materialized view pre-computes, stores, and mai
 
     ![Materialized view overhead after rebuild](./media/lab3_materialized_view_rebuilt.png)
 
-### Use result set caching
+### Task 2: Use result set caching
 
 Tailwind Trader's downstream reports are used by many users, which often means the same query is being executed repeatedly against data that does not change often. What can they do to improve the performance of these types of queries? How does this approach work when the underlying data changes?
 
@@ -1698,7 +1698,7 @@ Result cache is evicted regularly based on a time-aware least recently used algo
 
     Pausing a database won't empty the cached result set.
 
-### Create and update statistics
+### Task 3: Create and update statistics
 
 The more the dedicated SQL pool resource knows about your data, the faster it can execute queries. After loading data into the dedicated SQL pool, collecting statistics on your data is one of the most important things you can do for query optimization.
 
@@ -1762,7 +1762,7 @@ For example, if the optimizer estimates that the date your query is filtering on
     >
     >For example, if the optimizer estimates that the date your query is filtering on will return one row it will choose one plan. If it estimates that the selected date will return 1 million rows, it will return a different plan.
 
-### Create and update indexes
+### Task 4: Create and update indexes
 
 Clustered Columnstore Index vs. Heap vs. Clustered and Nonclustered
 
@@ -1844,7 +1844,7 @@ Clustered indexes may outperform clustered columnstore indexes when a single row
     >
     >Creating a non-clustered index on the `wwi_perf.Sale_Index` is based on the already existing clustered index. As a bonus exercise, try to create the same type of index on the `wwi_perf.Sale_Hash` table. Can you explain the difference in index creation time?
 
-### Ordered Clustered Columnstore Indexes
+### Task 5: Ordered Clustered Columnstore Indexes
 
 By default, for each table created without an index option, an internal component (index builder) creates a non-ordered clustered columnstore index (CCI) on it. Data in each column is compressed into a separate CCI rowgroup segment. There's metadata on each segment's value range, so segments that are outside the bounds of the query predicate aren't read from disk during query execution. CCI offers the highest level of data compression and reduces the size of segments to read so queries can run faster. However, because the index builder doesn't sort data before compressing them into segments, segments with overlapping value ranges could occur, causing queries to read more segments from disk and take longer to finish.
 

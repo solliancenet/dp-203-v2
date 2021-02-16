@@ -12,17 +12,17 @@ In this module, the student will be able to:
 - [Module 2 - Designing and Implementing the Serving Layer](#module-2---designing-and-implementing-the-serving-layer)
   - [Lab details](#lab-details)
     - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
-    - [Implementing a Star Schema](#implementing-a-star-schema)
+    - [Exercise 1: Implementing a Star Schema](#exercise-1-implementing-a-star-schema)
       - [Task 1: Create star schema in SQL database](#task-1-create-star-schema-in-sql-database)
-    - [Implementing a Snowflake Schema](#implementing-a-snowflake-schema)
+    - [Exercise 2: Implementing a Snowflake Schema](#exercise-2-implementing-a-snowflake-schema)
       - [Task 1: Create product snowflake schema in SQL database](#task-1-create-product-snowflake-schema-in-sql-database)
       - [Task 2: Create reseller snowflake schema in SQL database](#task-2-create-reseller-snowflake-schema-in-sql-database)
-    - [Implementing a Time Dimension Table](#implementing-a-time-dimension-table)
+    - [Exercise 3: Implementing a Time Dimension Table](#exercise-3-implementing-a-time-dimension-table)
       - [Task 1: Create time dimension table](#task-1-create-time-dimension-table)
       - [Task 2: Populate the time dimension table](#task-2-populate-the-time-dimension-table)
       - [Task 3: Load data into other tables](#task-3-load-data-into-other-tables)
       - [Task 4: Query data](#task-4-query-data)
-    - [Updating slowly changing dimensions with mapping data flows](#updating-slowly-changing-dimensions-with-mapping-data-flows)
+    - [Exercise 4: Updating slowly changing dimensions with mapping data flows](#exercise-4-updating-slowly-changing-dimensions-with-mapping-data-flows)
       - [Task 1: Create customer dimension table in dedicated SQL pool](#task-1-create-customer-dimension-table-in-dedicated-sql-pool)
       - [Task 2: Create the Azure SQL Database linked service](#task-2-create-the-azure-sql-database-linked-service)
       - [Task 3: Create a mapping data flow](#task-3-create-a-mapping-data-flow)
@@ -38,7 +38,7 @@ In this module, the student will be able to:
 
 2. Install [Azure Data Studio](https://docs.microsoft.com/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15) on your computer or lab virtual machine.
 
-### Implementing a Star Schema
+### Exercise 1: Implementing a Star Schema
 
 Star schema is a mature modeling approach widely adopted by relational data warehouses. It requires modelers to classify their model tables as either dimension or fact.
 
@@ -314,7 +314,7 @@ In this task, you create a star schema in SQL database, using foreign key constr
 
     ![The star schema is displayed with relationship keys.](media/star-schema-relationships.png "Star schema with relationships")
 
-### Implementing a Snowflake Schema
+### Exercise 2: Implementing a Snowflake Schema
 
 A **snowflake schema** is a set of normalized tables for a single business entity. For example, Adventure Works classifies products by category and subcategory. Categories are assigned to subcategories, and products are in turn assigned to subcategories. In the Adventure Works relational data warehouse, the product dimension is normalized and stored in three related tables: `DimProductCategory`, `DimProductSubcategory`, and `DimProduct`.
 
@@ -526,7 +526,7 @@ In this task, you add two new dimension tables: `DimCustomer` and `DimGeography`
 
     ![The finalized snowflake schema.](media/snowflake-schema-final.png "Snowflake schema")
 
-### Implementing a Time Dimension Table
+### Exercise 3: Implementing a Time Dimension Table
 
 A time dimension table is one of the most consistently used dimension tables. This type of table enables consistent granularity for temporal analysis and reporting and usually contains temporal hierarchies, such as `Year` > `Quarter` > `Month` > `Day`.
 
@@ -925,7 +925,7 @@ In this task, you load the dimension and fact tables with data from a public dat
 
     > Notice how using the **time dimension table** makes filtering by specific date parts and logical dates (such as fiscal year) easier and more performant that calculating date functions on the fly.
 
-### Updating slowly changing dimensions with mapping data flows
+### Exercise 4: Updating slowly changing dimensions with mapping data flows
 
 A **slowly changing dimension** (SCD) is one that appropriately manages change of dimension members over time. It applies when business entity values change over time, and in an ad hoc manner. A good example of a slowly changing dimension is a customer dimension, specifically its contact detail columns like email address and phone number. In contrast, some dimensions are considered to be rapidly changing when a dimension attribute changes often, like a stock's market price. The common design approach in these instances is to store rapidly changing attribute values in a fact table measure.
 

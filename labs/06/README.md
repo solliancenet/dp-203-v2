@@ -18,16 +18,17 @@ In this module the student will be able to:
   - [Lab 1 - Working with DataFrames](#lab-1---working-with-dataframes)
     - [Before the hands-on lab](#before-the-hands-on-lab)
       - [Task 1 - Create and configure the Azure Databricks workspace](#task-1---create-and-configure-the-azure-databricks-workspace)
-      - [Clone the Databricks archive](#clone-the-databricks-archive)
-    - [Complete the Describe a DataFrame notebook](#complete-the-describe-a-dataframe-notebook)
-    - [Complete the Working with DataFrames notebook](#complete-the-working-with-dataframes-notebook)
-    - [Complete the Display Function notebook](#complete-the-display-function-notebook)
-    - [Complete the Distinct Articles exercise notebook](#complete-the-distinct-articles-exercise-notebook)
+      - [Task 2: Clone the Databricks archive](#task-2-clone-the-databricks-archive)
+    - [Exercise 1: Complete the Describe a DataFrame notebook](#exercise-1-complete-the-describe-a-dataframe-notebook)
+    - [Exercise 2: Complete the Working with DataFrames notebook](#exercise-2-complete-the-working-with-dataframes-notebook)
+    - [Exercise 3: Complete the Display Function notebook](#exercise-3-complete-the-display-function-notebook)
+    - [Exercise 4: Complete the Distinct Articles exercise notebook](#exercise-4-complete-the-distinct-articles-exercise-notebook)
   - [Lab 2 - Working with DataFrames advanced methods](#lab-2---working-with-dataframes-advanced-methods)
-    - [Clone the Databricks archive](#clone-the-databricks-archive-1)
-    - [Complete the Date and Time Manipulation notebook](#complete-the-date-and-time-manipulation-notebook)
-    - [Complete the Use Aggregate Functions notebook](#complete-the-use-aggregate-functions-notebook)
-    - [Complete the De-Duping Data exercise notebook](#complete-the-de-duping-data-exercise-notebook)
+    - [Before the hands-on lab](#before-the-hands-on-lab-1)
+      - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive)
+    - [Exercise 2: Complete the Date and Time Manipulation notebook](#exercise-2-complete-the-date-and-time-manipulation-notebook)
+    - [Exercise 3: Complete the Use Aggregate Functions notebook](#exercise-3-complete-the-use-aggregate-functions-notebook)
+    - [Exercise 4: Complete the De-Duping Data exercise notebook](#exercise-4-complete-the-de-duping-data-exercise-notebook)
 
 ## Lab 1 - Working with DataFrames
 
@@ -41,7 +42,7 @@ Before stepping through the exercises in this lab, make sure you have access to 
 
 Follow the [lab 06 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/06/lab-01-setup.md) to create and configure the workspace.
 
-#### Clone the Databricks archive
+#### Task 2: Clone the Databricks archive
 
 1. If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select **Launch Workspace**.
 1. In the left pane, select **Workspace** > **Users**, and select your username (the entry with the house icon).
@@ -58,7 +59,7 @@ Follow the [lab 06 setup instructions](https://github.com/solliancenet/microsoft
 1. Select **Import**.
 1. Select the **04-Working-With-Dataframes** folder that appears.
 
-### Complete the Describe a DataFrame notebook
+### Exercise 1: Complete the Describe a DataFrame notebook
 
 Open the **1.Describe-a-dataframe** notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within.
 
@@ -73,7 +74,7 @@ Within the notebook, you will:
 
 After you've completed the notebook, return to this screen, and continue to the next step.
 
-### Complete the Working with DataFrames notebook
+### Exercise 2: Complete the Working with DataFrames notebook
 
 In your Azure Databricks workspace, open the **04-Working-With-Dataframes** folder that you imported within your user folder.
 
@@ -87,7 +88,7 @@ Within the notebook, you will:
 
 After you've completed the notebook, return to this screen, and continue to the next step.
 
-### Complete the Display Function notebook
+### Exercise 3: Complete the Display Function notebook
 
 In your Azure Databricks workspace, open the **04-Working-With-Dataframes** folder that you imported within your user folder.
 
@@ -107,7 +108,7 @@ Within the notebook, you will:
 
 After you've completed the notebook, return to this screen, and continue to the next step.
 
-### Complete the Distinct Articles exercise notebook
+### Exercise 4: Complete the Distinct Articles exercise notebook
 
 In your Azure Databricks workspace, open the **04-Working-With-Dataframes** folder that you imported within your user folder.
 
@@ -123,7 +124,8 @@ After you've completed the notebook, return to this screen, and continue to the 
 
 This lab builds on the Azure Databricks DataFrames concepts learned in the previous lab above by exploring some advanced methods data engineers can use to read, write, and transform data using DataFrames.
 
-### Clone the Databricks archive
+### Before the hands-on lab
+#### Task 1: Clone the Databricks archive
 
 1. If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select **Launch Workspace**.
 1. In the left pane, select **Workspace** > **Users**, and select your username (the entry with the house icon).
@@ -140,7 +142,7 @@ This lab builds on the Azure Databricks DataFrames concepts learned in the previ
 1. Select **Import**.
 1. Select the **07-Dataframe-Advanced-Methods** folder that appears.
 
-### Complete the Date and Time Manipulation notebook
+### Exercise 2: Complete the Date and Time Manipulation notebook
 
 Open the **1.DateTime-Manipulation** notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within.
 
@@ -151,7 +153,7 @@ Within the notebook, you will:
 
 After you've completed the notebook, return to this screen, and continue to the next step.
 
-### Complete the Use Aggregate Functions notebook
+### Exercise 3: Complete the Use Aggregate Functions notebook
 
 In your Azure Databricks workspace, open the **07-Dataframe-Advanced-Methods** folder that you imported within your user folder.
 
@@ -161,7 +163,7 @@ Within the notebook, you will learn various aggregate functions.
 
 After you've completed the notebook, return to this screen, and continue to the next step.
 
-### Complete the De-Duping Data exercise notebook
+### Exercise 4: Complete the De-Duping Data exercise notebook
 
 In your Azure Databricks workspace, open the **07-Dataframe-Advanced-Methods** folder that you imported within your user folder.
 

@@ -15,8 +15,8 @@ In this module, the student will be able to:
   - [Lab 1 - Delta Lake architecture](#lab-1---delta-lake-architecture)
     - [Before the hands-on lab](#before-the-hands-on-lab)
       - [Task 1 - Create and configure the Azure Databricks workspace](#task-1---create-and-configure-the-azure-databricks-workspace)
-      - [Clone the Databricks archive](#clone-the-databricks-archive)
-    - [Complete the following notebook](#complete-the-following-notebook)
+        - [Clone the Databricks archive](#clone-the-databricks-archive)
+    - [Exercise 1: Complete the following notebook](#exercise-1-complete-the-following-notebook)
   - [Lab 2 - Working with Apache Spark in Synapse Analytics](#lab-2---working-with-apache-spark-in-synapse-analytics)
     - [Before the hands-on lab](#before-the-hands-on-lab-1)
       - [Task 1 - Create and configure the Azure Synapse Analytics workspace](#task-1---create-and-configure-the-azure-synapse-analytics-workspace)
@@ -49,7 +49,7 @@ Before stepping through the exercises in this lab, make sure you have access to 
 
 Follow the [lab 01 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/01/lab-01-setup.md) to create and configure the workspace.
 
-#### Clone the Databricks archive
+##### Clone the Databricks archive
 
 1. If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select **Launch Workspace**.
 1. In the left pane, select **Workspace** > **Users**, and select your username (the entry with the house icon).
@@ -66,7 +66,7 @@ Follow the [lab 01 setup instructions](https://github.com/solliancenet/microsoft
 1. Select **Import**.
 1. Select the **11-Delta-Lake-Architecture** folder that appears.
 
-### Complete the following notebook
+### Exercise 1: Complete the following notebook
 
 Open the **1-Delta-Architecture** notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within.
 

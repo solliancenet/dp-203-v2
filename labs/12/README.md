@@ -12,19 +12,21 @@ In this module, the student will be able to:
 
 - [Module 12 - Support Hybrid Transactional Analytical Processing (HTAP) with Azure Synapse Link](#module-12---support-hybrid-transactional-analytical-processing-htap-with-azure-synapse-link)
   - [Lab details](#lab-details)
-  - [Lab setup](#lab-setup)
-    - [Create linked service](#create-linked-service)
-    - [Create dataset](#create-dataset)
-  - [Configuring Azure Synapse Link with Azure Cosmos DB](#configuring-azure-synapse-link-with-azure-cosmos-db)
-    - [Enable Azure Synapse Link](#enable-azure-synapse-link)
-    - [Create a new Azure Cosmos DB container](#create-a-new-azure-cosmos-db-container)
-    - [Create and run a copy pipeline](#create-and-run-a-copy-pipeline)
-  - [Querying Azure Cosmos DB with Apache Spark for Synapse Analytics](#querying-azure-cosmos-db-with-apache-spark-for-synapse-analytics)
-  - [Querying Azure Cosmos DB with serverless SQL pool for Azure Synapse Analytics](#querying-azure-cosmos-db-with-serverless-sql-pool-for-azure-synapse-analytics)
+  - [Exercise 1: Lab setup](#exercise-1-lab-setup)
+    - [Task 1: Create linked service](#task-1-create-linked-service)
+    - [Task 2: Create dataset](#task-2-create-dataset)
+  - [Exercise 2: Configuring Azure Synapse Link with Azure Cosmos DB](#exercise-2-configuring-azure-synapse-link-with-azure-cosmos-db)
+    - [Task 1: Enable Azure Synapse Link](#task-1-enable-azure-synapse-link)
+    - [Task 2: Create a new Azure Cosmos DB container](#task-2-create-a-new-azure-cosmos-db-container)
+    - [Task 3: Create and run a copy pipeline](#task-3-create-and-run-a-copy-pipeline)
+  - [Exercise 3: Querying Azure Cosmos DB with Apache Spark for Synapse Analytics](#exercise-3-querying-azure-cosmos-db-with-apache-spark-for-synapse-analytics)
+    - [Task 1: Create a notebook](#task-1-create-a-notebook)
+  - [Exercise 4: Querying Azure Cosmos DB with serverless SQL pool for Azure Synapse Analytics](#exercise-4-querying-azure-cosmos-db-with-serverless-sql-pool-for-azure-synapse-analytics)
+    - [Task 1: Create a new SQL script](#task-1-create-a-new-sql-script)
 
-## Lab setup
+## Exercise 1: Lab setup
 
-### Create linked service
+### Task 1: Create linked service
 
 Complete the steps below to create an Azure Cosmos DB linked service.
 
@@ -42,7 +44,7 @@ Complete the steps below to create an Azure Cosmos DB linked service.
 
     ![New Azure Cosmos DB linked service.](media/create-cosmos-db-linked-service.png "New linked service")
 
-### Create dataset
+### Task 2: Create dataset
 
 Complete the steps below to create the `asal400_customerprofile_cosmosdb` dataset.
 
@@ -80,7 +82,7 @@ Complete the steps below to create the `asal400_customerprofile_cosmosdb` datase
 
     ![Publish all is highlighted.](media/publish-all-1.png "Publish all")
 
-## Configuring Azure Synapse Link with Azure Cosmos DB
+## Exercise 2: Configuring Azure Synapse Link with Azure Cosmos DB
 
 Tailwind Traders uses Azure Cosmos DB to store user profile data from their eCommerce site. The NoSQL document store provided by the Azure Cosmos DB SQL API provides the familiarity of managing their data using SQL syntax, while being able to read and write the files at a massive, global scale.
 
@@ -90,7 +92,7 @@ You decide to enable Azure Synapse Link for Cosmos DB and enable the analytical 
 
 By combining the distributed scale of Cosmos DB's transactional processing with the built-in analytical store and the computing power of Azure Synapse Analytics, Azure Synapse Link enables a Hybrid Transactional/Analytical Processing (HTAP) architecture for optimizing Tailwind Trader's business processes. This integration eliminates ETL processes, enabling business analysts, data engineers & data scientists to self-serve and run near real-time BI, analytics, and Machine Learning pipelines over operational data.
 
-### Enable Azure Synapse Link
+### Task 1: Enable Azure Synapse Link
 
 1. Navigate to the Azure portal (<https://portal.azure.com>) and open the `synapse-in-a-day` resource group (or whichever resource group you are using for the demo).
 
@@ -116,7 +118,7 @@ By combining the distributed scale of Cosmos DB's transactional processing with 
 
     ![The operation completed successfully.](media/notifications-completed.png "Notifications")
 
-### Create a new Azure Cosmos DB container
+### Task 2: Create a new Azure Cosmos DB container
 
 Tailwind Traders has an Azure Cosmos DB container named `OnlineUserProfile01`. Since we enabled the Azure Synapse Link feature _after_ the container was already created, we cannot enable the analytical store on the container. We will create a new container that has the same partition key and enable the analytical store.
 
@@ -148,7 +150,7 @@ After creating the container, we will create a new Synapse Pipeline to copy data
 
     > **Note**: Take note of these values. You will need this information when creating the SQL view toward the end of the demo.
 
-### Create and run a copy pipeline
+### Task 3: Create and run a copy pipeline
 
 Now that we have the new Azure Cosmos DB container with the analytical store enabled, we need to copy the contents of the existing container by using a Synapse Pipeline.
 
@@ -202,11 +204,13 @@ Now that we have the new Azure Cosmos DB container with the analytical store ena
 
     > This may take around 4 minutes to complete.
 
-## Querying Azure Cosmos DB with Apache Spark for Synapse Analytics
+## Exercise 3: Querying Azure Cosmos DB with Apache Spark for Synapse Analytics
 
 Tailwind Traders wants to use Apache Spark to run analytical queries against the new Azure Cosmos DB container. In this segment, we will use built-in gestures in Synapse Studio to quickly create a Synapse Notebook that loads data from the analytical store of the HTAP-enabled container, without impacting the transactional store.
 
 Tailwind Traders is trying to solve how they can use the list of preferred products identified with each user, coupled with any matching product IDs in their review history, to show a list of all preferred product reviews.
+
+### Task 1: Create a notebook
 
 1. Navigate to the **Data** hub.
 
@@ -313,9 +317,11 @@ Tailwind Traders is trying to solve how they can use the list of preferred produ
 
     ![Cell output.](media/cell7.png "Cell 7 results")
 
-## Querying Azure Cosmos DB with serverless SQL pool for Azure Synapse Analytics
+## Exercise 4: Querying Azure Cosmos DB with serverless SQL pool for Azure Synapse Analytics
 
 Tailwind Traders wants to explore the Azure Cosmos DB analytical store with T-SQL. Ideally, they can create views that can then be used for joins with other analytical store containers, files from the data lake, or accessed by external tools, like Power BI.
+
+### Task 1: Create a new SQL script
 
 1. Navigate to the **Develop** hub.
 

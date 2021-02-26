@@ -293,12 +293,17 @@ To do this, you decide to build window functions that use the `PERCENTILE_CONT` 
     ```sql
     --LAG Function
     SELECT ProductId,
-        [Hour] AS SalesHour,
-        TotalAmount AS CurrentSalesTotal,
-        LAG(TotalAmount, 1,0) OVER (ORDER BY [Hour]) AS PreviousSalesTotal,
-        TotalAmount - LAG(TotalAmount,1,0) OVER (ORDER BY [Hour]) AS Diff
-    FROM [wwi_perf].[Sale_Index]
-    WHERE ProductId = 3848 AND [Hour] BETWEEN 8 AND 20;
+        [Hour],
+        [HourSalesTotal],
+        LAG(HourSalesTotal,1,0) OVER (ORDER BY [Hour]) AS PreviousHouseSalesTotal,
+        [HourSalesTotal] - LAG(HourSalesTotal,1,0) OVER (ORDER BY [Hour]) AS Diff
+    FROM ( 
+        SELECT ProductId,
+            [Hour],
+            SUM(TotalAmount) AS HourSalesTotal
+        FROM [wwi_perf].[Sale_Index]
+        WHERE ProductId = 3848 AND [Hour] BETWEEN 8 AND 20
+        GROUP BY ProductID, [Hour]) as HourTotals
     ```
 
     Tailwind Traders wants to compare the sales totals for a product over an hourly basis over time, showing the difference in value.

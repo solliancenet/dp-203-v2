@@ -704,7 +704,7 @@ Let's start by experimenting with different parameters.
 
     ![The run button is highlighted in the query toolbar.](media/synapse-studio-query-toolbar-run.png "Run")
   
-    The script takes up to **30 seconds** to execute and returns the result. There is clearly something wrong with the `Sale_Heap` table that induces the performance hit.
+    The script takes up to **0 seconds** to execute and returns the result. There is clearly something wrong with the `Sale_Heap` table that induces the performance hit.
 
     > If the script is still running after one minute, click on Cancel.
 

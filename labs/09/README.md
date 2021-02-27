@@ -210,6 +210,14 @@ In this segment of the lab, you will create a Synapse Spark notebook to make the
 
     The Parquet write method on the dataframe in the Notebook cell created this directory since it did not previously exist.
 
+17. Return to the notebook. Select **Stop session** on the upper-right of the notebook. We want to stop the session to free up the compute resources for when we run the notebook inside the pipeline in the next section.
+
+    ![The stop session button is highlighted.](media/notebook-stop-session.png "Stop session")
+
+18. Select **Stop now** in the Stop current session.
+
+    ![The stop now button is highlighted.](media/notebook-stop-session-stop.png "Stop current session")
+
 ### Task 2: Add the Notebook to the pipeline
 
 Tailwind Traders wants to execute this notebook after the Mapping Data Flow runs as part of their orchestration process. To do this, we will add this notebook to our pipeline as a new Notebook activity.

@@ -178,7 +178,7 @@ Now that we have the new Azure Cosmos DB container with the analytical store ena
 
     ![Azure Cosmos DB is selected.](media/dataset-type.png "New dataset")
 
-7. For **Name**, enter **`cosmos_db_htap` (1)**. Select the **`asacosmosdb01` (2)** **Linked service**. Select **From connection/store** under **Import schema (3)**, then select **OK (4)**.
+7. For **Name**, enter **`cosmos_db_htap` (1)**. Select the **`asacosmosdb01` (2)** **Linked service**. Select the **`UserProfileHTAP` (3)** **Collection**. Select **From connection/store** under **Import schema (4)**, then select **OK (5)**.
 
     ![The form is configured as described.](media/dataset-properties.png "Set properties")
 

@@ -448,6 +448,8 @@ To test out the permissions, we will add our own account to the `tailwind-reader
 
     Notice that the `tailwind-history-owners` group is assigned to the **Storage Blob Data Owner** group **(3)**, and `tailwind-readers` is assigned to the **Storage Blob Data Reader** group **(4)**.
 
+    > **Note**: You may need to navigate back to the resource group, then come back to this screen to see all of the new role assignments.
+
 ### Task 4: Configure data lake security - Access Control Lists (ACLs)
 
 1. Select **Storage Explorer (preview)** on the left-hand menu **(1)**. Expand CONTAINERS and select the **wwi-02** container **(2)**. Open the **sale-small** folder **(3)**, right-click on the **Year=2019** folder **(4)**, then select **Manage Access.. (5)**.

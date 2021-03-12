@@ -1,4 +1,4 @@
-# Module 15 - Creating a Stream Processing Solution with Event Hubs and Azure Databricks
+# Module 15 - Create a stream processing solution with Event Hubs and Azure Databricks
 
 In this module, students will learn how to ingest and process streaming data at scale with Event Hubs and Spark Structured Streaming in Azure Databricks. The student will learn the key features and uses of Structured Streaming. The student will implement sliding windows to aggregate over chunks of data and apply watermarking to remove stale data. Finally, the student will connect to Event Hubs to read and write streams.
 
@@ -12,7 +12,7 @@ In this module, the student will be able to:
 
 ## Lab details
 
-- [Module 15 - Creating a Stream Processing Solution with Event Hubs and Azure Databricks](#module-15---creating-a-stream-processing-solution-with-event-hubs-and-azure-databricks)
+- [Module 15 - Create a stream processing solution with Event Hubs and Azure Databricks](#module-15---create-a-stream-processing-solution-with-event-hubs-and-azure-databricks)
   - [Lab details](#lab-details)
   - [Concepts](#concepts)
   - [Event Hubs and Spark Structured Streaming](#event-hubs-and-spark-structured-streaming)

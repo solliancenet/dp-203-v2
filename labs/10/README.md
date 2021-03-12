@@ -1,4 +1,4 @@
-# Module 10 - Analyze Data and Optimize Query Performance with Dedicated SQL Pools in Azure Synapse
+# Module 10 - Optimize query performance with dedicated SQL pools in Azure Synapse
 
 In this module, students will learn strategies to optimize data storage and processing when using dedicated SQL pools in Azure Synapse Analytics. The student will know how to use developer features, such as windowing and HyperLogLog functions, use data loading best practices, and optimize and improve query performance.
 
@@ -10,9 +10,9 @@ In this module, the student will be able to:
 
 ## Lab details
 
-- [Module 10 - Analyze Data and Optimize Query Performance with Dedicated SQL Pools in Azure Synapse](#module-10---analyze-data-and-optimize-query-performance-with-dedicated-sql-pools-in-azure-synapse)
+- [Module 10 - Optimize query performance with dedicated SQL pools in Azure Synapse](#module-10---optimize-query-performance-with-dedicated-sql-pools-in-azure-synapse)
   - [Lab details](#lab-details)
-  - [Lab setup](#lab-setup)
+  - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
   - [Exercise 1: Understanding developer features of Azure Synapse Analytics](#exercise-1-understanding-developer-features-of-azure-synapse-analytics)
     - [Task 1: Using window functions](#task-1-using-window-functions)
       - [Task 1.1: OVER clause](#task-11-over-clause)
@@ -39,7 +39,22 @@ In this module, the student will be able to:
     - [Task 4: Create and update indexes](#task-4-create-and-update-indexes)
     - [Task 5: Ordered Clustered Columnstore Indexes](#task-5-ordered-clustered-columnstore-indexes)
 
-## Lab setup
+## Lab setup and pre-requisites
+
+**Complete the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/04/README.md)** for this module.
+
+Note, the following modules share this same environment:
+
+- [Module 4](labs/04/README.md)
+- [Module 5](labs/05/README.md)
+- [Module 7](labs/07/README.md)
+- [Module 8](labs/08/README.md)
+- [Module 9](labs/09/README.md)
+- [Module 10](labs/10/README.md)
+- [Module 11](labs/11/README.md)
+- [Module 12](labs/12/README.md)
+- [Module 13](labs/13/README.md)
+- [Module 16](labs/16/README.md)
 
 Before you begin, we need to create a few new tables and load them with data.
 

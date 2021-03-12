@@ -1,4 +1,4 @@
-# Module 6 - Data Exploration and Transformation in Azure Databricks
+# Module 6 - Data exploration and transformation in Azure Databricks
 
 This module teaches how to use various Apache Spark DataFrame methods to explore and transform data in Azure Databricks. The student will learn how to perform standard DataFrame methods to explore and transform data. They will also learn how to perform more advanced tasks, such as removing duplicate data, manipulate date/time values, rename columns, and aggregate data.
 
@@ -13,7 +13,7 @@ In this module the student will be able to:
 
 ## Lab details
 
-- [Module 6 - Data Exploration and Transformation in Azure Databricks](#module-6---data-exploration-and-transformation-in-azure-databricks)
+- [Module 6 - Data exploration and transformation in Azure Databricks](#module-6---data-exploration-and-transformation-in-azure-databricks)
   - [Lab details](#lab-details)
   - [Lab 1 - Working with DataFrames](#lab-1---working-with-dataframes)
     - [Before the hands-on lab](#before-the-hands-on-lab)

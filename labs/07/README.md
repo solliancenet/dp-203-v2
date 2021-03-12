@@ -1,4 +1,4 @@
-# Module 7 - Ingesting and Loading Data into the Data Warehouse
+# Module 7 - Ingest and load data into the Data Warehouse
 
 This module teaches students how to ingest data into the data warehouse through T-SQL scripts and Synapse Analytics integration pipelines. The student will learn how to load data into Synapse dedicated SQL pools with PolyBase and COPY using T-SQL. The student will also learn how to use workload management along with a Copy activity in a Azure Synapse pipeline for petabyte-scale data ingestion.
 
@@ -10,8 +10,9 @@ In this module, the student will be able to:
 
 ## Lab details
 
-- [Module 7 - Ingesting and Loading Data into the Data Warehouse](#module-7---ingesting-and-loading-data-into-the-data-warehouse)
+- [Module 7 - Ingest and load data into the Data Warehouse](#module-7---ingest-and-load-data-into-the-data-warehouse)
   - [Lab details](#lab-details)
+  - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
   - [Exercise 1: Import data with PolyBase and COPY using T-SQL](#exercise-1-import-data-with-polybase-and-copy-using-t-sql)
     - [Task 1: Create staging tables](#task-1-create-staging-tables)
     - [Task 2: Configure and run PolyBase load operation](#task-2-configure-and-run-polybase-load-operation)
@@ -22,6 +23,23 @@ In this module, the student will be able to:
   - [Exercise 2: Petabyte-scale ingestion with Azure Synapse Pipelines](#exercise-2-petabyte-scale-ingestion-with-azure-synapse-pipelines)
     - [Task 1: Configure workload management classification](#task-1-configure-workload-management-classification)
     - [Task 2: Create pipeline with copy activity](#task-2-create-pipeline-with-copy-activity)
+
+## Lab setup and pre-requisites
+
+**Complete the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/04/README.md)** for this module.
+
+Note, the following modules share this same environment:
+
+- [Module 4](labs/04/README.md)
+- [Module 5](labs/05/README.md)
+- [Module 7](labs/07/README.md)
+- [Module 8](labs/08/README.md)
+- [Module 9](labs/09/README.md)
+- [Module 10](labs/10/README.md)
+- [Module 11](labs/11/README.md)
+- [Module 12](labs/12/README.md)
+- [Module 13](labs/13/README.md)
+- [Module 16](labs/16/README.md)
 
 ## Exercise 1: Import data with PolyBase and COPY using T-SQL
 

@@ -1,4 +1,4 @@
-# Module 5 - Exploring, Transforming, and Loading Data into the Data Warehouse using Apache Spark
+# Module 5 - Explore, transform, and load data into the Data Warehouse using Apache Spark
 
 This module teaches how to explore data stored in a data lake, transform the data, and load data into a relational data store. The student will explore Parquet and JSON files and use techniques to query and transform JSON files with hierarchical structures. Then the student will use Apache Spark to load data into the data warehouse and join Parquet data in the data lake with data in the dedicated SQL pool.
 
@@ -11,8 +11,9 @@ In this module, the student will be able to:
 
 ## Lab details
 
-- [Module 5 - Exploring, Transforming, and Loading Data into the Data Warehouse using Apache Spark](#module-5---exploring-transforming-and-loading-data-into-the-data-warehouse-using-apache-spark)
+- [Module 5 - Explore, transform, and load data into the Data Warehouse using Apache Spark](#module-5---explore-transform-and-load-data-into-the-data-warehouse-using-apache-spark)
   - [Lab details](#lab-details)
+  - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
   - [Exercise 1: Perform Data Exploration in Synapse Studio](#exercise-1-perform-data-exploration-in-synapse-studio)
     - [Task 1: Exploring data using the Preview functionality of Synapse Studio](#task-1-exploring-data-using-the-preview-functionality-of-synapse-studio)
     - [Task 2: Using serverless SQL pools to explore files](#task-2-using-serverless-sql-pools-to-explore-files)
@@ -23,6 +24,23 @@ In this module, the student will be able to:
     - [Task 1: Query and transform JSON data with Apache Spark for Azure Synapse](#task-1-query-and-transform-json-data-with-apache-spark-for-azure-synapse)
   - [Exercise 4: Integrating SQL and Spark pools in Azure Synapse Analytics](#exercise-4-integrating-sql-and-spark-pools-in-azure-synapse-analytics)
     - [Task 1: Update notebook](#task-1-update-notebook)
+
+## Lab setup and pre-requisites
+
+**Complete the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/04/README.md)** for this module.
+
+Note, the following modules share this same environment:
+
+- [Module 4](labs/04/README.md)
+- [Module 5](labs/05/README.md)
+- [Module 7](labs/07/README.md)
+- [Module 8](labs/08/README.md)
+- [Module 9](labs/09/README.md)
+- [Module 10](labs/10/README.md)
+- [Module 11](labs/11/README.md)
+- [Module 12](labs/12/README.md)
+- [Module 13](labs/13/README.md)
+- [Module 16](labs/16/README.md)
 
 ## Exercise 1: Perform Data Exploration in Synapse Studio
 

@@ -13,6 +13,7 @@ In this module, the student will be able to:
 - [Module 13 - End-to-end security with Azure Synapse Analytics](#module-13---end-to-end-security-with-azure-synapse-analytics)
   - [Lab details](#lab-details)
   - [Resource naming throughout this lab](#resource-naming-throughout-this-lab)
+  - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
   - [Exercise 1 - Securing Azure Synapse Analytics supporting infrastructure](#exercise-1---securing-azure-synapse-analytics-supporting-infrastructure)
     - [Task 1 - Observing the SQL Active Directory admin](#task-1---observing-the-sql-active-directory-admin)
     - [Task 2 - Manage IP firewall rules](#task-2---manage-ip-firewall-rules)
@@ -52,6 +53,23 @@ For the remainder of this guide, the following terms will be used for various AS
 | Azure Key Vault Private Endpoint Name  | `KeyVaultPrivateEndpointName`                                                 |
 | Azure Subscription                | `WorkspaceSubscription`                                                            |
 | Azure Region                      | `WorkspaceRegion`                                                                  |
+
+## Lab setup and pre-requisites
+
+**Complete the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/04/README.md)** for this module.
+
+Note, the following modules share this same environment:
+
+- [Module 4](labs/04/README.md)
+- [Module 5](labs/05/README.md)
+- [Module 7](labs/07/README.md)
+- [Module 8](labs/08/README.md)
+- [Module 9](labs/09/README.md)
+- [Module 10](labs/10/README.md)
+- [Module 11](labs/11/README.md)
+- [Module 12](labs/12/README.md)
+- [Module 13](labs/13/README.md)
+- [Module 16](labs/16/README.md)
 
 ## Exercise 1 - Securing Azure Synapse Analytics supporting infrastructure
 

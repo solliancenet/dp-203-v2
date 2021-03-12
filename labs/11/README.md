@@ -1,4 +1,4 @@
-# Module 11 - Analyzing and Optimizing Data Warehouse Storage
+# Module 11 - Analyze and optimize Data Warehouse storage
 
 In this module, students will learn how to analyze then optimize the data storage of the Azure Synapse dedicated SQL pools. The student will know techniques to understand table space usage and column store storage details. Next the student will know how to compare storage requirements between identical tables that use different data types. Finally, the student will observe the impact materialized views have when executed in place of complex queries and learn how to avoid extensive logging by optimizing delete operations.
 
@@ -11,8 +11,9 @@ In this module, the student will be able to:
 
 ## Lab details
 
-- [Module 11 - Analyzing and Optimizing Data Warehouse Storage](#module-11---analyzing-and-optimizing-data-warehouse-storage)
+- [Module 11 - Analyze and optimize Data Warehouse storage](#module-11---analyze-and-optimize-data-warehouse-storage)
   - [Lab details](#lab-details)
+  - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
   - [Exercise 1 - Check for skewed data and space usage](#exercise-1---check-for-skewed-data-and-space-usage)
     - [Task 1 - Analyze the space used by tables](#task-1---analyze-the-space-used-by-tables)
     - [Task 2 - Use a more advanced approach to understand table space usage](#task-2---use-a-more-advanced-approach-to-understand-table-space-usage)
@@ -29,6 +30,23 @@ In this module, the student will be able to:
   - [Exercise 5 - Avoid extensive logging](#exercise-5---avoid-extensive-logging)
     - [Task 1 - Explore rules for minimally logged operations](#task-1---explore-rules-for-minimally-logged-operations)
     - [Task 2 - Optimizing a delete operation](#task-2---optimizing-a-delete-operation)
+
+## Lab setup and pre-requisites
+
+**Complete the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/04/README.md)** for this module.
+
+Note, the following modules share this same environment:
+
+- [Module 4](labs/04/README.md)
+- [Module 5](labs/05/README.md)
+- [Module 7](labs/07/README.md)
+- [Module 8](labs/08/README.md)
+- [Module 9](labs/09/README.md)
+- [Module 10](labs/10/README.md)
+- [Module 11](labs/11/README.md)
+- [Module 12](labs/12/README.md)
+- [Module 13](labs/13/README.md)
+- [Module 16](labs/16/README.md)
 
 ## Exercise 1 - Check for skewed data and space usage
 

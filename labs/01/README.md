@@ -1,4 +1,4 @@
-# Module 1 - Designing and Implementing Data Storage
+# Module 1 - Explore compute and storage options for data engineering workloads
 
 This module teaches ways to structure the data lake, and to optimize the files for exploration, streaming, and batch workloads. The student will learn how to organize the data lake into levels of data refinement as they transform files through batch and stream processing. Then they will learn how to create indexes on their datasets, such as CSV, JSON, and Parquet files, and use them for potential query and workload acceleration.
 
@@ -10,7 +10,7 @@ In this module, the student will be able to:
 
 ## Lab details
 
-- [Module 1 - Designing and Implementing Data Storage](#module-1---designing-and-implementing-data-storage)
+- [Module 1 - Explore compute and storage options for data engineering workloads](#module-1---explore-compute-and-storage-options-for-data-engineering-workloads)
   - [Lab details](#lab-details)
   - [Lab 1 - Delta Lake architecture](#lab-1---delta-lake-architecture)
     - [Before the hands-on lab](#before-the-hands-on-lab)
@@ -110,6 +110,9 @@ from com.microsoft.hyperspace.index import *
 
 # Disable BroadcastHashJoin, so Spark will use standard SortMergeJoin. Currently, Hyperspace indexes utilize SortMergeJoin to speed up query.
 spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
+
+# Replace the value below with the name of your primary ADLS Gen2 account for your Synapse workspace
+datalake = 'REPLACE_WITH_YOUR_DATALAKE_NAME'
 
 dfSales = spark.read.parquet("abfss://wwi-02@asagadatalake<unique_suffix>.dfs.core.windows.net/sale-small/Year=2019/Quarter=Q4/Month=12/*/*.parquet")
 dfSales.show(10)

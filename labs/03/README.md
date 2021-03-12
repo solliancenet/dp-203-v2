@@ -1,4 +1,4 @@
-# Module 3 - High-level data engineering design
+# Module 3 - Data engineering considerations for source files
 
 ## Team whiteboard activity
 

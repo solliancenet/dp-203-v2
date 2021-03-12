@@ -1,4 +1,4 @@
-# Module 2 - Designing and Implementing the Serving Layer
+# Module 2 - Design and Implement the serving layer
 
 This module teaches how to design and implement data stores in a modern data warehouse to optimize analytical workloads. The student will learn how to design a multidimensional schema to store fact and dimension data. Then the student will learn how to populate slowly changing dimensions through incremental data loading from Azure Data Factory.
 
@@ -9,7 +9,7 @@ In this module, the student will be able to:
 
 ## Lab details
 
-- [Module 2 - Designing and Implementing the Serving Layer](#module-2---designing-and-implementing-the-serving-layer)
+- [Module 2 - Design and Implement the serving layer](#module-2---design-and-implement-the-serving-layer)
   - [Lab details](#lab-details)
     - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
     - [Exercise 1: Implementing a Star Schema](#exercise-1-implementing-a-star-schema)

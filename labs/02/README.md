@@ -928,7 +928,19 @@ In this task, you load the dimension and fact tables with data from a public dat
 
 ### Exercise 4: Implementing a Star Schema in Synapse Analytics
 
-Star schema models are useful beyond SQL Server data warehouses. When building a big data solution in Azure Synapse you will use the same modeling principles. However, the technical implementation requires adjustments.
+For larger data sets you may implement your data warehouse in Azure Synapse instead of SQL Server. Star schema models are still a best practice for modeling data in Synapse dedicated SQL pools. You may notice some differences with creating a tables in Synapse Analytics vs. SQL database, but the same data modeling principles apply.
+
+ When you create a star schema/snowflake schema in Synapse, it's a bit different than doing so in SQL because you do not have foreign keys and unique value constraints like you do in SQL. The other thing you may notice is in the dimension tables you create, you configure a `DISTRIBUTION` value of `REPLICATE` and define a clustered columnstore index (CCI).
+
+Since Synapse Analytics is a [massively parallel processing](https://docs.microsoft.com/azure/architecture/data-guide/relational-data/data-warehousing#data-warehousing-in-azure) (MPP) system, you must consider how data is distributed in your table design, as opposed to symmetric multiprocessing (SMP) systems, such as OLTP databases like Azure SQL Database. The table category often determines which option to choose for distributing the table.
+
+| Table category | Recommended distribution option |
+|:---------------|:--------------------|
+| Fact           | Use hash-distribution with clustered columnstore index. Performance improves when two hash tables are joined on the same distribution column. |
+| Dimension      | Use replicated for smaller tables. If tables are too large to store on each Compute node, use hash-distributed. |
+| Staging        | Use round-robin for the staging table. The load with CTAS is fast. Once the data is in the staging table, use INSERT...SELECT to move the data to production tables. |
+
+In the case of the dimension tables in this exercise, the amount of data stored per table falls well within the criteria for using a replicated distribution.
 
 #### Task 1: Create star schema in Synapse Dedicated SQL
 
@@ -952,206 +964,187 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
 
     ![The data hub is displayed with the context menus to create a new SQL script.](media/new-sql-script.png "New SQL script")
 
-6. Paste the following script into the empty script window, then select **Run** or hit `F5` to execute the query:
-
-    ```sql
-    /*
-Some changes are required from the SQL create script.
-- We need to set Distribution. Typically REPLICATE for dimensions (anything smaller than 1 million records)
-- We typically add CLUSTERED COLUMNSTORE INDEX to the tables
-- For Fact table, we do not want to replicate but can set a column to use in a HASH function
-- Some data types in SQL Server are not supported in Azure Synapse
-  - EmployeePhoto column is varbinary which is unsupported. Instead we can save as an EmployeePhotoURL of type varchar
-  - LargePhoto column is varbinary which is unsupported. Instead we can save as LargePhotoUrl of type varchar
+6. Paste the following script into the empty script window, then select **Run** or hit `F5` to execute the query. You may notice some changes have been made to the original SQL star schema create script. A few notable changes are:
+    - DISTRIBUTION and COLUMNSTORE INDEX options have been added to each table.
+    - HASH function is used for Fact table distribution instead of a Clustered Index.
+    - A few fields are modified since the data types which are not supported in Azure Synapse:
+      - EmployeePhoto column was varbinary which is unsupported. Instead you can save as an EmployeePhotoURL of type varchar.
+      - LargePhoto column is varbinary which is unsupported. Instead we can save as LargePhotoUrl of type varchar.
     
-*/
-
-CREATE TABLE [dbo].[DimReseller](
-    [ResellerKey] [int] IDENTITY(1,1) NOT NULL,
-    [GeographyKey] [int] NULL,
-    [ResellerAlternateKey] [nvarchar](15) NULL,
-    [Phone] [nvarchar](25) NULL,
-    [BusinessType] [varchar](20) NOT NULL,
-    [ResellerName] [nvarchar](50) NOT NULL,
-    [NumberEmployees] [int] NULL,
-    [OrderFrequency] [char](1) NULL,
-    [OrderMonth] [tinyint] NULL,
-    [FirstOrderYear] [int] NULL,
-    [LastOrderYear] [int] NULL,
-    [ProductLine] [nvarchar](50) NULL,
-    [AddressLine1] [nvarchar](60) NULL,
-    [AddressLine2] [nvarchar](60) NULL,
-    [AnnualSales] [money] NULL,
-    [BankName] [nvarchar](50) NULL,
-    [MinPaymentType] [tinyint] NULL,
-    [MinPaymentAmount] [money] NULL,
-    [AnnualRevenue] [money] NULL,
-    [YearOpened] [int] NULL
-)
-WITH
-(
-    DISTRIBUTION = REPLICATE,
-    CLUSTERED COLUMNSTORE INDEX
-);
-GO
-
-CREATE TABLE [dbo].[DimEmployee](
-    [EmployeeKey] [int] IDENTITY(1,1) NOT NULL,
-    [ParentEmployeeKey] [int] NULL,
-    [EmployeeNationalIDAlternateKey] [nvarchar](15) NULL,
-    [ParentEmployeeNationalIDAlternateKey] [nvarchar](15) NULL,
-    [SalesTerritoryKey] [int] NULL,
-    [FirstName] [nvarchar](50) NOT NULL,
-    [LastName] [nvarchar](50) NOT NULL,
-    [MiddleName] [nvarchar](50) NULL,
-    [NameStyle] [bit] NOT NULL,
-    [Title] [nvarchar](50) NULL,
-    [HireDate] [date] NULL,
-    [BirthDate] [date] NULL,
-    [LoginID] [nvarchar](256) NULL,
-    [EmailAddress] [nvarchar](50) NULL,
-    [Phone] [nvarchar](25) NULL,
-    [MaritalStatus] [nchar](1) NULL,
-    [EmergencyContactName] [nvarchar](50) NULL,
-    [EmergencyContactPhone] [nvarchar](25) NULL,
-    [SalariedFlag] [bit] NULL,
-    [Gender] [nchar](1) NULL,
-    [PayFrequency] [tinyint] NULL,
-    [BaseRate] [money] NULL,
-    [VacationHours] [smallint] NULL,
-    [SickLeaveHours] [smallint] NULL,
-    [CurrentFlag] [bit] NOT NULL,
-    [SalesPersonFlag] [bit] NOT NULL,
-    [DepartmentName] [nvarchar](50) NULL,
-    [StartDate] [date] NULL,
-    [EndDate] [date] NULL,
-    [Status] [nvarchar](50) NULL,
-    [EmployeePhotoUrl] [varchar](200) NULL
-)
-WITH
-(
-    DISTRIBUTION = REPLICATE,
-    CLUSTERED COLUMNSTORE INDEX
-);
-GO
-
-CREATE TABLE [dbo].[DimProduct](
-    [ProductKey] [int] IDENTITY(1,1) NOT NULL,
-    [ProductAlternateKey] [nvarchar](25) NULL,
-    [ProductSubcategoryKey] [int] NULL,
-    [WeightUnitMeasureCode] [nchar](3) NULL,
-    [SizeUnitMeasureCode] [nchar](3) NULL,
-    [EnglishProductName] [nvarchar](50) NOT NULL,
-    [SpanishProductName] [nvarchar](50) NOT NULL,
-    [FrenchProductName] [nvarchar](50) NOT NULL,
-    [StandardCost] [money] NULL,
-    [FinishedGoodsFlag] [bit] NOT NULL,
-    [Color] [nvarchar](15) NOT NULL,
-    [SafetyStockLevel] [smallint] NULL,
-    [ReorderPoint] [smallint] NULL,
-    [ListPrice] [money] NULL,
-    [Size] [nvarchar](50) NULL,
-    [SizeRange] [nvarchar](50) NULL,
-    [Weight] [float] NULL,
-    [DaysToManufacture] [int] NULL,
-    [ProductLine] [nchar](2) NULL,
-    [DealerPrice] [money] NULL,
-    [Class] [nchar](2) NULL,
-    [Style] [nchar](2) NULL,
-    [ModelName] [nvarchar](50) NULL,
-    [LargePhotoUrl] [varchar](200) NULL,
-    [EnglishDescription] [nvarchar](400) NULL,
-    [FrenchDescription] [nvarchar](400) NULL,
-    [ChineseDescription] [nvarchar](400) NULL,
-    [ArabicDescription] [nvarchar](400) NULL,
-    [HebrewDescription] [nvarchar](400) NULL,
-    [ThaiDescription] [nvarchar](400) NULL,
-    [GermanDescription] [nvarchar](400) NULL,
-    [JapaneseDescription] [nvarchar](400) NULL,
-    [TurkishDescription] [nvarchar](400) NULL,
-    [StartDate] [datetime] NULL,
-    [EndDate] [datetime] NULL,
-    [Status] [nvarchar](7) NULL    
-)
-WITH
-(
-    DISTRIBUTION = REPLICATE,
-    CLUSTERED COLUMNSTORE INDEX
-);
-GO
-
-CREATE TABLE dbo.[DimCustomer](
-        [CustomerID] [int] NOT NULL,
-        [Title] [nvarchar](8) NULL,
-        [FirstName] [nvarchar](50) NOT NULL,
-        [MiddleName] [nvarchar](50) NULL,
-        [LastName] [nvarchar](50) NOT NULL,
-        [Suffix] [nvarchar](10) NULL,
-        [CompanyName] [nvarchar](128) NULL,
-        [SalesPerson] [nvarchar](256) NULL,
-        [EmailAddress] [nvarchar](50) NULL,
+    ```sql
+    CREATE TABLE [dbo].[DimReseller](
+        [ResellerKey] [int] IDENTITY(1,1) NOT NULL,
+        [GeographyKey] [int] NULL,
+        [ResellerAlternateKey] [nvarchar](15) NULL,
         [Phone] [nvarchar](25) NULL,
-        [InsertedDate] [datetime] NOT NULL,
-        [ModifiedDate] [datetime] NOT NULL,
-        [HashKey] [char](66)
+        [BusinessType] [varchar](20) NOT NULL,
+        [ResellerName] [nvarchar](50) NOT NULL,
+        [NumberEmployees] [int] NULL,
+        [OrderFrequency] [char](1) NULL,
+        [OrderMonth] [tinyint] NULL,
+        [FirstOrderYear] [int] NULL,
+        [LastOrderYear] [int] NULL,
+        [ProductLine] [nvarchar](50) NULL,
+        [AddressLine1] [nvarchar](60) NULL,
+        [AddressLine2] [nvarchar](60) NULL,
+        [AnnualSales] [money] NULL,
+        [BankName] [nvarchar](50) NULL,
+        [MinPaymentType] [tinyint] NULL,
+        [MinPaymentAmount] [money] NULL,
+        [AnnualRevenue] [money] NULL,
+        [YearOpened] [int] NULL
     )
     WITH
     (
         DISTRIBUTION = REPLICATE,
         CLUSTERED COLUMNSTORE INDEX
     );
-GO
-
-CREATE TABLE [dbo].[FactResellerSales](
-    [ProductKey] [int] NOT NULL,
-    [OrderDateKey] [int] NOT NULL,
-    [DueDateKey] [int] NOT NULL,
-    [ShipDateKey] [int] NOT NULL,
-    [ResellerKey] [int] NOT NULL,
-    [EmployeeKey] [int] NOT NULL,
-    [PromotionKey] [int] NOT NULL,
-    [CurrencyKey] [int] NOT NULL,
-    [SalesTerritoryKey] [int] NOT NULL,
-    [SalesOrderNumber] [nvarchar](20) NOT NULL,
-    [SalesOrderLineNumber] [tinyint] NOT NULL,
-    [RevisionNumber] [tinyint] NULL,
-    [OrderQuantity] [smallint] NULL,
-    [UnitPrice] [money] NULL,
-    [ExtendedAmount] [money] NULL,
-    [UnitPriceDiscountPct] [float] NULL,
-    [DiscountAmount] [float] NULL,
-    [ProductStandardCost] [money] NULL,
-    [TotalProductCost] [money] NULL,
-    [SalesAmount] [money] NULL,
-    [TaxAmt] [money] NULL,
-    [Freight] [money] NULL,
-    [CarrierTrackingNumber] [nvarchar](25) NULL,
-    [CustomerPONumber] [nvarchar](25) NULL,
-    [OrderDate] [datetime] NULL,
-    [DueDate] [datetime] NULL,
-    [ShipDate] [datetime] NULL
-)
-WITH
-(
-    DISTRIBUTION = HASH([SalesOrderNumber]),
-    CLUSTERED COLUMNSTORE INDEX
-);
-GO
+    GO
+    
+    CREATE TABLE [dbo].[DimEmployee](
+        [EmployeeKey] [int] IDENTITY(1,1) NOT NULL,
+        [ParentEmployeeKey] [int] NULL,
+        [EmployeeNationalIDAlternateKey] [nvarchar](15) NULL,
+        [ParentEmployeeNationalIDAlternateKey] [nvarchar](15) NULL,
+        [SalesTerritoryKey] [int] NULL,
+        [FirstName] [nvarchar](50) NOT NULL,
+        [LastName] [nvarchar](50) NOT NULL,
+        [MiddleName] [nvarchar](50) NULL,
+        [NameStyle] [bit] NOT NULL,
+        [Title] [nvarchar](50) NULL,
+        [HireDate] [date] NULL,
+        [BirthDate] [date] NULL,
+        [LoginID] [nvarchar](256) NULL,
+        [EmailAddress] [nvarchar](50) NULL,
+        [Phone] [nvarchar](25) NULL,
+        [MaritalStatus] [nchar](1) NULL,
+        [EmergencyContactName] [nvarchar](50) NULL,
+        [EmergencyContactPhone] [nvarchar](25) NULL,
+        [SalariedFlag] [bit] NULL,
+        [Gender] [nchar](1) NULL,
+        [PayFrequency] [tinyint] NULL,
+        [BaseRate] [money] NULL,
+        [VacationHours] [smallint] NULL,
+        [SickLeaveHours] [smallint] NULL,
+        [CurrentFlag] [bit] NOT NULL,
+        [SalesPersonFlag] [bit] NOT NULL,
+        [DepartmentName] [nvarchar](50) NULL,
+        [StartDate] [date] NULL,
+        [EndDate] [date] NULL,
+        [Status] [nvarchar](50) NULL,
+        [EmployeePhotoUrl] [varchar](200) NULL
+    )
+    WITH
+    (
+        DISTRIBUTION = REPLICATE,
+        CLUSTERED COLUMNSTORE INDEX
+    );
+    GO
+    
+    CREATE TABLE [dbo].[DimProduct](
+        [ProductKey] [int] IDENTITY(1,1) NOT NULL,
+        [ProductAlternateKey] [nvarchar](25) NULL,
+        [ProductSubcategoryKey] [int] NULL,
+        [WeightUnitMeasureCode] [nchar](3) NULL,
+        [SizeUnitMeasureCode] [nchar](3) NULL,
+        [EnglishProductName] [nvarchar](50) NOT NULL,
+        [SpanishProductName] [nvarchar](50) NOT NULL,
+        [FrenchProductName] [nvarchar](50) NOT NULL,
+        [StandardCost] [money] NULL,
+        [FinishedGoodsFlag] [bit] NOT NULL,
+        [Color] [nvarchar](15) NOT NULL,
+        [SafetyStockLevel] [smallint] NULL,
+        [ReorderPoint] [smallint] NULL,
+        [ListPrice] [money] NULL,
+        [Size] [nvarchar](50) NULL,
+        [SizeRange] [nvarchar](50) NULL,
+        [Weight] [float] NULL,
+        [DaysToManufacture] [int] NULL,
+        [ProductLine] [nchar](2) NULL,
+        [DealerPrice] [money] NULL,
+        [Class] [nchar](2) NULL,
+        [Style] [nchar](2) NULL,
+        [ModelName] [nvarchar](50) NULL,
+        [LargePhotoUrl] [varchar](200) NULL,
+        [EnglishDescription] [nvarchar](400) NULL,
+        [FrenchDescription] [nvarchar](400) NULL,
+        [ChineseDescription] [nvarchar](400) NULL,
+        [ArabicDescription] [nvarchar](400) NULL,
+        [HebrewDescription] [nvarchar](400) NULL,
+        [ThaiDescription] [nvarchar](400) NULL,
+        [GermanDescription] [nvarchar](400) NULL,
+        [JapaneseDescription] [nvarchar](400) NULL,
+        [TurkishDescription] [nvarchar](400) NULL,
+        [StartDate] [datetime] NULL,
+        [EndDate] [datetime] NULL,
+        [Status] [nvarchar](7) NULL    
+    )
+    WITH
+    (
+        DISTRIBUTION = REPLICATE,
+        CLUSTERED COLUMNSTORE INDEX
+    );
+    GO
+    
+    CREATE TABLE dbo.[DimCustomer](
+            [CustomerID] [int] NOT NULL,
+            [Title] [nvarchar](8) NULL,
+            [FirstName] [nvarchar](50) NOT NULL,
+            [MiddleName] [nvarchar](50) NULL,
+            [LastName] [nvarchar](50) NOT NULL,
+            [Suffix] [nvarchar](10) NULL,
+            [CompanyName] [nvarchar](128) NULL,
+            [SalesPerson] [nvarchar](256) NULL,
+            [EmailAddress] [nvarchar](50) NULL,
+            [Phone] [nvarchar](25) NULL,
+            [InsertedDate] [datetime] NOT NULL,
+            [ModifiedDate] [datetime] NOT NULL,
+            [HashKey] [char](66)
+        )
+        WITH
+        (
+            DISTRIBUTION = REPLICATE,
+            CLUSTERED COLUMNSTORE INDEX
+        );
+    GO
+    
+    CREATE TABLE [dbo].[FactResellerSales](
+        [ProductKey] [int] NOT NULL,
+        [OrderDateKey] [int] NOT NULL,
+        [DueDateKey] [int] NOT NULL,
+        [ShipDateKey] [int] NOT NULL,
+        [ResellerKey] [int] NOT NULL,
+        [EmployeeKey] [int] NOT NULL,
+        [PromotionKey] [int] NOT NULL,
+        [CurrencyKey] [int] NOT NULL,
+        [SalesTerritoryKey] [int] NOT NULL,
+        [SalesOrderNumber] [nvarchar](20) NOT NULL,
+        [SalesOrderLineNumber] [tinyint] NOT NULL,
+        [RevisionNumber] [tinyint] NULL,
+        [OrderQuantity] [smallint] NULL,
+        [UnitPrice] [money] NULL,
+        [ExtendedAmount] [money] NULL,
+        [UnitPriceDiscountPct] [float] NULL,
+        [DiscountAmount] [float] NULL,
+        [ProductStandardCost] [money] NULL,
+        [TotalProductCost] [money] NULL,
+        [SalesAmount] [money] NULL,
+        [TaxAmt] [money] NULL,
+        [Freight] [money] NULL,
+        [CarrierTrackingNumber] [nvarchar](25) NULL,
+        [CustomerPONumber] [nvarchar](25) NULL,
+        [OrderDate] [datetime] NULL,
+        [DueDate] [datetime] NULL,
+        [ShipDate] [datetime] NULL
+    )
+    WITH
+    (
+        DISTRIBUTION = HASH([SalesOrderNumber]),
+        CLUSTERED COLUMNSTORE INDEX
+    );
+    GO
     ```
     ![The script and Run button are both highlighted.](media/synapse-create-table-script.png "Create table script")
-
-    You may notice some differences with creating a dimension table in Synapse Analytics vs. SQL database. When you create a star schema/snowflake schema in Synapse, it's a bit different than doing so in SQL because you do not have foreign keys and unique value constraints like you do in SQL. The other thing you may notice is in the `DimCustomer` table you just created, you configured a `DISTRIBUTION` value of `REPLICATE` and defined a clustered columnstore index (CCI).
-
-    Since Synapse Analytics is a [massively parallel processing](https://docs.microsoft.com/azure/architecture/data-guide/relational-data/data-warehousing#data-warehousing-in-azure) (MPP) system, you must consider how data is distributed in your table design, as opposed to symmetric multiprocessing (SMP) systems, such as OLTP databases like Azure SQL Database. The table category often determines which option to choose for distributing the table.
-
-    | Table category | Recommended distribution option |
-    |:---------------|:--------------------|
-    | Fact           | Use hash-distribution with clustered columnstore index. Performance improves when two hash tables are joined on the same distribution column. |
-    | Dimension      | Use replicated for smaller tables. If tables are too large to store on each Compute node, use hash-distributed. |
-    | Staging        | Use round-robin for the staging table. The load with CTAS is fast. Once the data is in the staging table, use INSERT...SELECT to move the data to production tables. |
-
-    In the case of the `DimCustomer` table, the amount of data we are storing falls well within the criteria for using a replicated distribution.
-
 
 ### Exercise 5: Updating slowly changing dimensions with mapping data flows
 

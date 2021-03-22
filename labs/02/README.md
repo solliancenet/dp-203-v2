@@ -1032,12 +1032,12 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
         [StartDate] [date] NULL,
         [EndDate] [date] NULL,
         [Status] [nvarchar](50) NULL,
-        [EmployeePhotoUrl] [varchar](200) NULL
+        [EmployeePhoto] [varbinary](max) NULL
     )
     WITH
     (
         DISTRIBUTION = REPLICATE,
-        CLUSTERED COLUMNSTORE INDEX
+        CLUSTERED INDEX (EmployeeKey)
     );
     GO
     
@@ -1048,8 +1048,8 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
         [WeightUnitMeasureCode] [nchar](3) NULL,
         [SizeUnitMeasureCode] [nchar](3) NULL,
         [EnglishProductName] [nvarchar](50) NOT NULL,
-        [SpanishProductName] [nvarchar](50) NOT NULL,
-        [FrenchProductName] [nvarchar](50) NOT NULL,
+        [SpanishProductName] [nvarchar](50) NULL,
+        [FrenchProductName] [nvarchar](50) NULL,
         [StandardCost] [money] NULL,
         [FinishedGoodsFlag] [bit] NOT NULL,
         [Color] [nvarchar](15) NOT NULL,
@@ -1065,7 +1065,7 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
         [Class] [nchar](2) NULL,
         [Style] [nchar](2) NULL,
         [ModelName] [nvarchar](50) NULL,
-        [LargePhotoUrl] [varchar](200) NULL,
+        [LargePhoto] [varbinary](max) NULL,
         [EnglishDescription] [nvarchar](400) NULL,
         [FrenchDescription] [nvarchar](400) NULL,
         [ChineseDescription] [nvarchar](400) NULL,
@@ -1082,7 +1082,7 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
     WITH
     (
         DISTRIBUTION = REPLICATE,
-        CLUSTERED COLUMNSTORE INDEX
+        CLUSTERED INDEX (ProductKey)
     );
     GO
     

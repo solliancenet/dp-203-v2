@@ -155,7 +155,7 @@ In this task, you create a star schema in SQL database, using foreign key constr
     GO
 
     CREATE TABLE [dbo].[DimProduct](
-        [ProductKey] [int] IDENTITY(1,1) NOT NULL,
+        [ProductKey] [int] NOT NULL,
         [ProductAlternateKey] [nvarchar](25) NULL,
         [ProductSubcategoryKey] [int] NULL,
         [WeightUnitMeasureCode] [nchar](3) NULL,
@@ -973,7 +973,7 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
     
     ```sql
     CREATE TABLE [dbo].[DimReseller](
-        [ResellerKey] [int] IDENTITY(1,1) NOT NULL,
+        [ResellerKey] [int] NOT NULL,
         [GeographyKey] [int] NULL,
         [ResellerAlternateKey] [nvarchar](15) NULL,
         [Phone] [nvarchar](25) NULL,
@@ -1002,7 +1002,7 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
     GO
     
     CREATE TABLE [dbo].[DimEmployee](
-        [EmployeeKey] [int] IDENTITY(1,1) NOT NULL,
+        [EmployeeKey] [int] NOT NULL,
         [ParentEmployeeKey] [int] NULL,
         [EmployeeNationalIDAlternateKey] [nvarchar](15) NULL,
         [ParentEmployeeNationalIDAlternateKey] [nvarchar](15) NULL,
@@ -1042,7 +1042,7 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
     GO
     
     CREATE TABLE [dbo].[DimProduct](
-        [ProductKey] [int] IDENTITY(1,1) NOT NULL,
+        [ProductKey] [int] NOT NULL,
         [ProductAlternateKey] [nvarchar](25) NULL,
         [ProductSubcategoryKey] [int] NULL,
         [WeightUnitMeasureCode] [nchar](3) NULL,
@@ -1145,6 +1145,159 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
     GO
     ```
     ![The script and Run button are both highlighted.](media/synapse-create-table-script.png "Create table script")
+
+#### Task 2: Load data into Synapse tables
+
+In this task, you load the Synapse dimension and fact tables with data from a public data source. There are two ways to load this data from Azure Storage files using T-SQL: the COPY INTO command or selecting from external table using Polybase. For this task you will use COPY INTO as a simple syntax for loading delimited data from Azure Storage.
+
+1. Paste **and execute** the query with the following to insert data into the fact and dimension tables:
+
+    ```sql
+    COPY INTO [dbo].[DimProduct]
+    FROM 'https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/DimProduct.csv'
+    WITH (
+        FILE_TYPE='CSV',
+        FIELDTERMINATOR='|',
+        FIELDQUOTE='',
+        ROWTERMINATOR='\n',
+        ENCODING = 'UTF16'
+    );
+    GO
+
+    COPY INTO [dbo].[DimReseller]
+    FROM 'https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/DimReseller.csv'
+    WITH (
+        FILE_TYPE='CSV',
+        FIELDTERMINATOR='|',
+        FIELDQUOTE='',
+        ROWTERMINATOR='\n',
+        ENCODING = 'UTF16'
+    );
+    GO
+
+    COPY INTO [dbo].[DimEmployee]
+    FROM 'https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/DimEmployee.csv'
+    WITH (
+        FILE_TYPE='CSV',
+        FIELDTERMINATOR='|',
+        FIELDQUOTE='',
+        ROWTERMINATOR='\n',
+        ENCODING = 'UTF16'
+    );
+    GO
+
+    COPY INTO [dbo].[FactResellerSales]
+    FROM 'https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/FactResellerSales.csv'
+    WITH (
+        FILE_TYPE='CSV',
+        FIELDTERMINATOR='|',
+        FIELDQUOTE='',
+        ROWTERMINATOR='\n',
+        ENCODING = 'UTF16'
+    );
+    GO
+    ```
+
+#### Task 3: Populate the time dimension table in Synapse
+
+In this task, you populate the time dimension table using T-SQL that is valid for Azure Synapse.
+
+1. Paste **and execute** the following into the query window to create the new time dimension table:
+
+TODO: Add code
+
+#### Task 4: Query data
+
+1. Paste **and execute** the following query to retrieve reseller sales data from the snowflake schema at the reseller, product, and month granularity:
+
+    ```sql
+    SELECT
+            pc.[EnglishProductCategoryName]
+            ,Coalesce(p.[ModelName], p.[EnglishProductName]) AS [Model]
+            ,CASE
+                WHEN e.[BaseRate] < 25 THEN 'Low'
+                WHEN e.[BaseRate] > 40 THEN 'High'
+                ELSE 'Moderate'
+            END AS [EmployeeIncomeGroup]
+            ,g.City AS ResellerCity
+            ,g.StateProvinceName AS StateProvince
+            ,r.[AnnualSales] AS ResellerAnnualSales
+            ,d.[CalendarYear]
+            ,d.[FiscalYear]
+            ,d.[MonthOfYear] AS [Month]
+            ,f.[SalesOrderNumber] AS [OrderNumber]
+            ,f.SalesOrderLineNumber AS LineNumber
+            ,f.OrderQuantity AS Quantity
+            ,f.ExtendedAmount AS Amount  
+        FROM
+            [dbo].[FactResellerSales] f
+        INNER JOIN [dbo].[DimReseller] r
+            ON f.ResellerKey = r.ResellerKey
+        INNER JOIN [dbo].[DimGeography] g
+            ON r.GeographyKey = g.GeographyKey
+        INNER JOIN [dbo].[DimEmployee] e
+            ON f.EmployeeKey = e.EmployeeKey
+        INNER JOIN [dbo].[DimDate] d
+            ON f.[OrderDateKey] = d.[DateKey]
+        INNER JOIN [dbo].[DimProduct] p
+            ON f.[ProductKey] = p.[ProductKey]
+        INNER JOIN [dbo].[DimProductSubcategory] psc
+            ON p.[ProductSubcategoryKey] = psc.[ProductSubcategoryKey]
+        INNER JOIN [dbo].[DimProductCategory] pc
+            ON psc.[ProductCategoryKey] = pc.[ProductCategoryKey]
+        ORDER BY Amount DESC
+    ```
+
+    You should see an output similar to the following:
+
+    ![The reseller query results are displayed.](media/reseller-query-results.png "Reseller query results")
+
+2. Replace **and execute** the query with the following to limit the results to October sales between the 2012 and 2013 fiscal years:
+
+    ```sql
+    SELECT
+            pc.[EnglishProductCategoryName]
+            ,Coalesce(p.[ModelName], p.[EnglishProductName]) AS [Model]
+            ,CASE
+                WHEN e.[BaseRate] < 25 THEN 'Low'
+                WHEN e.[BaseRate] > 40 THEN 'High'
+                ELSE 'Moderate'
+            END AS [EmployeeIncomeGroup]
+            ,g.City AS ResellerCity
+            ,g.StateProvinceName AS StateProvince
+            ,r.[AnnualSales] AS ResellerAnnualSales
+            ,d.[CalendarYear]
+            ,d.[FiscalYear]
+            ,d.[MonthOfYear] AS [Month]
+            ,f.[SalesOrderNumber] AS [OrderNumber]
+            ,f.SalesOrderLineNumber AS LineNumber
+            ,f.OrderQuantity AS Quantity
+            ,f.ExtendedAmount AS Amount  
+        FROM
+            [dbo].[FactResellerSales] f
+        INNER JOIN [dbo].[DimReseller] r
+            ON f.ResellerKey = r.ResellerKey
+        INNER JOIN [dbo].[DimGeography] g
+            ON r.GeographyKey = g.GeographyKey
+        INNER JOIN [dbo].[DimEmployee] e
+            ON f.EmployeeKey = e.EmployeeKey
+        INNER JOIN [dbo].[DimDate] d
+            ON f.[OrderDateKey] = d.[DateKey]
+        INNER JOIN [dbo].[DimProduct] p
+            ON f.[ProductKey] = p.[ProductKey]
+        INNER JOIN [dbo].[DimProductSubcategory] psc
+            ON p.[ProductSubcategoryKey] = psc.[ProductSubcategoryKey]
+        INNER JOIN [dbo].[DimProductCategory] pc
+            ON psc.[ProductCategoryKey] = pc.[ProductCategoryKey]
+        WHERE d.[MonthOfYear] = 10 AND d.[FiscalYear] IN (2012, 2013)
+        ORDER BY d.[FiscalYear]
+    ```
+
+    You should see an output similar to the following:
+
+    ![The query results are displayed in a table.](media/reseller-query-results-date-filter.png "Reseller query results with date filter")
+
+    > Notice how using the **time dimension table** makes filtering by specific date parts and logical dates (such as fiscal year) easier and more performant that calculating date functions on the fly.
 
 ### Exercise 5: Updating slowly changing dimensions with mapping data flows
 

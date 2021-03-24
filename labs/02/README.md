@@ -23,7 +23,7 @@ In this module, the student will be able to:
       - [Task 3: Load data into other tables](#task-3-load-data-into-other-tables)
       - [Task 4: Query data](#task-4-query-data)
     - [Exercise 4: Implementing a Star Schema in Synapse Analytics](#exercise-4-implementing-a-star-schema-in-synapse-analytics)
-      - [Task 1: Create star schema in Synapse Dedicated SQL](#task-1-create-star-schema-in-synapse-dedicated-sql)
+      - [Task 1: Create star schema in Synapse dedicated SQL](#task-1-create-star-schema-in-synapse-dedicated-sql)
       - [Task 2: Load data into Synapse tables](#task-2-load-data-into-synapse-tables)
       - [Task 3: Query data from Synapse](#task-3-query-data-from-synapse)
     - [Exercise 5: Updating slowly changing dimensions with mapping data flows](#exercise-5-updating-slowly-changing-dimensions-with-mapping-data-flows)
@@ -944,7 +944,7 @@ Since Synapse Analytics is a [massively parallel processing](https://docs.micros
 
 In the case of the dimension tables in this exercise, the amount of data stored per table falls well within the criteria for using a replicated distribution.
 
-#### Task 1: Create star schema in Synapse Dedicated SQL
+#### Task 1: Create star schema in Synapse dedicated SQL
 
 In this task, you create a star schema in Azure Synapse dedicated pool. The first step is to create the base dimension and fact tables.
 

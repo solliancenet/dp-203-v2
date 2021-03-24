@@ -924,7 +924,7 @@ In this task, you load the dimension and fact tables with data from a public dat
 
     ![The query results are displayed in a table.](media/reseller-query-results-date-filter.png "Reseller query results with date filter")
 
-    > Notice how using the **time dimension table** makes filtering by specific date parts and logical dates (such as fiscal year) easier and more performant that calculating date functions on the fly.
+    > Notice how using the **time dimension table** makes filtering by specific date parts and logical dates (such as fiscal year) easier and more performant than calculating date functions on the fly.
 
 ### Exercise 4: Implementing a Star Schema in Synapse Analytics
 
@@ -972,6 +972,85 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
       - LargePhoto column is varbinary which is unsupported. Instead we can save as LargePhotoUrl of type varchar.
     
     ```sql
+        CREATE TABLE dbo.[DimCustomer](
+            [CustomerID] [int] NOT NULL,
+            [Title] [nvarchar](8) NULL,
+            [FirstName] [nvarchar](50) NOT NULL,
+            [MiddleName] [nvarchar](50) NULL,
+            [LastName] [nvarchar](50) NOT NULL,
+            [Suffix] [nvarchar](10) NULL,
+            [CompanyName] [nvarchar](128) NULL,
+            [SalesPerson] [nvarchar](256) NULL,
+            [EmailAddress] [nvarchar](50) NULL,
+            [Phone] [nvarchar](25) NULL,
+            [InsertedDate] [datetime] NOT NULL,
+            [ModifiedDate] [datetime] NOT NULL,
+            [HashKey] [char](66)
+        )
+        WITH
+        (
+            DISTRIBUTION = REPLICATE,
+            CLUSTERED COLUMNSTORE INDEX
+        );
+    GO
+    
+    CREATE TABLE [dbo].[FactResellerSales](
+        [ProductKey] [int] NOT NULL,
+        [OrderDateKey] [int] NOT NULL,
+        [DueDateKey] [int] NOT NULL,
+        [ShipDateKey] [int] NOT NULL,
+        [ResellerKey] [int] NOT NULL,
+        [EmployeeKey] [int] NOT NULL,
+        [PromotionKey] [int] NOT NULL,
+        [CurrencyKey] [int] NOT NULL,
+        [SalesTerritoryKey] [int] NOT NULL,
+        [SalesOrderNumber] [nvarchar](20) NOT NULL,
+        [SalesOrderLineNumber] [tinyint] NOT NULL,
+        [RevisionNumber] [tinyint] NULL,
+        [OrderQuantity] [smallint] NULL,
+        [UnitPrice] [money] NULL,
+        [ExtendedAmount] [money] NULL,
+        [UnitPriceDiscountPct] [float] NULL,
+        [DiscountAmount] [float] NULL,
+        [ProductStandardCost] [money] NULL,
+        [TotalProductCost] [money] NULL,
+        [SalesAmount] [money] NULL,
+        [TaxAmt] [money] NULL,
+        [Freight] [money] NULL,
+        [CarrierTrackingNumber] [nvarchar](25) NULL,
+        [CustomerPONumber] [nvarchar](25) NULL,
+        [OrderDate] [datetime] NULL,
+        [DueDate] [datetime] NULL,
+        [ShipDate] [datetime] NULL
+    )
+    WITH
+    (
+        DISTRIBUTION = HASH([SalesOrderNumber]),
+        CLUSTERED COLUMNSTORE INDEX
+    );
+    GO
+
+    CREATE TABLE [dbo].[DimDate]
+    ( 
+        [DateKey] [int]  NOT NULL,
+        [DateAltKey] [datetime]  NOT NULL,
+        [CalendarYear] [int]  NOT NULL,
+        [CalendarQuarter] [int]  NOT NULL,
+        [MonthOfYear] [int]  NOT NULL,
+        [MonthName] [nvarchar](15)  NOT NULL,
+        [DayOfMonth] [int]  NOT NULL,
+        [DayOfWeek] [int]  NOT NULL,
+        [DayName] [nvarchar](15)  NOT NULL,
+        [FiscalYear] [int]  NOT NULL,
+        [FiscalQuarter] [int]  NOT NULL
+    )
+    WITH
+    (
+        DISTRIBUTION = REPLICATE,
+        CLUSTERED COLUMNSTORE INDEX
+    );
+    GO
+
     CREATE TABLE [dbo].[DimReseller](
         [ResellerKey] [int] NOT NULL,
         [GeographyKey] [int] NULL,
@@ -1085,61 +1164,23 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
         CLUSTERED INDEX (ProductKey)
     );
     GO
-    
-    CREATE TABLE dbo.[DimCustomer](
-            [CustomerID] [int] NOT NULL,
-            [Title] [nvarchar](8) NULL,
-            [FirstName] [nvarchar](50) NOT NULL,
-            [MiddleName] [nvarchar](50) NULL,
-            [LastName] [nvarchar](50) NOT NULL,
-            [Suffix] [nvarchar](10) NULL,
-            [CompanyName] [nvarchar](128) NULL,
-            [SalesPerson] [nvarchar](256) NULL,
-            [EmailAddress] [nvarchar](50) NULL,
-            [Phone] [nvarchar](25) NULL,
-            [InsertedDate] [datetime] NOT NULL,
-            [ModifiedDate] [datetime] NOT NULL,
-            [HashKey] [char](66)
-        )
-        WITH
-        (
-            DISTRIBUTION = REPLICATE,
-            CLUSTERED COLUMNSTORE INDEX
-        );
-    GO
-    
-    CREATE TABLE [dbo].[FactResellerSales](
-        [ProductKey] [int] NOT NULL,
-        [OrderDateKey] [int] NOT NULL,
-        [DueDateKey] [int] NOT NULL,
-        [ShipDateKey] [int] NOT NULL,
-        [ResellerKey] [int] NOT NULL,
-        [EmployeeKey] [int] NOT NULL,
-        [PromotionKey] [int] NOT NULL,
-        [CurrencyKey] [int] NOT NULL,
-        [SalesTerritoryKey] [int] NOT NULL,
-        [SalesOrderNumber] [nvarchar](20) NOT NULL,
-        [SalesOrderLineNumber] [tinyint] NOT NULL,
-        [RevisionNumber] [tinyint] NULL,
-        [OrderQuantity] [smallint] NULL,
-        [UnitPrice] [money] NULL,
-        [ExtendedAmount] [money] NULL,
-        [UnitPriceDiscountPct] [float] NULL,
-        [DiscountAmount] [float] NULL,
-        [ProductStandardCost] [money] NULL,
-        [TotalProductCost] [money] NULL,
-        [SalesAmount] [money] NULL,
-        [TaxAmt] [money] NULL,
-        [Freight] [money] NULL,
-        [CarrierTrackingNumber] [nvarchar](25) NULL,
-        [CustomerPONumber] [nvarchar](25) NULL,
-        [OrderDate] [datetime] NULL,
-        [DueDate] [datetime] NULL,
-        [ShipDate] [datetime] NULL
+
+    CREATE TABLE [dbo].[DimGeography](
+        [GeographyKey] [int] NOT NULL,
+        [City] [nvarchar](30) NULL,
+        [StateProvinceCode] [nvarchar](3) NULL,
+        [StateProvinceName] [nvarchar](50) NULL,
+        [CountryRegionCode] [nvarchar](3) NULL,
+        [EnglishCountryRegionName] [nvarchar](50) NULL,
+        [SpanishCountryRegionName] [nvarchar](50) NULL,
+        [FrenchCountryRegionName] [nvarchar](50) NULL,
+        [PostalCode] [nvarchar](15) NULL,
+        [SalesTerritoryKey] [int] NULL,
+        [IpAddressLocator] [nvarchar](15) NULL
     )
     WITH
     (
-        DISTRIBUTION = HASH([SalesOrderNumber]),
+        DISTRIBUTION = REPLICATE,
         CLUSTERED COLUMNSTORE INDEX
     );
     GO
@@ -1186,6 +1227,17 @@ In this task, you load the Synapse dimension and fact tables with data from a pu
     );
     GO
 
+    COPY INTO [dbo].[DimGeography]
+    FROM 'https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/DimGeography.csv'
+    WITH (
+        FILE_TYPE='CSV',
+        FIELDTERMINATOR='|',
+        FIELDQUOTE='',
+        ROWTERMINATOR='\n',
+        ENCODING = 'UTF16'
+    );
+    GO
+
     COPY INTO [dbo].[FactResellerSales]
     FROM 'https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/FactResellerSales.csv'
     WITH (
@@ -1203,49 +1255,53 @@ In this task, you load the Synapse dimension and fact tables with data from a pu
 In this task, you populate the time dimension table using T-SQL that is valid for Azure Synapse.
 
 1. Paste **and execute** the following into the query window to create the new time dimension table:
-
-TODO: Add code
+    
+    ```sql
+    COPY INTO [dbo].[DimDate]
+    FROM 'https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/DimDate.csv'
+    WITH (
+        FILE_TYPE='CSV',
+        FIELDTERMINATOR='|',
+        FIELDQUOTE='',
+        ROWTERMINATOR='0x0a',
+        ENCODING = 'UTF16'
+    );
+    GO
+    ```
 
 #### Task 4: Query data
 
-1. Paste **and execute** the following query to retrieve reseller sales data from the snowflake schema at the reseller, product, and month granularity:
+1. Paste **and execute** the following query to retrieve reseller sales data from the star schema at the reseller location, product, and month granularity:
 
     ```sql
     SELECT
-            pc.[EnglishProductCategoryName]
-            ,Coalesce(p.[ModelName], p.[EnglishProductName]) AS [Model]
-            ,CASE
-                WHEN e.[BaseRate] < 25 THEN 'Low'
-                WHEN e.[BaseRate] > 40 THEN 'High'
-                ELSE 'Moderate'
-            END AS [EmployeeIncomeGroup]
-            ,g.City AS ResellerCity
-            ,g.StateProvinceName AS StateProvince
-            ,r.[AnnualSales] AS ResellerAnnualSales
-            ,d.[CalendarYear]
-            ,d.[FiscalYear]
-            ,d.[MonthOfYear] AS [Month]
-            ,f.[SalesOrderNumber] AS [OrderNumber]
-            ,f.SalesOrderLineNumber AS LineNumber
-            ,f.OrderQuantity AS Quantity
-            ,f.ExtendedAmount AS Amount  
-        FROM
-            [dbo].[FactResellerSales] f
-        INNER JOIN [dbo].[DimReseller] r
-            ON f.ResellerKey = r.ResellerKey
-        INNER JOIN [dbo].[DimGeography] g
-            ON r.GeographyKey = g.GeographyKey
-        INNER JOIN [dbo].[DimEmployee] e
-            ON f.EmployeeKey = e.EmployeeKey
-        INNER JOIN [dbo].[DimDate] d
-            ON f.[OrderDateKey] = d.[DateKey]
-        INNER JOIN [dbo].[DimProduct] p
-            ON f.[ProductKey] = p.[ProductKey]
-        INNER JOIN [dbo].[DimProductSubcategory] psc
-            ON p.[ProductSubcategoryKey] = psc.[ProductSubcategoryKey]
-        INNER JOIN [dbo].[DimProductCategory] pc
-            ON psc.[ProductCategoryKey] = pc.[ProductCategoryKey]
-        ORDER BY Amount DESC
+        Coalesce(p.[ModelName], p.[EnglishProductName]) AS [Model]
+        ,g.City AS ResellerCity
+        ,g.StateProvinceName AS StateProvince
+        ,d.[CalendarYear]
+        ,d.[FiscalYear]
+        ,d.[MonthOfYear] AS [Month]
+        ,sum(f.OrderQuantity) AS Quantity
+        ,sum(f.ExtendedAmount) AS Amount
+        ,approx_count_distinct(f.SalesOrderNumber) AS UniqueOrders  
+    FROM
+        [dbo].[FactResellerSales] f
+    INNER JOIN [dbo].[DimReseller] r
+        ON f.ResellerKey = r.ResellerKey
+    INNER JOIN [dbo].[DimGeography] g
+        ON r.GeographyKey = g.GeographyKey
+    INNER JOIN [dbo].[DimDate] d
+        ON f.[OrderDateKey] = d.[DateKey]
+    INNER JOIN [dbo].[DimProduct] p
+        ON f.[ProductKey] = p.[ProductKey]
+    GROUP BY
+        Coalesce(p.[ModelName], p.[EnglishProductName])
+        ,g.City
+        ,g.StateProvinceName
+        ,d.[CalendarYear]
+        ,d.[FiscalYear]
+        ,d.[MonthOfYear]
+    ORDER BY Amount DESC
     ```
 
     You should see an output similar to the following:
@@ -1256,48 +1312,41 @@ TODO: Add code
 
     ```sql
     SELECT
-            pc.[EnglishProductCategoryName]
-            ,Coalesce(p.[ModelName], p.[EnglishProductName]) AS [Model]
-            ,CASE
-                WHEN e.[BaseRate] < 25 THEN 'Low'
-                WHEN e.[BaseRate] > 40 THEN 'High'
-                ELSE 'Moderate'
-            END AS [EmployeeIncomeGroup]
-            ,g.City AS ResellerCity
-            ,g.StateProvinceName AS StateProvince
-            ,r.[AnnualSales] AS ResellerAnnualSales
-            ,d.[CalendarYear]
-            ,d.[FiscalYear]
-            ,d.[MonthOfYear] AS [Month]
-            ,f.[SalesOrderNumber] AS [OrderNumber]
-            ,f.SalesOrderLineNumber AS LineNumber
-            ,f.OrderQuantity AS Quantity
-            ,f.ExtendedAmount AS Amount  
-        FROM
-            [dbo].[FactResellerSales] f
-        INNER JOIN [dbo].[DimReseller] r
-            ON f.ResellerKey = r.ResellerKey
-        INNER JOIN [dbo].[DimGeography] g
-            ON r.GeographyKey = g.GeographyKey
-        INNER JOIN [dbo].[DimEmployee] e
-            ON f.EmployeeKey = e.EmployeeKey
-        INNER JOIN [dbo].[DimDate] d
-            ON f.[OrderDateKey] = d.[DateKey]
-        INNER JOIN [dbo].[DimProduct] p
-            ON f.[ProductKey] = p.[ProductKey]
-        INNER JOIN [dbo].[DimProductSubcategory] psc
-            ON p.[ProductSubcategoryKey] = psc.[ProductSubcategoryKey]
-        INNER JOIN [dbo].[DimProductCategory] pc
-            ON psc.[ProductCategoryKey] = pc.[ProductCategoryKey]
-        WHERE d.[MonthOfYear] = 10 AND d.[FiscalYear] IN (2012, 2013)
-        ORDER BY d.[FiscalYear]
+        Coalesce(p.[ModelName], p.[EnglishProductName]) AS [Model]
+        ,g.City AS ResellerCity
+        ,g.StateProvinceName AS StateProvince
+        ,d.[CalendarYear]
+        ,d.[FiscalYear]
+        ,d.[MonthOfYear] AS [Month]
+        ,sum(f.OrderQuantity) AS Quantity
+        ,sum(f.ExtendedAmount) AS Amount
+        ,approx_count_distinct(f.SalesOrderNumber) AS UniqueOrders  
+    FROM
+        [dbo].[FactResellerSales] f
+    INNER JOIN [dbo].[DimReseller] r
+        ON f.ResellerKey = r.ResellerKey
+    INNER JOIN [dbo].[DimGeography] g
+        ON r.GeographyKey = g.GeographyKey
+    INNER JOIN [dbo].[DimDate] d
+        ON f.[OrderDateKey] = d.[DateKey]
+    INNER JOIN [dbo].[DimProduct] p
+        ON f.[ProductKey] = p.[ProductKey]
+    WHERE d.[MonthOfYear] = 10 AND d.[FiscalYear] IN (2012, 2013)
+    GROUP BY
+        Coalesce(p.[ModelName], p.[EnglishProductName])
+        ,g.City
+        ,g.StateProvinceName
+        ,d.[CalendarYear]
+        ,d.[FiscalYear]
+        ,d.[MonthOfYear]
+    ORDER BY d.[FiscalYear]
     ```
 
     You should see an output similar to the following:
 
     ![The query results are displayed in a table.](media/reseller-query-results-date-filter.png "Reseller query results with date filter")
 
-    > Notice how using the **time dimension table** makes filtering by specific date parts and logical dates (such as fiscal year) easier and more performant that calculating date functions on the fly.
+    > Notice how using the **time dimension table** makes filtering by specific date parts and logical dates (such as fiscal year) easier and more performant than calculating date functions on the fly.
 
 ### Exercise 5: Updating slowly changing dimensions with mapping data flows
 

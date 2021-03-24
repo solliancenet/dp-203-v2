@@ -24,6 +24,8 @@ In this module, the student will be able to:
       - [Task 4: Query data](#task-4-query-data)
     - [Exercise 4: Implementing a Star Schema in Synapse Analytics](#exercise-4-implementing-a-star-schema-in-synapse-analytics)
       - [Task 1: Create star schema in Synapse Dedicated SQL](#task-1-create-star-schema-in-synapse-dedicated-sql)
+      - [Task 2: Load data into Synapse tables](#task-2-load-data-into-synapse-tables)
+      - [Task 3: Query data from Synapse](#task-3-query-data-from-synapse)
     - [Exercise 5: Updating slowly changing dimensions with mapping data flows](#exercise-5-updating-slowly-changing-dimensions-with-mapping-data-flows)
       - [Task 1: Create the Azure SQL Database linked service](#task-1-create-the-azure-sql-database-linked-service)
       - [Task 2: Create a mapping data flow](#task-2-create-a-mapping-data-flow)
@@ -930,7 +932,7 @@ In this task, you load the dimension and fact tables with data from a public dat
 
 For larger data sets you may implement your data warehouse in Azure Synapse instead of SQL Server. Star schema models are still a best practice for modeling data in Synapse dedicated SQL pools. You may notice some differences with creating a tables in Synapse Analytics vs. SQL database, but the same data modeling principles apply.
 
- When you create a star schema/snowflake schema in Synapse, it's a bit different than doing so in SQL because you do not have foreign keys and unique value constraints like you do in SQL. The other thing you may notice is in the dimension tables you create, you configure a `DISTRIBUTION` value of `REPLICATE` and define a clustered columnstore index (CCI).
+ When you create a star schema or snowflake schema in Synapse, it requires some changes to your table creation scripts. In Synapse, you do not have foreign keys and unique value constraints like you do in SQL. Since these rules are not enforces at the database layer, the jobs used to load data are more responsible to maintain data integrity. You still have the option to use clustered indexes, but for most dimension tables in Synapse you will benefit from using a clustered columnstore index (CCI).
 
 Since Synapse Analytics is a [massively parallel processing](https://docs.microsoft.com/azure/architecture/data-guide/relational-data/data-warehousing#data-warehousing-in-azure) (MPP) system, you must consider how data is distributed in your table design, as opposed to symmetric multiprocessing (SMP) systems, such as OLTP databases like Azure SQL Database. The table category often determines which option to choose for distributing the table.
 
@@ -965,33 +967,32 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
     ![The data hub is displayed with the context menus to create a new SQL script.](media/new-sql-script.png "New SQL script")
 
 6. Paste the following script into the empty script window, then select **Run** or hit `F5` to execute the query. You may notice some changes have been made to the original SQL star schema create script. A few notable changes are:
-    - DISTRIBUTION and COLUMNSTORE INDEX options have been added to each table.
-    - HASH function is used for Fact table distribution instead of a Clustered Index.
-    - A few fields are modified since the data types which are not supported in Azure Synapse:
-      - EmployeePhoto column was varbinary which is unsupported. Instead you can save as an EmployeePhotoURL of type varchar.
-      - LargePhoto column is varbinary which is unsupported. Instead we can save as LargePhotoUrl of type varchar.
+    - Distribution setting has been added to each table
+    - Clustered columnstore index is used for most tables.
+    - HASH function is used for Fact table distribution since it will be a larger table that should be distributed across nodes.
+    - A few fields are using varbinary data types that cannot be included in a clustered columnstore index in Azure Synapse. As a simple solution, a clustered index was used instead.
     
     ```sql
-        CREATE TABLE dbo.[DimCustomer](
-            [CustomerID] [int] NOT NULL,
-            [Title] [nvarchar](8) NULL,
-            [FirstName] [nvarchar](50) NOT NULL,
-            [MiddleName] [nvarchar](50) NULL,
-            [LastName] [nvarchar](50) NOT NULL,
-            [Suffix] [nvarchar](10) NULL,
-            [CompanyName] [nvarchar](128) NULL,
-            [SalesPerson] [nvarchar](256) NULL,
-            [EmailAddress] [nvarchar](50) NULL,
-            [Phone] [nvarchar](25) NULL,
-            [InsertedDate] [datetime] NOT NULL,
-            [ModifiedDate] [datetime] NOT NULL,
-            [HashKey] [char](66)
-        )
-        WITH
-        (
-            DISTRIBUTION = REPLICATE,
-            CLUSTERED COLUMNSTORE INDEX
-        );
+    CREATE TABLE dbo.[DimCustomer](
+        [CustomerID] [int] NOT NULL,
+        [Title] [nvarchar](8) NULL,
+        [FirstName] [nvarchar](50) NOT NULL,
+        [MiddleName] [nvarchar](50) NULL,
+        [LastName] [nvarchar](50) NOT NULL,
+        [Suffix] [nvarchar](10) NULL,
+        [CompanyName] [nvarchar](128) NULL,
+        [SalesPerson] [nvarchar](256) NULL,
+        [EmailAddress] [nvarchar](50) NULL,
+        [Phone] [nvarchar](25) NULL,
+        [InsertedDate] [datetime] NOT NULL,
+        [ModifiedDate] [datetime] NOT NULL,
+        [HashKey] [char](66)
+    )
+    WITH
+    (
+        DISTRIBUTION = REPLICATE,
+        CLUSTERED COLUMNSTORE INDEX
+    );
     GO
     
     CREATE TABLE [dbo].[FactResellerSales](
@@ -1185,11 +1186,12 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
     );
     GO
     ```
+    You will find `Run` in the top left corner of the script window.
     ![The script and Run button are both highlighted.](media/synapse-create-table-script.png "Create table script")
 
 #### Task 2: Load data into Synapse tables
 
-In this task, you load the Synapse dimension and fact tables with data from a public data source. There are two ways to load this data from Azure Storage files using T-SQL: the COPY INTO command or selecting from external table using Polybase. For this task you will use COPY INTO as a simple syntax for loading delimited data from Azure Storage.
+In this task, you load the Synapse dimension and fact tables with data from a public data source. There are two ways to load this data from Azure Storage files using T-SQL: the COPY command or selecting from external tables using Polybase. For this task you will use COPY since it is a simple and flexible syntax for loading delimited data from Azure Storage. If the source were a private storage account you would include a CREDENTIAL option to authorize the COPY command to read the data, but for this example that is not required.
 
 1. Paste **and execute** the query with the following to insert data into the fact and dimension tables:
 
@@ -1250,12 +1252,8 @@ In this task, you load the Synapse dimension and fact tables with data from a pu
     GO
     ```
 
-#### Task 3: Populate the time dimension table in Synapse
+2. To populate the time dimension table in Azure Synapse, it is fastest to load the data from a delimited file since the looping method used to create the time data runs slowly. To populate this important time dimension, paste **and execute** the following in the query window:
 
-In this task, you populate the time dimension table using T-SQL that is valid for Azure Synapse.
-
-1. Paste **and execute** the following into the query window to create the new time dimension table:
-    
     ```sql
     COPY INTO [dbo].[DimDate]
     FROM 'https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/DimDate.csv'
@@ -1269,9 +1267,9 @@ In this task, you populate the time dimension table using T-SQL that is valid fo
     GO
     ```
 
-#### Task 4: Query data
+#### Task 3: Query data from Synapse
 
-1. Paste **and execute** the following query to retrieve reseller sales data from the star schema at the reseller location, product, and month granularity:
+1. Paste **and execute** the following query to retrieve reseller sales data from the Synapse star schema at the reseller location, product, and month granularity:
 
     ```sql
     SELECT
@@ -1306,7 +1304,7 @@ In this task, you populate the time dimension table using T-SQL that is valid fo
 
     You should see an output similar to the following:
 
-    ![The reseller query results are displayed.](media/reseller-query-results.png "Reseller query results")
+    ![The reseller query results are displayed.](media/reseller-query-results-synapse.png "Reseller query results")
 
 2. Replace **and execute** the query with the following to limit the results to October sales between the 2012 and 2013 fiscal years:
 
@@ -1344,7 +1342,7 @@ In this task, you populate the time dimension table using T-SQL that is valid fo
 
     You should see an output similar to the following:
 
-    ![The query results are displayed in a table.](media/reseller-query-results-date-filter.png "Reseller query results with date filter")
+    ![The query results are displayed in a table.](media/reseller-query-results-date-filter-synapse.png "Reseller query results with date filter")
 
     > Notice how using the **time dimension table** makes filtering by specific date parts and logical dates (such as fiscal year) easier and more performant than calculating date functions on the fly.
 

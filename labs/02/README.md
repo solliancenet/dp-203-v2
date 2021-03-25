@@ -157,7 +157,7 @@ In this task, you create a star schema in SQL database, using foreign key constr
     GO
 
     CREATE TABLE [dbo].[DimProduct](
-        [ProductKey] [int] NOT NULL,
+        [ProductKey] [int] IDENTITY(1,1) NOT NULL,
         [ProductAlternateKey] [nvarchar](25) NULL,
         [ProductSubcategoryKey] [int] NULL,
         [WeightUnitMeasureCode] [nchar](3) NULL,

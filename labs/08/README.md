@@ -618,6 +618,21 @@ To do this, you will build a mapping data flow that performs the following tasks
 
     ![The data preview tab is displayed with a sample of the file contents.](media/data-flow-user-profiles-flatten-data-preview.png "Data preview")
 
+    > **IMPORTANT**: A bug was introduced with the latest release, and the userId source columns are not being updated from the user interface. As a temporary fix, access the script for the data flow (located in the toolbar). Find the `userId` activity in the script, and in the mapColumn function, ensure you append the appropriate source field. For `productId`, ensure it is sourced from **topProductPurchases.productId**, and that **itemsPurchasedLast12Months** is sourced from **topProductPurchases.itemsPurchasedLast12Months**.
+
+    ![Data flow script button.](media/dataflowactivityscript.png "Data flow script button")
+
+    ```javascript
+    userId foldDown(unroll(topProductPurchases),
+        mapColumn(
+            visitorId,
+            productId = topProductPurchases.productId,
+            itemsPurchasedLast12Months = topProductPurchases.itemsPurchasedLast12Months
+        )
+    ```
+
+    ![The script for the data flow is displayed with the userId portion identified and the property names added are highlighted.](media/appendpropertynames_script.png "Data flow script")
+
 12. Select the **+** to the right of the `UserTopProducts` step, then select the **Derived Column** schema modifier from the context menu.
 
     ![The plus sign and Derived Column schema modifier are highlighted.](media/data-flow-user-profiles-new-derived-column2.png "New Derived Column")
@@ -821,7 +836,8 @@ To do this, you will build a mapping data flow that performs the following tasks
 
     - **Output stream name**: Enter `DataLake`.
     - **Incoming stream**: Select `Filter1`.
-    - **Sink type**: select `Delta`.
+    - **Sink type**: select `Inline`.
+    - **Inline dataset type**: select `Delta`.
     - **Linked service**: Select the default workspace data lake storage account (example: `asaworkspaceinaday84-WorspaceDefaultStorage`).
     - **Options**: Check `Allow schema drift` and uncheck `Validate schema`.
 
@@ -833,7 +849,7 @@ To do this, you will build a mapping data flow that performs the following tasks
     - **Compression type**: Select `snappy`.
     - **Compression level**: Select `Fastest`.
     - **Vacuum**: Enter 0.
-    - **Truncate table**: Check.
+    - **Truncate table**: Select.
     - **Update method**: Check `Allow insert` and leave the rest unchecked.
     - **Merge schema (under Delta options)**: Unchecked.
 
@@ -847,12 +863,12 @@ To do this, you will build a mapping data flow that performs the following tasks
         | Input columns | Output columns |
         | --- | --- |
         | visitorId | visitorId |
-        | productId | ProductId |
-        | itemsPurchasedLast12Months | ItemsPurchasedLast12Months |
+        | productId | productId |
+        | itemsPurchasedLast12Months | itemsPurchasedLast12Months |
         | preferredProductId | preferredProductId |
-        | userId | UserId |
-        | isTopProduct | IsTopProduct |
-        | isPreferredProduct | IsPreferredProduct |
+        | userId | userId |
+        | isTopProduct | isTopProduct |
+        | isPreferredProduct | isPreferredProduct |
 
     ![The mapping settings are configured as described.](media/data-flow-user-profiles-new-sink-settings-mapping2.png "Mapping")
 

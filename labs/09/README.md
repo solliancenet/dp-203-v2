@@ -68,7 +68,7 @@ In this segment of the lab, you will create a Synapse Spark notebook to make the
 
     > **Note:** To run just the cell, either hover over the cell and select the _Run cell_ icon to the left of the cell, or select the cell then type **Ctrl+Enter** on your keyboard.
 
-6. Create a new cell underneath by selecting **{} Add code** when hovering over the blank space at the bottom of the notebook.
+6. Create a new cell underneath by selecting the **+** button nd selecting the **Code cell** item. The + button is located beneath the notebook cell on the left. Alternatively, you can also expand the **+ Cell** menu in the Notebook toolbar and select the **Code cell** item.
 
     ![The Add Code menu option is highlighted.](media/new-cell.png "Add code")
 

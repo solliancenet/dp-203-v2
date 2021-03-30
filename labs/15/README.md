@@ -19,7 +19,7 @@ In this module, the student will be able to:
   - [Streaming concepts](#streaming-concepts)
   - [Lab](#lab)
     - [Before the hands-on lab](#before-the-hands-on-lab)
-      - [Task 1 - Create and configure the Azure Databricks workspace](#task-1---create-and-configure-the-azure-databricks-workspace)
+      - [Task 1: Create and configure the Azure Databricks workspace](#task-1-create-and-configure-the-azure-databricks-workspace)
     - [Exercise 1: Complete the Structured Streaming Concepts notebook](#exercise-1-complete-the-structured-streaming-concepts-notebook)
       - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive)
       - [Task 2: Complete the notebook](#task-2-complete-the-notebook)
@@ -57,7 +57,7 @@ You need to complete the exercises within Databricks Notebooks. To begin, you ne
 
 Before stepping through the exercises in this lab, make sure you have access to an Azure Databricks workspace with an available cluster. Perform the tasks below to configure the workspace.
 
-#### Task 1 - Create and configure the Azure Databricks workspace
+#### Task 1: Create and configure the Azure Databricks workspace
 
 Follow the [lab 15 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/15/lab-01-setup.md) to create and configure the workspace.
 

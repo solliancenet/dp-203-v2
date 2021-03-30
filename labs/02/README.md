@@ -29,13 +29,15 @@ In this module, the student will be able to:
     - [Exercise 5: Updating slowly changing dimensions with mapping data flows](#exercise-5-updating-slowly-changing-dimensions-with-mapping-data-flows)
       - [Task 1: Create the Azure SQL Database linked service](#task-1-create-the-azure-sql-database-linked-service)
       - [Task 2: Create a mapping data flow](#task-2-create-a-mapping-data-flow)
-      - [Task 3: Create a pipeline and run the data flow](#task-2-create-a-pipeline-and-run-the-data-flow)
+      - [Task 3: Create a pipeline and run the data flow](#task-3-create-a-pipeline-and-run-the-data-flow)
       - [Task 4: View inserted data](#task-4-view-inserted-data)
       - [Task 5: Update a source customer record](#task-5-update-a-source-customer-record)
       - [Task 6: Re-run mapping data flow](#task-6-re-run-mapping-data-flow)
       - [Task 7: Verify record updated](#task-7-verify-record-updated)
 
 ### Lab setup and pre-requisites
+
+> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
 
 1. If you have not already, follow the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/02/README.md) for this module.
 

@@ -18,7 +18,7 @@ In this module, the student will be able to:
     - [Azure Event Hubs](#azure-event-hubs)
     - [Power BI](#power-bi)
   - [Scenario overview](#scenario-overview)
-  - [Experience requirements](#experience-requirements)
+  - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
   - [Exercise 1: Configure services](#exercise-1-configure-services)
     - [Task 1: Configure Event Hubs](#task-1-configure-event-hubs)
     - [Task 2: Configure Synapse Analytics](#task-2-configure-synapse-analytics)
@@ -56,7 +56,9 @@ Contoso Auto is collecting vehicle telemetry and wants to use Event Hubs to rapi
 
 In this experience, you will use Azure Event Hubs to ingest streaming vehicle telemetry data as the entry point to a near real-time analytics pipeline built on Event Hubs, Azure Stream Analytics, and Power BI. Azure Stream Analytics extracts the vehicle sensor data from Event Hubs, performs aggregations over windows of time, then sends the aggregated data to Azure Synapse Analytics and Power BI for data visualization and analysis. A vehicle telemetry data generator will be used to send vehicle telemetry data to Event Hubs.
 
-## Experience requirements
+## Lab setup and pre-requisites
+
+> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
 
 - Azure subscription
 - Power BI account (sign up at <https://powerbi.microsoft.com>)

@@ -20,8 +20,9 @@ In this module, the student will be able to:
   - [Lab](#lab)
     - [Before the hands-on lab](#before-the-hands-on-lab)
       - [Task 1 - Create and configure the Azure Databricks workspace](#task-1---create-and-configure-the-azure-databricks-workspace)
-      - [Task 2: Clone the Databricks archive](#task-2-clone-the-databricks-archive)
     - [Exercise 1: Complete the Structured Streaming Concepts notebook](#exercise-1-complete-the-structured-streaming-concepts-notebook)
+      - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive)
+      - [Task 2: Complete the notebook](#task-2-complete-the-notebook)
     - [Exercise 2: Complete the Working with Time Windows notebook](#exercise-2-complete-the-working-with-time-windows-notebook)
     - [Exercise 3: Complete the Structured Streaming with Azure EventHubs notebook](#exercise-3-complete-the-structured-streaming-with-azure-eventhubs-notebook)
 
@@ -52,13 +53,17 @@ You need to complete the exercises within Databricks Notebooks. To begin, you ne
 
 ### Before the hands-on lab
 
+> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+
 Before stepping through the exercises in this lab, make sure you have access to an Azure Databricks workspace with an available cluster. Perform the tasks below to configure the workspace.
 
 #### Task 1 - Create and configure the Azure Databricks workspace
 
 Follow the [lab 15 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/15/lab-01-setup.md) to create and configure the workspace.
 
-#### Task 2: Clone the Databricks archive
+### Exercise 1: Complete the Structured Streaming Concepts notebook
+
+#### Task 1: Clone the Databricks archive
 
 1. If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select **Launch Workspace**.
 1. In the left pane, select **Workspace** > **Users**, and select your username (the entry with the house icon).
@@ -75,7 +80,7 @@ Follow the [lab 15 setup instructions](https://github.com/solliancenet/microsoft
 1. Select **Import**.
 1. Select the **10-Structured-Streaming** folder that appears.
 
-### Exercise 1: Complete the Structured Streaming Concepts notebook
+#### Task 2: Complete the notebook
 
 Open the **1.Structured-Streaming-Concepts** notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within.
 

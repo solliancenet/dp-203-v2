@@ -31,6 +31,8 @@ Tailwind Trader's Data Engineers want a way to explore the data lake, transform 
 
 ## Lab setup and pre-requisites
 
+> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+
 You must have permissions to create new Azure Active Directory security groups and assign members to them.
 
 **Complete the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/04/README.md)** for this module.

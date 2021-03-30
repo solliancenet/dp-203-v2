@@ -18,15 +18,16 @@ In this module the student will be able to:
   - [Lab 1 - Working with DataFrames](#lab-1---working-with-dataframes)
     - [Before the hands-on lab](#before-the-hands-on-lab)
       - [Task 1 - Create and configure the Azure Databricks workspace](#task-1---create-and-configure-the-azure-databricks-workspace)
-      - [Task 2: Clone the Databricks archive](#task-2-clone-the-databricks-archive)
-    - [Exercise 1: Complete the Describe a DataFrame notebook](#exercise-1-complete-the-describe-a-dataframe-notebook)
+    - [Exercise 1: Complete the lab notebook](#exercise-1-complete-the-lab-notebook)
+      - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive)
+      - [Task 2: Complete the Describe a DataFrame notebook](#task-2-complete-the-describe-a-dataframe-notebook)
     - [Exercise 2: Complete the Working with DataFrames notebook](#exercise-2-complete-the-working-with-dataframes-notebook)
     - [Exercise 3: Complete the Display Function notebook](#exercise-3-complete-the-display-function-notebook)
     - [Exercise 4: Complete the Distinct Articles exercise notebook](#exercise-4-complete-the-distinct-articles-exercise-notebook)
   - [Lab 2 - Working with DataFrames advanced methods](#lab-2---working-with-dataframes-advanced-methods)
-    - [Before the hands-on lab](#before-the-hands-on-lab-1)
-      - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive)
-    - [Exercise 2: Complete the Date and Time Manipulation notebook](#exercise-2-complete-the-date-and-time-manipulation-notebook)
+    - [Exercise 2: Complete the lab notebook](#exercise-2-complete-the-lab-notebook)
+      - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive-1)
+      - [Task 2: Complete the Date and Time Manipulation notebook](#task-2-complete-the-date-and-time-manipulation-notebook)
     - [Exercise 3: Complete the Use Aggregate Functions notebook](#exercise-3-complete-the-use-aggregate-functions-notebook)
     - [Exercise 4: Complete the De-Duping Data exercise notebook](#exercise-4-complete-the-de-duping-data-exercise-notebook)
 
@@ -36,13 +37,17 @@ Your data processing in Azure Databricks is accomplished by defining DataFrames 
 
 ### Before the hands-on lab
 
+> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+
 Before stepping through the exercises in this lab, make sure you have access to an Azure Databricks workspace with an available cluster. Perform the tasks below to configure the workspace.
 
 #### Task 1 - Create and configure the Azure Databricks workspace
 
 Follow the [lab 06 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/06/lab-01-setup.md) to create and configure the workspace.
 
-#### Task 2: Clone the Databricks archive
+### Exercise 1: Complete the lab notebook
+
+#### Task 1: Clone the Databricks archive
 
 1. If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select **Launch Workspace**.
 1. In the left pane, select **Workspace** > **Users**, and select your username (the entry with the house icon).
@@ -59,7 +64,7 @@ Follow the [lab 06 setup instructions](https://github.com/solliancenet/microsoft
 1. Select **Import**.
 1. Select the **04-Working-With-Dataframes** folder that appears.
 
-### Exercise 1: Complete the Describe a DataFrame notebook
+#### Task 2: Complete the Describe a DataFrame notebook
 
 Open the **1.Describe-a-dataframe** notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within.
 
@@ -124,7 +129,8 @@ After you've completed the notebook, return to this screen, and continue to the 
 
 This lab builds on the Azure Databricks DataFrames concepts learned in the previous lab above by exploring some advanced methods data engineers can use to read, write, and transform data using DataFrames.
 
-### Before the hands-on lab
+### Exercise 2: Complete the lab notebook
+
 #### Task 1: Clone the Databricks archive
 
 1. If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select **Launch Workspace**.
@@ -142,7 +148,7 @@ This lab builds on the Azure Databricks DataFrames concepts learned in the previ
 1. Select **Import**.
 1. Select the **07-Dataframe-Advanced-Methods** folder that appears.
 
-### Exercise 2: Complete the Date and Time Manipulation notebook
+#### Task 2: Complete the Date and Time Manipulation notebook
 
 Open the **1.DateTime-Manipulation** notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within.
 

@@ -14,16 +14,17 @@ In this module, the student will be able to:
   - [Lab details](#lab-details)
   - [Lab 1 - Delta Lake architecture](#lab-1---delta-lake-architecture)
     - [Before the hands-on lab](#before-the-hands-on-lab)
-      - [Task 1 - Create and configure the Azure Databricks workspace](#task-1---create-and-configure-the-azure-databricks-workspace)
-        - [Clone the Databricks archive](#clone-the-databricks-archive)
-    - [Exercise 1: Complete the following notebook](#exercise-1-complete-the-following-notebook)
+      - [Task 1: Create and configure the Azure Databricks workspace](#task-1-create-and-configure-the-azure-databricks-workspace)
+    - [Exercise 1: Complete the lab notebook](#exercise-1-complete-the-lab-notebook)
+      - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive)
+      - [Task 2: Complete the following notebook](#task-2-complete-the-following-notebook)
   - [Lab 2 - Working with Apache Spark in Synapse Analytics](#lab-2---working-with-apache-spark-in-synapse-analytics)
     - [Before the hands-on lab](#before-the-hands-on-lab-1)
-      - [Task 1 - Create and configure the Azure Synapse Analytics workspace](#task-1---create-and-configure-the-azure-synapse-analytics-workspace)
-      - [Task 2 - Create and configure additional resources for this lab](#task-2---create-and-configure-additional-resources-for-this-lab)
-    - [Exercise 1 - Load and data with Spark](#exercise-1---load-and-data-with-spark)
-      - [Task 1 - Index the Data Lake storage with Hyperspace](#task-1---index-the-data-lake-storage-with-hyperspace)
-      - [Task 2 - Explore the Data Lake storage with the MSSparkUtil library](#task-2---explore-the-data-lake-storage-with-the-mssparkutil-library)
+      - [Task 1: Create and configure the Azure Synapse Analytics workspace](#task-1-create-and-configure-the-azure-synapse-analytics-workspace)
+      - [Task 2: Create and configure additional resources for this lab](#task-2-create-and-configure-additional-resources-for-this-lab)
+    - [Exercise 1: Load and data with Spark](#exercise-1-load-and-data-with-spark)
+      - [Task 1: Index the Data Lake storage with Hyperspace](#task-1-index-the-data-lake-storage-with-hyperspace)
+      - [Task 2: Explore the Data Lake storage with the MSSparkUtil library](#task-2-explore-the-data-lake-storage-with-the-mssparkutil-library)
     - [Resources](#resources)
 
 ## Lab 1 - Delta Lake architecture
@@ -32,13 +33,17 @@ In this lab, you will use an Azure Databricks workspace and perform Structured S
 
 ### Before the hands-on lab
 
+> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+
 Before stepping through the exercises in this lab, make sure you have access to an Azure Databricks workspace with an available cluster. Perform the tasks below to configure the workspace.
 
-#### Task 1 - Create and configure the Azure Databricks workspace
+#### Task 1: Create and configure the Azure Databricks workspace
 
-Follow the [lab 01 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/01/lab-01-setup.md) to create and configure the workspace.
+**If you are not using a hosted lab environment**, follow the [lab 01 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/01/lab-01-setup.md) to manually create and configure the workspace.
 
-##### Clone the Databricks archive
+### Exercise 1: Complete the lab notebook
+
+#### Task 1: Clone the Databricks archive
 
 1. If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select **Launch Workspace**.
 1. In the left pane, select **Workspace** > **Users**, and select your username (the entry with the house icon).
@@ -55,7 +60,7 @@ Follow the [lab 01 setup instructions](https://github.com/solliancenet/microsoft
 1. Select **Import**.
 1. Select the **11-Delta-Lake-Architecture** folder that appears.
 
-### Exercise 1: Complete the following notebook
+#### Task 2: Complete the following notebook
 
 Open the **1-Delta-Architecture** notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within.
 
@@ -71,23 +76,25 @@ After completing the lab, you will understand the main steps of an end-to-end da
 
 ### Before the hands-on lab
 
+> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+
 Before stepping through the exercises in this lab, make sure you have properly configured your Azure Synapse Analytics workspace. Perform the tasks below to configure the workspace.
 
-#### Task 1 - Create and configure the Azure Synapse Analytics workspace
+#### Task 1: Create and configure the Azure Synapse Analytics workspace
 
 >**NOTE**
 >
 >If you have already created and configured the Synapse Analytics workspace while running one of the other labs available in this repo, you must not perform this task again and you can move on to the next task. The labs are designed to share the Synapse Analytics workspace, so you only need to create it once.
 
-Follow the instructions in [Deploy your Azure Synapse Analytics workspace](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/01/asa-workspace-deploy.md) to create and configure the workspace.
+**If you are not using a hosted lab environment**, follow the instructions in [Deploy your Azure Synapse Analytics workspace](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/01/asa-workspace-deploy.md) to create and configure the workspace.
 
-#### Task 2 - Create and configure additional resources for this lab
+#### Task 2: Create and configure additional resources for this lab
 
-Follow the instructions in [Deploy resources for Lab 02](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/01/lab-02-deploy.md) to deploy additional resources for this lab. Once deployment is complete, you are ready to proceed with the exercises in this lab.
+**If you are not using a hosted lab environment**, follow the instructions in [Deploy resources for Lab 02](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/01/lab-02-deploy.md) to deploy additional resources for this lab. Once deployment is complete, you are ready to proceed with the exercises in this lab.
 
-### Exercise 1 - Load and data with Spark
+### Exercise 1: Load and data with Spark
 
-#### Task 1 - Index the Data Lake storage with Hyperspace
+#### Task 1: Index the Data Lake storage with Hyperspace
 
 When loading data from Azure Data Lake Gen 2, searching in the data in one of the most resource consuming operations. [Hyperspace](https://github.com/microsoft/hyperspace) introduces the ability for Apache Spark users to create indexes on their datasets, such as CSV, JSON, and Parquet, and use them for potential query and workload acceleration.
 
@@ -207,7 +214,7 @@ hyperspace.deleteIndex("indexCUSTOMERS")
 hyperspace.vacuumIndex("indexCUSTOMERS")
 ```
 
-#### Task 2 - Explore the Data Lake storage with the MSSparkUtil library
+#### Task 2: Explore the Data Lake storage with the MSSparkUtil library
 
 Microsoft Spark Utilities (MSSparkUtils) is a builtin package to help you easily perform common tasks. You can use MSSparkUtils to work with file systems, to get environment variables, and to work with secrets.
 
@@ -249,9 +256,9 @@ Run the new cell and observe how `mssparkutils` is used to work with the file sy
 
 To learn more about the topics covered in this lab, use these resources:
 
-- [Apache Spark in Azure Synapse Analytics](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-overview)
+- [Apache Spark in Azure Synapse Analytics](https://docs.microsoft.com/azure/synapse-analytics/spark/apache-spark-overview)
 - [Announcing Azure Data Explorer data connector for Azure Synapse](https://techcommunity.microsoft.com/t5/azure-data-explorer/announcing-azure-data-explorer-data-connector-for-azure-synapse/ba-p/1743868)
-- [Connect to Azure Data Explorer using Apache Spark for Azure Synapse Analytics](https://docs.microsoft.com/en-us/azure/synapse-analytics/quickstart-connect-azure-data-explorer)
-- [Azure Synapse Analytics shared metadata](https://docs.microsoft.com/en-us/azure/synapse-analytics/metadata/overview)
-- [Introduction of Microsoft Spark Utilities](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/microsoft-spark-utilities?pivots=programming-language-python)
+- [Connect to Azure Data Explorer using Apache Spark for Azure Synapse Analytics](https://docs.microsoft.com/azure/synapse-analytics/quickstart-connect-azure-data-explorer)
+- [Azure Synapse Analytics shared metadata](https://docs.microsoft.com/azure/synapse-analytics/metadata/overview)
+- [Introduction of Microsoft Spark Utilities](https://docs.microsoft.com/azure/synapse-analytics/spark/microsoft-spark-utilities?pivots=programming-language-python)
 - [Hyperspace - An open source indexing subsystem that brings index-based query acceleration to Apache Spark™ and big data workloads](https://github.com/microsoft/hyperspace)

@@ -9,52 +9,52 @@ After completing the lab, you will understand the main steps of an end-to-end Ma
 - [Module 17 - Perform integrated Machine Learning processes in Azure Synapse Analytics](#module-17---perform-integrated-machine-learning-processes-in-azure-synapse-analytics)
   - [Lab details](#lab-details)
   - [Before the hands-on lab](#before-the-hands-on-lab)
-    - [Task 1 - Create and configure the Azure Synapse Analytics workspace](#task-1---create-and-configure-the-azure-synapse-analytics-workspace)
-    - [Task 2 - Create and configure additional resources for this lab](#task-2---create-and-configure-additional-resources-for-this-lab)
-  - [Exercise 1 - Create an Azure Machine Learning linked service](#exercise-1---create-an-azure-machine-learning-linked-service)
-    - [Task 1 - Create and configure an Azure Machine Learning linked service in Synapse Studio](#task-1---create-and-configure-an-azure-machine-learning-linked-service-in-synapse-studio)
-    - [Task 2 - Explore Azure Machine Learning integration features in Synapse Studio](#task-2---explore-azure-machine-learning-integration-features-in-synapse-studio)
-  - [Exercise 2 - Trigger an Auto ML experiment using data from a Spark table](#exercise-2---trigger-an-auto-ml-experiment-using-data-from-a-spark-table)
-    - [Task 1 - Trigger a regression Auto ML experiment on a Spark table](#task-1---trigger-a-regression-auto-ml-experiment-on-a-spark-table)
-    - [Task 2 - View experiment details in Azure Machine Learning workspace](#task-2---view-experiment-details-in-azure-machine-learning-workspace)
-  - [Exercise 3 - Enrich data using trained models](#exercise-3---enrich-data-using-trained-models)
-    - [Task 1 - Enrich data in a SQL pool table using a trained model from Azure Machine Learning](#task-1---enrich-data-in-a-sql-pool-table-using-a-trained-model-from-azure-machine-learning)
-    - [Task 2 - Enrich data in a Spark table using a trained model from Azure Cognitive Services](#task-2---enrich-data-in-a-spark-table-using-a-trained-model-from-azure-cognitive-services)
-    - [Task 3 - Integrate a Machine Learning-based enrichment procedure in a Synapse pipeline](#task-3---integrate-a-machine-learning-based-enrichment-procedure-in-a-synapse-pipeline)
-  - [Exercise 4 - Serve prediction results using Power BI](#exercise-4---serve-prediction-results-using-power-bi)
-    - [Task 1 - Display prediction results in a Power BI report](#task-1---display-prediction-results-in-a-power-bi-report)
-    - [Task 2 - Trigger the pipeline using an event-based trigger](#task-2---trigger-the-pipeline-using-an-event-based-trigger)
-  - [After the hands-on lab](#after-the-hands-on-lab)
+    - [Task 1: Create and configure the Azure Synapse Analytics workspace](#task-1-create-and-configure-the-azure-synapse-analytics-workspace)
+    - [Task 2: Create and configure additional resources for this lab](#task-2-create-and-configure-additional-resources-for-this-lab)
+  - [Exercise 1: Create an Azure Machine Learning linked service](#exercise-1-create-an-azure-machine-learning-linked-service)
+    - [Task 1: Create and configure an Azure Machine Learning linked service in Synapse Studio](#task-1-create-and-configure-an-azure-machine-learning-linked-service-in-synapse-studio)
+    - [Task 2: Explore Azure Machine Learning integration features in Synapse Studio](#task-2-explore-azure-machine-learning-integration-features-in-synapse-studio)
+  - [Exercise 2: Trigger an Auto ML experiment using data from a Spark table](#exercise-2-trigger-an-auto-ml-experiment-using-data-from-a-spark-table)
+    - [Task 1: Trigger a regression Auto ML experiment on a Spark table](#task-1-trigger-a-regression-auto-ml-experiment-on-a-spark-table)
+    - [Task 2: View experiment details in Azure Machine Learning workspace](#task-2-view-experiment-details-in-azure-machine-learning-workspace)
+  - [Exercise 3: Enrich data using trained models](#exercise-3-enrich-data-using-trained-models)
+    - [Task 1: Enrich data in a SQL pool table using a trained model from Azure Machine Learning](#task-1-enrich-data-in-a-sql-pool-table-using-a-trained-model-from-azure-machine-learning)
+    - [Task 2: Enrich data in a Spark table using a trained model from Azure Cognitive Services](#task-2-enrich-data-in-a-spark-table-using-a-trained-model-from-azure-cognitive-services)
+    - [Task 3: Integrate a Machine Learning-based enrichment procedure in a Synapse pipeline](#task-3-integrate-a-machine-learning-based-enrichment-procedure-in-a-synapse-pipeline)
+  - [Exercise 4: Serve prediction results using Power BI](#exercise-4-serve-prediction-results-using-power-bi)
+    - [Task 1: Display prediction results in a Power BI report](#task-1-display-prediction-results-in-a-power-bi-report)
+    - [Task 2: Trigger the pipeline using an event-based trigger](#task-2-trigger-the-pipeline-using-an-event-based-trigger)
   - [Resources](#resources)
-  - [Report issues](#report-issues)
 
 ## Before the hands-on lab
 
+> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+
 Before stepping through the exercises in this lab, make sure you have properly configured your Azure Synapse Analytics workspace. Perform the tasks below to configure the workspace.
 
-### Task 1 - Create and configure the Azure Synapse Analytics workspace
+### Task 1: Create and configure the Azure Synapse Analytics workspace
 
 >**NOTE**
 >
 >If you have already created and configured the Synapse Analytics workspace while running one of the other labs available in this repo, you must not perform this task again and you can move on to the next task. The labs are designed to share the Synapse Analytics workspace, so you only need to create it once.
 
-Follow the instructions in [Deploy your Azure Synapse Analytics workspace](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/17/asa-workspace-deploy.md) to create and configure the workspace.
+**If you are not using a hosted lab environment**, follow the instructions in [Deploy your Azure Synapse Analytics workspace](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/17/asa-workspace-deploy.md) to create and configure the workspace.
 
-### Task 2 - Create and configure additional resources for this lab
+### Task 2: Create and configure additional resources for this lab
 
-Follow the instructions in [Deploy resources for Lab 01](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/17/lab-01-deploy.md) to deploy additional resources for this lab. Once deployment is complete, you are ready to proceed with the exercises in this lab.
+**If you are not using a hosted lab environment**, follow the instructions in [Deploy resources for Lab 01](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/17/lab-01-deploy.md) to deploy additional resources for this lab. Once deployment is complete, you are ready to proceed with the exercises in this lab.
 
-## Exercise 1 - Create an Azure Machine Learning linked service
+## Exercise 1: Create an Azure Machine Learning linked service
 
 In this exercise, you will create and configure an Azure Machine Learning linked service in Synapse Studio. Once the linked service is available, you will explore the Azure Machine Learning integration features in Synapse Studio.
 
-### Task 1 - Create and configure an Azure Machine Learning linked service in Synapse Studio
+### Task 1: Create and configure an Azure Machine Learning linked service in Synapse Studio
 
 The Synapse Analytics linked service authenticates with Azure Machine Learning using a service principal. The service principal is based on an Azure Active Directory application named `Azure Synapse Analytics GA Labs` and has already been created for you by the deployment procedure. The secret associated with the service principal has also been created and saved in the Azure Key Vault instance, under the `ASA-GA-LABS` name.
 
 >**NOTE**
 >
->In the labs provided by this repo, the Azure AD application is used in a single Azure AD tenant which means it has exactly one service principal associated to it. Consequently, we will use the terms Azure AD application and service principal interchangeably. For a detailed explanation on Azure AD applications and security principals, see [Application and service principal objects in Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals).
+>In the labs provided by this repo, the Azure AD application is used in a single Azure AD tenant which means it has exactly one service principal associated to it. Consequently, we will use the terms Azure AD application and service principal interchangeably. For a detailed explanation on Azure AD applications and security principals, see [Application and service principal objects in Azure Active Directory](https://docs.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals).
 
 To view the service principal, open the Azure portal and navigate to your instance of Azure Active directory. Select the `App registrations` section and you should see the `Azure Synapse Analytics GA Labs SUFFIX` (where `SUFFIX` is your unique suffix used during lab deployment) application under the `Owned applications` tab.
 
@@ -99,7 +99,7 @@ Next, select `Test connection` to make sure all settings are correct, and then s
 
 ![Publish Azure Machine Learning linked service in Synapse Studio](media/lab-01-ex-01-task-01-publish-linked-service.png)
 
-### Task 2 - Explore Azure Machine Learning integration features in Synapse Studio
+### Task 2: Explore Azure Machine Learning integration features in Synapse Studio
 
 First, we need to create a Spark table as a starting point for the Machine Learning model trainig process. In Synapse Studio, select the `Data` hub and then the `Linked` section. In the primary `Azure Data Lake Storage Gen 2` account, select the `wwi-02` file system, and then select the `sale-small-20191201-snappy.parquet` file under `wwi-02\sale-small\Year=2019\Quarter=Q4\Month=12\Day=20191201`. Right click the file and select `New notebook -> New Spark table`.
 
@@ -129,11 +129,11 @@ The following options are available in the `Machine Learning` section:
 - Enrich with new model: allows you to start an AutoML experiment to train a new model.
 - Enrich with existing model: allows you to use an existing Azure Cognitive Services model.
 
-## Exercise 2 - Trigger an Auto ML experiment using data from a Spark table
+## Exercise 2: Trigger an Auto ML experiment using data from a Spark table
 
 In this exercise, you will trigger the execution of an Auto ML experiment and view its progress in Azure Machine learning studio.
 
-### Task 1 - Trigger a regression Auto ML experiment on a Spark table
+### Task 1: Trigger a regression Auto ML experiment on a Spark table
 
 To trigger the execution of a new AutoML experiment, select the `Data` hub and then select the `...` area on the right of the `saleconsolidated` Spark table to activate the context menu.
 
@@ -191,7 +191,7 @@ Once your run is successfully submitted, you will get another notification that 
 >
 >Take a moment to read through the code that is generated for you.
 
-### Task 2 - View experiment details in Azure Machine Learning workspace
+### Task 2: View experiment details in Azure Machine Learning workspace
 
 To view the experiment run you just started, open the Azure Portal, select your resource group, and then select the Azure Machine Learning workspace from the resource group.
 
@@ -217,11 +217,11 @@ Next, select the `Models` section on the left in Azure Machine Learning Studio a
 
 ![AutoML best model registered in Azure Machine Learning](media/lab-01-ex-02-task-02-model-registry.png)
 
-## Exercise 3 - Enrich data using trained models
+## Exercise 3: Enrich data using trained models
 
 In this exercise, you will use existing trained models to perform predictions on data. Task 1 uses a trained model from Azure Machine Learning services while Task 2 uses one from Azure Cognitive Services. Finally, you will include the prediciton stored procedure created in Task 1 into a Synapse pipeline.
 
-### Task 1 - Enrich data in a SQL pool table using a trained model from Azure Machine Learning
+### Task 1: Enrich data in a SQL pool table using a trained model from Azure Machine Learning
 
 In Synapse Studio, select the `Data` hub, then select the `Workspace` tab, and then locate the `wwi.ProductQuantityForecast` table in the `SQLPool01 (SQL)` database (under `Databases`). Activate the context menu by selecting `...` from the righ side of the table name, and then select `New SQL script > Select TOP 100 rows`. The table contains the following columns:
 
@@ -312,7 +312,7 @@ Notice how the values in the `TotalQuantity` column have changed from zero to no
 
 ![Execute forecast and view results](media/lab-01-ex-03-task-01-run-forecast.png)
 
-### Task 2 - Enrich data in a Spark table using a trained model from Azure Cognitive Services
+### Task 2: Enrich data in a Spark table using a trained model from Azure Cognitive Services
 
 First, we need to create a Spark table to be used as the input for the Cognitive Services model. In Synapse Studio, select the `Data` hub and then the `Linked` section. In the primary `Azure Data Lake Storage Gen 2` account, select the `wwi-02` file system, and then select the `ProductReviews.csv` file under `wwi-02\sale-small-product-reviews`. Right click the file and select `New notebook -> New Spark table`.
 
@@ -370,7 +370,7 @@ Run cells 2 and 3 in the notebook to get the sentiment analysis results for your
 
 ![Sentiment analytis on data from the Spark table](media/lab-01-ex-03-task-02-text-analytics-results.png)
 
-### Task 3 - Integrate a Machine Learning-based enrichment procedure in a Synapse pipeline
+### Task 3: Integrate a Machine Learning-based enrichment procedure in a Synapse pipeline
 
 In Synapse studio, select the `Integrate` hub on the left side and then select `+ > Pipeline` to create a new Synapse pipeline.
 
@@ -431,11 +431,11 @@ In the results you should now see forecasted values for Hour = 11 (which are cor
 
 ![Test forecast pipeline](media/lab-01-ex-03-task-03-pipeline-test.png)
 
-## Exercise 4 - Serve prediction results using Power BI
+## Exercise 4: Serve prediction results using Power BI
 
 In this exercise you will view the prediction results in a Power BI report. You will also trigger the forecast pipeline with new input data and view the updated quantites in the Power BI report.
 
-### Task 1 - Display prediction results in a Power BI report
+### Task 1: Display prediction results in a Power BI report
 
 First, you will publish a simple Product Quantity Forecast report to Power BI.
 
@@ -459,7 +459,7 @@ To view the results of the report, in Synapse Studio, select the `Develop` hub o
 
 ![View Product Quantity Forecast report in Synapse Studio](media/lab-01-ex-04-task-01-view-report.png)
 
-### Task 2 - Trigger the pipeline using an event-based trigger
+### Task 2: Trigger the pipeline using an event-based trigger
 
 In Synapse Studio, select the `Integrate` hub on the left side and open the `Product Quantity Forecast` pipeline. Select `+ Add trigger` and specify that you want to create a new pipeline trigger. In the `New trigger` window, provide the following values:
 
@@ -483,17 +483,9 @@ In Synapse Studio, select the `Data` hub on the left side, navigate to the prima
 
 In Synapse Studio, select the `Monitor` hub on the left side, and then select `Trigger runs` to see the newly activated pipeline run. Once the pipeline is finished, refresh the Power BI report in Synapse Studio to view the updated data.
 
-## After the hands-on lab
-
-Follow the instructions in [Clean-up your subscription](./../setup/cleanup.md) to clean-up your environment after the hands-on lab.
-
 ## Resources
 
 To learn more about the topics covered in this lab, use these resources:
 
-- [Quickstart: Create a new Azure Machine Learning linked service in Synapse](https://docs.microsoft.com/en-us/azure/synapse-analytics/machine-learning/quickstart-integrate-azure-machine-learning)
-- [Tutorial: Machine learning model scoring wizard for dedicated SQL pools](https://docs.microsoft.com/en-us/azure/synapse-analytics/machine-learning/tutorial-sql-pool-model-scoring-wizard)
-
-## Report issues
-
-In case you encounter any issues with the content in this repository, please follow the [How to report issues](./../../report-issues.md) guideline. We will try to address them as soon as possible. Please check your open issues to learn about their status.
+- [Quickstart: Create a new Azure Machine Learning linked service in Synapse](https://docs.microsoft.com/azure/synapse-analytics/machine-learning/quickstart-integrate-azure-machine-learning)
+- [Tutorial: Machine learning model scoring wizard for dedicated SQL pools](https://docs.microsoft.com/azure/synapse-analytics/machine-learning/tutorial-sql-pool-model-scoring-wizard)

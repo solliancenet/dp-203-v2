@@ -1,6 +1,6 @@
 # Module 3 - Data engineering considerations for source files
 
-In this lab, you will be directed by your instructor to work alone, or in groups for 20 minutes to read through the following information presented below. You will then answer the questions and present back to the classroom your finding based on the requirements define. 
+In this lab, you will be directed by your instructor to work alone, or in groups for 20 minutes to read through the following information presented below. You will then answer the questions and present back to the classroom your findings based on the requirements. 
 
 ## Team whiteboard activity
 

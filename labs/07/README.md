@@ -51,14 +51,13 @@ However, even with their familiarity with SQL, there are some things to consider
 
 | PolyBase | COPY |
 | --- | --- |
-| GA, stable | Currently in preview |
 | Needs `CONTROL` permission | Relaxed permission |
 | Has row width limits | No row width limit |
 | No delimiters within text | Supports delimiters in text |
 | Fixed line delimiter | Supports custom column and row delimiters |
 | Complex to set up in code | Reduces amount of code |
 
-WWI has heard that PolyBase is generally faster than COPY, especially when working with large data sets. 
+WWI has heard that PolyBase is generally faster than COPY, especially when working with large data sets.
 
 In this exercise, you will help WWI compare ease of setup, flexibility, and speed between these loading strategies.
 

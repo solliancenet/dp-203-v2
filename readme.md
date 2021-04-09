@@ -1,4 +1,4 @@
-# INF99X: Sample Course
+# DP-203: Microsoft Data Engineering Course
 
 - **[Download Latest Student Handbook and AllFiles Content](../../releases/latest)**
 - **Are you a MCT?** - Have a look at our [GitHub User Guide for MCTs](https://microsoftlearning.github.io/MCT-User-Guide/)

@@ -2,9 +2,6 @@
 
 Welcome to the course DP-203: Data Engineering on Azure. To support this course, we will need to make updates to the course content to keep it current with the Azure services used in the course.  We are publishing the lab instructions and lab files on GitHub to allow for open contributions between the course authors and MCTs to keep the content current with changes in the Azure platform.
 
-Before we go further, make sure you have checked the following resources
-
-- **[Download Latest Student Handbook and AllFiles Content](../../releases/latest)**.
 - **Are you a MCT?** - Have a look at our [GitHub User Guide for MCTs](https://microsoftlearning.github.io/MCT-User-Guide/).
                                                                        
 ## How should I use these files relative to the released MOC files?

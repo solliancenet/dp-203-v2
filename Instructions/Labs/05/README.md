@@ -50,7 +50,7 @@ One of the first data engineering tasks typically performed during data ingestio
 
 The engineers at Tailspin Traders have run into issues ingesting some of their sales data into the data warehouse, and have requested assistance in understanding how Synapse Studio can be used to help them resolve these issues. As the first step of this process, you need to explore the data to understand what is causing the issues they've encountered, and then provide them with a solution.
 
-### Task 1: Exploring data using the Preview functionality of Synapse Studio
+### Task 1: Exploring data using Azure Synapse Studio
 
 Azure Synapse Studio provides numerous ways to explore data, from a simple preview interface to more complicated programmatic options using Synapse Spark notebooks. In this exercise, you will learn how to use these features to explore, identify, and fix problematic files. You will be exploring CSV files stored in the `wwi-02/sale-poc` folder of the data lake and learning about how to identify and fix issues.
 

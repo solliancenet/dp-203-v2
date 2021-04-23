@@ -256,6 +256,8 @@ In this task, you will use a Synapse Spark notebook to explore a few of the file
 
 5. Follow the instructions contained within the notebook to complete the remainder of this task. When you are done with the notebook, return to this guide and continue with the next section.
 
+6. Once you have completed the **Lab 2 - Explore with Spark** notebook, click on the stop session button on the far right hand side of the toolbar to release the Spark cluster for the next exercise.  
+
 Tailwind Traders has unstructured and semi-structured files from various data sources. Their data engineers want to use their Spark expertise to explore, ingest, and transform these files.
 
 You recommend using Synapse Notebooks, which are integrated in the Azure Synapse Analytics workspace and used from within Synapse Studio.

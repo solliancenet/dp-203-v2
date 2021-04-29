@@ -49,7 +49,7 @@ Before stepping through the exercises in this lab, make sure you have access to 
 1. In the left pane, select **Workspace** > **Users**, and select your username (the entry with the house icon).
 1. In the pane that appears, select the arrow next to your name, and select **Import**.
 
-    ![The menu option to import the archive](media/import-archive.png)
+  ![The menu option to import the archive](media/import-archive.png)
 
 1. In the **Import Notebooks** dialog box, select the URL and paste in the following URL:
 
@@ -108,149 +108,175 @@ Also, Hyperspace allows users to compare their original plan versus the updated 
 
     ![The develop hub is highlighted.](media/develop-hub.png "Develop hub")
 
-Add a new cell to your notebook with the following code (remember to replace `<unique_suffix>` with the value you specified during the Synapse Analytics workspace deployment):
+3. Select **+**, then **Notebook** to create a new Synapse notebook.
 
-```python
-from hyperspace import *  
-from com.microsoft.hyperspace import *
-from com.microsoft.hyperspace.index import *
+    ![The new notebook menu item is highlighted.](media/new-notebook.png "New Notebook")
 
-# Disable BroadcastHashJoin, so Spark will use standard SortMergeJoin. Currently, Hyperspace indexes utilize SortMergeJoin to speed up query.
-spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
+4. Enter **Hyperspace** for the notebook name **(1)**, then select the **Properties** button above **(2)** to hide the properties pane.
 
-# Replace the value below with the name of your primary ADLS Gen2 account for your Synapse workspace
-datalake = 'REPLACE_WITH_YOUR_DATALAKE_NAME'
+    ![The notebook properties are displayed.](media/notebook-properties.png "Properties")
 
-dfSales = spark.read.parquet("abfss://wwi-02@asagadatalake<unique_suffix>.dfs.core.windows.net/sale-small/Year=2019/Quarter=Q4/Month=12/*/*.parquet")
-dfSales.show(10)
+5. Attach the notebook to the Spark cluster and make sure that the language is set to **PySpark (Python)**.
 
-dfCustomers = spark.read.load("abfss://wwi-02@asagadatalake<unique_suffix>.dfs.core.windows.net/data-generators/generator-customer-clean.csv", format="csv", header=True)
-dfCustomers.show(10)
+    ![The cluster is selected and the language is set.](media/notebook-attach-cluster.png "Attach cluster")
 
-# Create an instance of Hyperspace
-hyperspace = Hyperspace(spark)
-```
+6. Add the following code to a new cell in your notebook:
 
-Run the new cell. It will load the two DataFrames with data from the data lake and initalize Hyperspace.
+    ```python
+    from hyperspace import *  
+    from com.microsoft.hyperspace import *
+    from com.microsoft.hyperspace.index import *
 
-![Load data from the data lake and initialize Hyperspace](media/lab-02-ex-02-task-02-initialize-hyperspace.png)
+    # Disable BroadcastHashJoin, so Spark will use standard SortMergeJoin. Currently, Hyperspace indexes utilize SortMergeJoin to speed up query.
+    spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
 
-Add another new cell to your notebook with the following code:
+    # Replace the value below with the name of your primary ADLS Gen2 account for your Synapse workspace
+    datalake = 'REPLACE_WITH_YOUR_DATALAKE_NAME'
 
-```python
-#create indexes: each one contains a name, a set of indexed columns and a set of included columns
-indexConfigSales = IndexConfig("indexSALES", ["CustomerId"], ["TotalAmount"])
-indexConfigCustomers = IndexConfig("indexCUSTOMERS", ["CustomerId"], ["FullName"])
+    dfSales = spark.read.parquet("abfss://wwi-02@" + datalake + ".dfs.core.windows.net/sale-small/Year=2019/Quarter=Q4/Month=12/*/*.parquet")
+    dfSales.show(10)
 
-hyperspace.createIndex(dfSales, indexConfigSales)			# only create index once
-hyperspace.createIndex(dfCustomers, indexConfigCustomers)	# only create index once
-hyperspace.indexes().show()
-```
+    dfCustomers = spark.read.load("abfss://wwi-02@" + datalake + ".dfs.core.windows.net/data-generators/generator-customer-clean.csv", format="csv", header=True)
+    dfCustomers.show(10)
 
-Run the new cell. It will create two indexes and display their structure.
+    # Create an instance of Hyperspace
+    hyperspace = Hyperspace(spark)
+    ```
 
-![Create new indexes and display their structure](media/lab-02-ex-02-task-02-create-indexes.png)
+    Replace the `REPLACE_WITH_YOUR_DATALAKE_NAME` value with the name of your primary ADLS Gen2 account for your Synapse workspace. To find this, do the following:
 
-Add another new cell to your notebook with the following code:
+    1. Navigate to the **Data** hub.
 
-```python
-df1 = dfSales.filter("""CustomerId = 203""").select("""TotalAmount""")
-df1.show()
-df1.explain(True)
-```
+        ![The data hub is highlighted.](media/data-hub.png "Data hub")
 
-Run the new cell. The output will show that the physical execution plan is not taking into account any of the indexes (performs a file scan on the original data file).
+    2. Select the **Linked** tab **(1)**, expand the Azure Data Lake Storage Gen2 group, then make note of the primary ADLS Gen2 name **(2)** next to the name of the workspace.
 
-![Hyperspace explained - no indexes used](media/lab-02-ex-02-task-02-explain-hyperspace-01.png)
+        ![The primary ADLS Gen2 name is displayed.](media/adlsgen2-name.png "ADLS Gen2 name")
 
-Now add another new cell to your notebook with the following code (notice the extra line at the beginning used to enable Hyperspace optimization in the Spark engine):
+7. Run the new cell. It will load the two DataFrames with data from the data lake and initialize Hyperspace.
 
-```python
-# Enable Hyperspace - Hyperspace optimization rules become visible to the Spark optimizer and exploit existing Hyperspace indexes to optimize user queries
-Hyperspace.enable(spark)
-df1 = dfSales.filter("""CustomerId = 203""").select("""TotalAmount""")
-df1.show()
-df1.explain(True)
-```
+    ![Load data from the data lake and initialize Hyperspace](media/lab-02-ex-02-task-02-initialize-hyperspace.png "Initialize Hyperspace")
 
-Run the new cell. The output will show that the physical execution plan is now using the index instead of the orginal data file.
+    > **Note**: You may select the Run button to the left of the cell, or enter `Shift+Enter` to execute the cell and create a new cell below.
+    >
+    > The first time you execute a cell in the notebook will take a few minutes since it must start a new Spark cluster. Each subsequent cell execution should be must faster.
 
-![Hyperspace explained - using an index](media/lab-02-ex-02-task-02-explain-hyperspace-02.png)
+8. Add a new code cell to your notebook with the following code:
 
-Hyperspace provides an Explain API that allows you to compare the execution plans without indexes vs. with indexes. Add a new cell with the following code:
+    ```python
+    #create indexes: each one contains a name, a set of indexed columns and a set of included columns
+    indexConfigSales = IndexConfig("indexSALES", ["CustomerId"], ["TotalAmount"])
+    indexConfigCustomers = IndexConfig("indexCUSTOMERS", ["CustomerId"], ["FullName"])
 
-```python
-df1 = dfSales.filter("""CustomerId = 203""").select("""TotalAmount""")
+    hyperspace.createIndex(dfSales, indexConfigSales)			# only create index once
+    hyperspace.createIndex(dfCustomers, indexConfigCustomers)	# only create index once
+    hyperspace.indexes().show()
+    ```
 
-spark.conf.set("spark.hyperspace.explain.displayMode", "html")
-hyperspace.explain(df1, True, displayHTML)
-```
+9. Run the new cell. It will create two indexes and display their structure.
 
-Run the new cell. The output shows a comparison `Plan with indexes` vs. `Plan without indexes`. Observe how, in the first case the index file is used while in the second case the original data file is used.
+    ![Create new indexes and display their structure](media/lab-02-ex-02-task-02-create-indexes.png "New indexes")
 
-![Hyperspace explained - plan comparison](media/lab-02-ex-02-task-02-explain-hyperspace-03.png)
+10. Add another new code cell to your notebook with the following code:
 
-Let's investigate now a more complex case, involving a join operation. Add a new cell with the following code:
+    ```python
+    df1 = dfSales.filter("""CustomerId = 203""").select("""TotalAmount""")
+    df1.show()
+    df1.explain(True)
+    ```
 
-```python
-eqJoin = dfSales.join(dfCustomers, dfSales.CustomerId == dfCustomers.CustomerId).select(dfSales.TotalAmount, dfCustomers.FullName)
+11. Run the new cell. The output will show that the physical execution plan is not taking into account any of the indexes (performs a file scan on the original data file).
 
-hyperspace.explain(eqJoin, True, displayHTML)
-```
+    ![Hyperspace explained - no indexes used](media/lab-02-ex-02-task-02-explain-hyperspace-01.png)
 
-Run the new cell. The output shows again a comparison `Plan with indexes` vs. `Plan without indexes`, where indexes are used in the first case and the original data files in the second.
+12. Now add another new cell to your notebook with the following code (notice the extra line at the beginning used to enable Hyperspace optimization in the Spark engine):
 
-![Hyperspace explained - plan comparison for join](media/lab-02-ex-02-task-02-explain-hyperspace-04.png)
+    ```python
+    # Enable Hyperspace - Hyperspace optimization rules become visible to the Spark optimizer and exploit existing Hyperspace indexes to optimize user queries
+    Hyperspace.enable(spark)
+    df1 = dfSales.filter("""CustomerId = 203""").select("""TotalAmount""")
+    df1.show()
+    df1.explain(True)
+    ```
 
-In case you want to deactivate Hyperspace and cleanup the indexes, you can run the following code:
+13. Run the new cell. The output will show that the physical execution plan is now using the index instead of the original data file.
 
-```python
-# Disable Hyperspace - Hyperspace rules no longer apply during query optimization. Disabling Hyperspace has no impact on created indexes because they remain intact
-Hyperspace.disable(spark)
+    ![Hyperspace explained - using an index](media/lab-02-ex-02-task-02-explain-hyperspace-02.png)
 
-hyperspace.deleteIndex("indexSALES")
-hyperspace.vacuumIndex("indexSALES")
-hyperspace.deleteIndex("indexCUSTOMERS")
-hyperspace.vacuumIndex("indexCUSTOMERS")
-```
+14. Hyperspace provides an Explain API that allows you to compare the execution plans without indexes vs. with indexes. Add a new cell with the following code:
+
+    ```python
+    df1 = dfSales.filter("""CustomerId = 203""").select("""TotalAmount""")
+
+    spark.conf.set("spark.hyperspace.explain.displayMode", "html")
+    hyperspace.explain(df1, True, displayHTML)
+    ```
+
+15. Run the new cell. The output shows a comparison `Plan with indexes` vs. `Plan without indexes`. Observe how, in the first case the index file is used while in the second case the original data file is used.
+
+    ![Hyperspace explained - plan comparison](media/lab-02-ex-02-task-02-explain-hyperspace-03.png)
+
+16. Let's investigate now a more complex case, involving a join operation. Add a new cell with the following code:
+
+    ```python
+    eqJoin = dfSales.join(dfCustomers, dfSales.CustomerId == dfCustomers.CustomerId).select(dfSales.TotalAmount, dfCustomers.FullName)
+
+    hyperspace.explain(eqJoin, True, displayHTML)
+    ```
+
+17. Run the new cell. The output shows again a comparison `Plan with indexes` vs. `Plan without indexes`, where indexes are used in the first case and the original data files in the second.
+
+    ![Hyperspace explained - plan comparison for join](media/lab-02-ex-02-task-02-explain-hyperspace-04.png)
+
+    In case you want to deactivate Hyperspace and cleanup the indexes, you can run the following code:
+
+    ```python
+    # Disable Hyperspace - Hyperspace rules no longer apply during query optimization. Disabling Hyperspace has no impact on created indexes because they remain intact
+    Hyperspace.disable(spark)
+
+    hyperspace.deleteIndex("indexSALES")
+    hyperspace.vacuumIndex("indexSALES")
+    hyperspace.deleteIndex("indexCUSTOMERS")
+    hyperspace.vacuumIndex("indexCUSTOMERS")
+    ```
 
 #### Task 2: Explore the Data Lake storage with the MSSparkUtil library
 
 Microsoft Spark Utilities (MSSparkUtils) is a builtin package to help you easily perform common tasks. You can use MSSparkUtils to work with file systems, to get environment variables, and to work with secrets.
 
-Continue with the same notebook from the previous task and add a new cell with the following code (remember to replace `<unique_suffix>` with the value you specified during the Synapse Analytics workspace deployment):
+1. Continue with the same notebook from the previous task and add a new cell with the following code:
 
-```python
-from notebookutils import mssparkutils
+    ```python
+    from notebookutils import mssparkutils
 
-#
-# Microsoft Spark Utilities
-#
-# https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/microsoft-spark-utilities?pivots=programming-language-python
-#
+    #
+    # Microsoft Spark Utilities
+    #
+    # https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/microsoft-spark-utilities?pivots=programming-language-python
+    #
 
-# Azure storage access info
-blob_account_name = 'asagadatalake<unique_suffix>'
-blob_container_name = 'wwi-02'
-blob_relative_path = '/'
-linkedServiceName = 'asagadatalake<unique_suffix>'
-blob_sas_token = mssparkutils.credentials.getConnectionStringOrCreds(linkedServiceName)
+    # Azure storage access info
+    blob_account_name = datalake
+    blob_container_name = 'wwi-02'
+    blob_relative_path = '/'
+    linkedServiceName = datalake
+    blob_sas_token = mssparkutils.credentials.getConnectionStringOrCreds(linkedServiceName)
 
-# Allow SPARK to access from Blob remotely
-spark.conf.set('fs.azure.sas.%s.%s.blob.core.windows.net' % (blob_container_name, blob_account_name), blob_sas_token)
+    # Allow SPARK to access from Blob remotely
+    spark.conf.set('fs.azure.sas.%s.%s.blob.core.windows.net' % (blob_container_name, blob_account_name), blob_sas_token)
 
-files = mssparkutils.fs.ls('/')
-for file in files:
-    print(file.name, file.isDir, file.isFile, file.path, file.size)
+    files = mssparkutils.fs.ls('/')
+    for file in files:
+        print(file.name, file.isDir, file.isFile, file.path, file.size)
 
-mssparkutils.fs.mkdirs('/SomeNewFolder')
+    mssparkutils.fs.mkdirs('/SomeNewFolder')
 
-files = mssparkutils.fs.ls('/')
-for file in files:
-    print(file.name, file.isDir, file.isFile, file.path, file.size)
-```
+    files = mssparkutils.fs.ls('/')
+    for file in files:
+        print(file.name, file.isDir, file.isFile, file.path, file.size)
+    ```
 
-Run the new cell and observe how `mssparkutils` is used to work with the file system.
+2. Run the new cell and observe how `mssparkutils` is used to work with the file system.
 
 ### Resources
 

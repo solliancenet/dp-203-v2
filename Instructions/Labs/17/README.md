@@ -25,7 +25,6 @@ After completing the lab, you will understand the main steps of an end-to-end Ma
     - [Task 3: Integrate a Machine Learning-based enrichment procedure in a Synapse pipeline](#task-3-integrate-a-machine-learning-based-enrichment-procedure-in-a-synapse-pipeline)
   - [Exercise 4: Serve prediction results using Power BI](#exercise-4-serve-prediction-results-using-power-bi)
     - [Task 1: Display prediction results in a Power BI report](#task-1-display-prediction-results-in-a-power-bi-report)
-    - [Task 2: Trigger the pipeline using an event-based trigger](#task-2-trigger-the-pipeline-using-an-event-based-trigger)
   - [Resources](#resources)
 
 ## Pre-requisites
@@ -535,45 +534,115 @@ First, you will publish a simple Product Quantity Forecast report to Power BI.
 
 2. Open the file with Power BI Desktop (ignore the warning about missing credentials). Also, if you are first prompted to update credentials, ignore the messages and close the pop-ups without updating the connection information.
 
-3. In the `Home` section, select `Transform data`, then edit the `Source` entry in the `APPLIED STEPS` list of the `ProductQuantityForecast` query. Change the name of the server to `asagaworkspace<unique_suffix>.sql.azuresynapse.net` (where `<unique_suffix>` is the unique suffix for your Synapse Analytics workspace).
+3. In the `Home` section of the report, select **Transform data**.
+
+    ![The Transform data button is highlighted.](media/pbi-transform-data-button.png "Transform data")
+
+4. Select the **gear icon** on the `Source` entry in the `APPLIED STEPS` list of the `ProductQuantityForecast` query.
+
+    ![The gear icon is highlighted to the right of the Source entry.](media/pbi-source-button.png "Edit Source button")
+
+5. Change the name of the server to `asagaworkspace<unique_suffix>.sql.azuresynapse.net` (where `<unique_suffix>` is the unique suffix for your Synapse Analytics workspace), then select **OK**.
 
     ![Edit server name in Power BI Desktop](media/lab-01-ex-04-task-01-server-in-power-bi-desktop.png)
 
-4. The credentials window will pop up and prompt you to enter the credentials to connect to the Synapse Analytics SQL pool (in case it doesn't, select `Data source settings` on the ribbon, select your data source, select `Edit Permissions...`, and then select `Edit...` under `Credentials`).
+6. The credentials window will pop up and prompt you to enter the credentials to connect to the Synapse Analytics SQL pool (in case it doesn't, select `Data source settings` on the ribbon, select your data source, select `Edit Permissions...`, and then select `Edit...` under `Credentials`).
 
-5. In the credentials window, select `Microsoft account` and then select `Sign in`. Use your Power BI Pro account to sign in.
+7. In the credentials window, select `Microsoft account` and then select `Sign in`. Use your Power BI Pro account to sign in.
 
     ![Edit credentials in Power BI Desktop](media/lab-01-ex-04-task-01-credentials-in-power-bi-desktop.png)
 
-6. Close all open popup windows, select `Close & Apply` and then publish the file to your Power BI workspace.
+8. After signing in, select **Connect** to establish the connection to your dedicated SQL pool.
 
-7. To view the results of the report, in Synapse Studio, select the `Develop` hub on the left side, expand the `Power BI` section, and select the `ProductQuantityForecast` report under the `Power BI reports` section from your workspace.
+    ![The connect button is highlighted.](media/pbi-signed-in-connect.png "Connect")
+
+9. Close all open popup windows, then select **Close & Apply**.
+
+    ![The Close & Apply button is highlighted.](media/pbi-close-apply.png "Close & Apply")
+
+10. After the report loads, select **Publish** on the ribbon. When prompted to save your changes, select **Save**.
+
+    ![The publish button is highlighted.](media/pbi-publish-button.png "Publish")
+
+11. When prompted, enter the email address of your Azure account you are using for this lab, then select **Continue**. Enter your password or select your user from the list when prompted.
+
+    ![The email form and continue button are highlighted.](media/pbi-enter-email.png "Enter your email address")
+
+12. Select the Synapse Analytics Power BI Pro workspace created for this lab, then select **Save**.
+
+    ![The workspace and Select button are highlighted.](media/pbi-select-workspace.png "Publish to Power BI")
+
+    Wait until the publish succeeds.
+
+    ![The success dialog is shown.](media/pbi-publish-succeeded.png "Success!")
+
+13. In a new web browser tab, navigate to <https://powerbi.com>.
+
+14. Select **Sign in** and enter your Azure credentials you are using for the lab, when prompted.
+
+15. Select **Workspaces** on the left-hand menu, then select the Synapse Analytics Power BI workspace created for this lab. This is the same workspace you published to a moment ago.
+
+    ![The workspace is highlighted.](media/pbi-com-select-workspace.png "Select workspace")
+
+16. Select **Settings** in the top-most menu, then select **Settings**.
+
+    ![The settings menu item is selected.](media/pbi-com-settings-link.png "Settings")
+
+17. Select the **Datasets** tab, then select **Edit credentials**.
+
+    ![The datasets and edit credentials links are highlighted.](media/pbi-com-datasets-edit.png "Edit credentials")
+
+18. Select **OAuth2** under `Authentication method`, then select **Sign in**. When prompted, enter your credentials.
+
+    ![OAuth2 is selected.](media/pbi-com-auth-method.png "Authentication method")
+
+19. To view the results of the report, switch back to Synapse Studio.
+
+20. Select the `Develop` hub on the left-hand side.
+
+    ![Select the develop hub.](media/develop-hub.png "Develop hub")
+
+21. Expand the `Power BI` section, and select the `ProductQuantityForecast` report under the `Power BI reports` section from your workspace.
 
     ![View Product Quantity Forecast report in Synapse Studio](media/lab-01-ex-04-task-01-view-report.png)
 
-### Task 2: Trigger the pipeline using an event-based trigger
+<!-- ### Task 2: Trigger the pipeline using an event-based trigger
 
-In Synapse Studio, select the `Integrate` hub on the left side and open the `Product Quantity Forecast` pipeline. Select `+ Add trigger` and specify that you want to create a new pipeline trigger. In the `New trigger` window, provide the following values:
+1. In Synapse Studio, select the **Integrate** hub on the left-hand side.
 
-- **Name**: enter `New data trigger`.
-- **Type**: select `Event`.
-- **Azure subscription**: ensure the right Azure subscription is selected (the one containing your resource group).
-- **Storage account name**: select the `asagadatalake<uniqu_prefix>` account (where `<unique_suffix>` is the unique suffix you provided when deploying the Synapse Analytics workspace).
-- **Container name**: enter `wwi-02`.
-- **Blob path begins with**: enter `sale-small-product-quantity-forecast/ProductQuantity`.
-- **Event**: select `Blob created`.
+    ![The integrate hub is selected.](media/integrate-hub.png "Integrate hub")
 
-Select `Continue` to create the trigger, then select once more `Continue` in the `Data preview` dialog, and then `OK` to publish the trigger.
+2. Open the `Product Quantity Forecast` pipeline. Select **+ Add trigger**, then select **New/Edit**.
 
-![Configure new storage event trigger on pipeline](media/lab-01-ex-04-task-02-create-trigger.png)
+    ![The new/edit button option is highlighted.](media/pipeline-new-trigger.png "New trigger")
 
-In Synapse Studio, select `Publish all` and then `Publish` to publish all changes.
+3. In the `Add triggers` dialog, select **Choose trigger...**, then select **+ New**.
 
-Download the `ProductQuantity-20201209-12.csv` file from https://solliancepublicdata.blob.core.windows.net/wwi-02/sale-small-product-quantity-forecast/ProductQuantity-20201209-12.csv.
+    ![The dropdown and new option are selected.](media/pipeline-new-trigger-add-new.png "Add new trigger")
 
-In Synapse Studio, select the `Data` hub on the left side, navigate to the primary data lake account in the `Linked` section, and open the `wwi-02 > sale-small-product-quantity-forecast` path. Delete the existing `ProductQuantity-20201209-11.csv` file and upload the `ProductQuantity-20201209-12.csv` file. This will trigger the `Product Quantity Forecast` pipeline wich will import the forecast requests from the CSV file and run the forecasting stored procedure.
+4. In the `New trigger` window, provide the following values:
 
-In Synapse Studio, select the `Monitor` hub on the left side, and then select `Trigger runs` to see the newly activated pipeline run. Once the pipeline is finished, refresh the Power BI report in Synapse Studio to view the updated data.
+   - **Name**: enter `New data trigger`.
+   - **Type**: select `Storage events`.
+   - **Azure subscription**: ensure the right Azure subscription is selected (the one containing your resource group).
+   - **Storage account name**: select the `asagadatalake<uniqu_prefix>` account (where `<unique_suffix>` is the unique suffix for your Synapse Analytics workspace).
+   - **Container name**: select `wwi-02`.
+   - **Blob path begins with**: enter `sale-small-product-quantity-forecast/ProductQuantity`.
+   - **Event**: select `Blob created`.
+
+   ![The form is completed as described.](media/pipeline-add-new-trigger-form.png "New trigger")
+
+5. Select **Continue** to create the trigger, then select once more `Continue` in the `Data preview` dialog, and then `OK` and `OK` once more to save the trigger.
+
+    ![The matching blob name is highlighted and the Continue button is selected.](media/pipeline-add-new-trigger-preview.png "Data preview")
+
+6. In Synapse Studio, select `Publish all` and then `Publish` to publish all changes.
+
+7. Download the `ProductQuantity-20201209-12.csv` file from https://solliancepublicdata.blob.core.windows.net/wwi-02/sale-small-product-quantity-forecast/ProductQuantity-20201209-12.csv.
+
+8. n Synapse Studio, select the `Data` hub on the left side, navigate to the primary data lake account in the `Linked` section, and open the `wwi-02 > sale-small-product-quantity-forecast` path. Delete the existing `ProductQuantity-20201209-11.csv` file and upload the `ProductQuantity-20201209-12.csv` file. This will trigger the `Product Quantity Forecast` pipeline which will import the forecast requests from the CSV file and run the forecasting stored procedure.
+
+9. In Synapse Studio, select the `Monitor` hub on the left side, and then select `Trigger runs` to see the newly activated pipeline run. Once the pipeline is finished, refresh the Power BI report in Synapse Studio to view the updated data. -->
 
 ## Resources
 

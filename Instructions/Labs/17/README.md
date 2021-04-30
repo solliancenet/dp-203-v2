@@ -11,6 +11,7 @@ After completing the lab, you will understand the main steps of an end-to-end Ma
   - [Before the hands-on lab](#before-the-hands-on-lab)
     - [Task 1: Create and configure the Azure Synapse Analytics workspace](#task-1-create-and-configure-the-azure-synapse-analytics-workspace)
     - [Task 2: Create and configure additional resources for this lab](#task-2-create-and-configure-additional-resources-for-this-lab)
+  - [Exercise 0: Start the dedicated SQL pool](#exercise-0-start-the-dedicated-sql-pool)
   - [Exercise 1: Create an Azure Machine Learning linked service](#exercise-1-create-an-azure-machine-learning-linked-service)
     - [Task 1: Create and configure an Azure Machine Learning linked service in Synapse Studio](#task-1-create-and-configure-an-azure-machine-learning-linked-service-in-synapse-studio)
     - [Task 2: Explore Azure Machine Learning integration features in Synapse Studio](#task-2-explore-azure-machine-learning-integration-features-in-synapse-studio)
@@ -28,7 +29,7 @@ After completing the lab, you will understand the main steps of an end-to-end Ma
 
 ## Before the hands-on lab
 
-> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 0.
 
 Before stepping through the exercises in this lab, make sure you have properly configured your Azure Synapse Analytics workspace. Perform the tasks below to configure the workspace.
 
@@ -43,6 +44,26 @@ Before stepping through the exercises in this lab, make sure you have properly c
 ### Task 2: Create and configure additional resources for this lab
 
 **If you are not using a hosted lab environment**, follow the instructions in [Deploy resources for Lab 01](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/17/lab-01-deploy.md) to deploy additional resources for this lab. Once deployment is complete, you are ready to proceed with the exercises in this lab.
+
+## Exercise 0: Start the dedicated SQL pool
+
+This lab uses the dedicated SQL pool. As a first step, make sure it is not paused. If so, start it by following these instructions:
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. If the dedicated SQL pool is paused, hover over the name of the pool and select **Resume (2)**.
+
+    ![The resume button is highlighted on the dedicated SQL pool.](media/resume-dedicated-sql-pool.png "Resume")
+
+4. When prompted, select **Resume**. It will take a minute or two to resume the pool.
+
+    ![The resume button is highlighted.](media/resume-dedicated-sql-pool-confirm.png "Resume")
+
+> **Continue to the next exercise** while the dedicated SQL pool resumes.
 
 ## Exercise 1: Create an Azure Machine Learning linked service
 
@@ -245,7 +266,11 @@ In this exercise, you will use existing trained models to perform predictions on
 
 ### Task 1: Enrich data in a SQL pool table using a trained model from Azure Machine Learning
 
-In Synapse Studio, select the `Data` hub, then select the `Workspace` tab, and then locate the `wwi.ProductQuantityForecast` table in the `SQLPool01 (SQL)` database (under `Databases`). Activate the context menu by selecting `...` from the righ side of the table name, and then select `New SQL script > Select TOP 100 rows`. The table contains the following columns:
+1. Switch back to Synapse Studio and select the **Data** hub.
+
+    ![The data hub is highlighted.](media/data-hub.png "Data hub")
+
+2. Select the `Workspace` tab, and then locate the `wwi.ProductQuantityForecast` table in the `SQLPool01 (SQL)` database (under `Databases`). Activate the context menu by selecting `...` from the right side of the table name, and then select `New SQL script > Select TOP 100 rows`. The table contains the following columns:
 
 -**ProductId**: the identifier of the product for which we want to predict
 -**TransactionDate**: the future date for which we want to predict

@@ -8,6 +8,7 @@ After completing the lab, you will understand the main steps of an end-to-end Ma
 
 - [Module 17 - Perform integrated Machine Learning processes in Azure Synapse Analytics](#module-17---perform-integrated-machine-learning-processes-in-azure-synapse-analytics)
   - [Lab details](#lab-details)
+  - [Pre-requisites](#pre-requisites)
   - [Before the hands-on lab](#before-the-hands-on-lab)
     - [Task 1: Create and configure the Azure Synapse Analytics workspace](#task-1-create-and-configure-the-azure-synapse-analytics-workspace)
     - [Task 2: Create and configure additional resources for this lab](#task-2-create-and-configure-additional-resources-for-this-lab)
@@ -26,6 +27,10 @@ After completing the lab, you will understand the main steps of an end-to-end Ma
     - [Task 1: Display prediction results in a Power BI report](#task-1-display-prediction-results-in-a-power-bi-report)
     - [Task 2: Trigger the pipeline using an event-based trigger](#task-2-trigger-the-pipeline-using-an-event-based-trigger)
   - [Resources](#resources)
+
+## Pre-requisites
+
+Install [Power BI Desktop](https://www.microsoft.com/download/details.aspx?id=58494) on your lab computer or VM.
 
 ## Before the hands-on lab
 
@@ -272,211 +277,251 @@ In this exercise, you will use existing trained models to perform predictions on
 
 2. Select the `Workspace` tab, and then locate the `wwi.ProductQuantityForecast` table in the `SQLPool01 (SQL)` database (under `Databases`). Activate the context menu by selecting `...` from the right side of the table name, and then select `New SQL script > Select TOP 100 rows`. The table contains the following columns:
 
--**ProductId**: the identifier of the product for which we want to predict
--**TransactionDate**: the future date for which we want to predict
--**Hour**: the hour from the future date for which we want to predict
--**TotalQuantity**: the value we want to predict for the specified product, day, and hour.
+- **ProductId**: the identifier of the product for which we want to predict
+- **TransactionDate**: the future date for which we want to predict
+- **Hour**: the hour from the future date for which we want to predict
+- **TotalQuantity**: the value we want to predict for the specified product, day, and hour.
 
-![ProductQuantitForecast table in the SQL pool](media/lab-01-ex-03-task-01-explore-table.png)
+    ![ProductQuantitForecast table in the SQL pool](media/lab-01-ex-03-task-01-explore-table.png)
 
-Notice that `TotalQuantity` is zero in all rows as this is the placeholder for the predicted values we are looking to get.
+    > Notice that `TotalQuantity` is zero in all rows as this is the placeholder for the predicted values we are looking to get.
 
-To use the model you just trained in Azure Machine Learning, activate the context menu of the `wwi.ProductQuantityForecast`, and then select `Machine Learning > Enrich with existing model`. This will open the `Enrich with existing model` dialog where you can select your model. Select the most recent model and then select `Continue`.
+3. To use the model you just trained in Azure Machine Learning, activate the context menu of the `wwi.ProductQuantityForecast`, and then select `Machine Learning > Enrich with existing model`.
 
-![Select trained Machine Learning model](media/lab-01-ex-03-task-01-select-model.png)
+    ![The context menu is displayed.](media/enrich-with-ml-model-menu.png "Enrich with existing model")
 
-Next, you will manage the input and output column mappings. Because the column names from the target table and the table used for model training match, you can leave all mappings as suggested by default. Select `Continue` to advance.
+4. This will open the `Enrich with existing model` dialog where you can select your model. Select the most recent model and then select `Continue`.
 
-![Column mapping in model selection](media/lab-01-ex-03-task-01-map-columns.png)
+    ![Select trained Machine Learning model](media/enrich-with-ml-model.png "Enrich with existing model")
 
-The final step presents you with options to name the stored procedure that will perform the predictions and the table that will store the serialized form of your model. Provide the following values:
+5. Next, you will manage the input and output column mappings. Because the column names from the target table and the table used for model training match, you can leave all mappings as suggested by default. Select `Continue` to advance.
 
-- **Stored procedure name**: `[wwi].[ForecastProductQuantity]`
-- **Select target table**: `Create new`
-- **New table**: `[wwi].[Model]`
+    ![Column mapping in model selection](media/lab-01-ex-03-task-01-map-columns.png)
 
-Select `Deploy model + open script` to deploy your model into the SQL pool.
+6. The final step presents you with options to name the stored procedure that will perform the predictions and the table that will store the serialized form of your model. Provide the following values:
 
-![Configure model deployment](media/lab-01-ex-03-task-01-deploy-model.png)
+   - **Stored procedure name**: `[wwi].[ForecastProductQuantity]`
+   - **Select target table**: `Create new`
+   - **New table**: `[wwi].[Model]`
 
-From the new SQL script that is created for you, copy the ID of the model:
+    Select **Deploy model + open script** to deploy your model into the SQL pool.
 
-![SQL script for stored procedure](media/lab-01-ex-03-task-01-forecast-stored-procedure.png)
+    ![Configure model deployment](media/lab-01-ex-03-task-01-deploy-model.png)
 
-The T-SQL code that is generated will only return the results of the prediction, without actually saving them. To save the results of the prediction directly into the `[wwi].[ProductQuantityForecast]` table, replace the generated code with the following:
+7. From the new SQL script that is created for you, copy the ID of the model:
 
-```sql
-CREATE PROC [wwi].[ForecastProductQuantity] AS
-BEGIN
+    ![SQL script for stored procedure](media/lab-01-ex-03-task-01-forecast-stored-procedure.png)
 
-SELECT
-    CAST([ProductId] AS [bigint]) AS [ProductId],
-    CAST([TransactionDate] AS [bigint]) AS [TransactionDate],
-    CAST([Hour] AS [bigint]) AS [Hour]
-INTO #ProductQuantityForecast
-FROM [wwi].[ProductQuantityForecast]
-WHERE TotalQuantity = 0;
+8. The T-SQL code that is generated will only return the results of the prediction, without actually saving them. To save the results of the prediction directly into the `[wwi].[ProductQuantityForecast]` table, replace the generated code with the following, then execute the script (after replacing `<your_model_id>`):
 
-SELECT
-    ProductId
-    ,TransactionDate
-    ,Hour
-    ,CAST(variable_out1 as INT) as TotalQuantity
-INTO
-    #Pred
-FROM PREDICT (MODEL = (SELECT [model] FROM wwi.Model WHERE [ID] = '<your_model_id>'),
-            DATA = #ProductQuantityForecast,
-            RUNTIME = ONNX) WITH ([variable_out1] [real])
+    ```sql
+    CREATE PROC [wwi].[ForecastProductQuantity] AS
+    BEGIN
 
-MERGE [wwi].[ProductQuantityForecast] AS target  
-    USING (select * from #Pred) AS source (ProductId, TransactionDate, Hour, TotalQuantity)  
-ON (target.ProductId = source.ProductId and target.TransactionDate = source.TransactionDate and target.Hour = source.Hour)  
-    WHEN MATCHED THEN
-        UPDATE SET target.TotalQuantity = source.TotalQuantity;
-END
-GO
-```
+    SELECT
+        CAST([ProductId] AS [bigint]) AS [ProductId],
+        CAST([TransactionDate] AS [bigint]) AS [TransactionDate],
+        CAST([Hour] AS [bigint]) AS [Hour]
+    INTO #ProductQuantityForecast
+    FROM [wwi].[ProductQuantityForecast]
+    WHERE TotalQuantity = 0;
 
-In the code above, make sure you replace `<your_model_id>` with the actual ID of the model (the one you copied in the previous step).
+    SELECT
+        ProductId
+        ,TransactionDate
+        ,Hour
+        ,CAST(variable_out1 as INT) as TotalQuantity
+    INTO
+        #Pred
+    FROM PREDICT (MODEL = (SELECT [model] FROM wwi.Model WHERE [ID] = '<your_model_id>'),
+                DATA = #ProductQuantityForecast,
+                RUNTIME = ONNX) WITH ([variable_out1] [real])
 
->**NOTE**:
->
->Our version of the stored procedure uses the `MERGE` commdand to update the values of the `TotalQuantity` field in-place, in the `wwi.ProductQuantityForecast` table. The `MERGE` command has been recently added to Azure Synapse Analytics. For more details, read [New MERGE command for Azure Synapse Analytics](https://azure.microsoft.com/en-us/updates/new-merge-command-for-azure-synapse-analytics/).
+    MERGE [wwi].[ProductQuantityForecast] AS target  
+        USING (select * from #Pred) AS source (ProductId, TransactionDate, Hour, TotalQuantity)  
+    ON (target.ProductId = source.ProductId and target.TransactionDate = source.TransactionDate and target.Hour = source.Hour)  
+        WHEN MATCHED THEN
+            UPDATE SET target.TotalQuantity = source.TotalQuantity;
+    END
+    GO
+    ```
 
-You are now ready to perform the forecast on the `TotalQuantity` column. Open a new SQL script and run the following statement:
+    In the code above, make sure you replace `<your_model_id>` with the actual ID of the model (the one you copied in the previous step).
 
-```sql
-EXEC
-    wwi.ForecastProductQuantity
+    >**NOTE**:
+    >
+    >Our version of the stored procedure uses the `MERGE` command to update the values of the `TotalQuantity` field in-place, in the `wwi.ProductQuantityForecast` table. The `MERGE` command has been recently added to Azure Synapse Analytics. For more details, read [New MERGE command for Azure Synapse Analytics](https://azure.microsoft.com/updates/new-merge-command-for-azure-synapse-analytics/).
 
-SELECT  
-    *
-FROM
-    wwi.ProductQuantityForecast
-```
+9. You are now ready to perform the forecast on the `TotalQuantity` column. Replace the SQL script and run the following statement:
 
-Notice how the values in the `TotalQuantity` column have changed from zero to non-zero predicted values:
+    ```sql
+    EXEC
+        wwi.ForecastProductQuantity
+    SELECT
+        *
+    FROM
+        wwi.ProductQuantityForecast
+    ```
 
-![Execute forecast and view results](media/lab-01-ex-03-task-01-run-forecast.png)
+    Notice how the values in the `TotalQuantity` column have changed from zero to non-zero predicted values:
+
+    ![Execute forecast and view results](media/lab-01-ex-03-task-01-run-forecast.png)
 
 ### Task 2: Enrich data in a Spark table using a trained model from Azure Cognitive Services
 
-First, we need to create a Spark table to be used as the input for the Cognitive Services model. In Synapse Studio, select the `Data` hub and then the `Linked` section. In the primary `Azure Data Lake Storage Gen 2` account, select the `wwi-02` file system, and then select the `ProductReviews.csv` file under `wwi-02\sale-small-product-reviews`. Right click the file and select `New notebook -> New Spark table`.
+First, we need to create a Spark table to be used as the input for the Cognitive Services model.
 
-![Create new Spark table from product reviews file in primary data lake](media/lab-01-ex-03-task-02-new-spark-table.png)
+1. Select the **Data** hub.
 
-Replace the content of the notebook cell with the following code and then run the cell:
+    ![The data hub is highlighted.](media/data-hub.png "Data hub")
 
-```python
-%%pyspark
-df = spark.read.load('abfss://wwi-02@<data_lake_account_name>.dfs.core.windows.net/sale-small-product-reviews/ProductReviews.csv', format='csv'
-,header=True
-)
-df.write.mode("overwrite").saveAsTable("default.ProductReview")
-```
+2. Select the `Linked` tab. In the primary `Azure Data Lake Storage Gen 2` account, select the `wwi-02` file system, and then select the `ProductReviews.csv` file under `wwi-02\sale-small-product-reviews`. Right click the file and select `New notebook -> New Spark table`.
 
->**NOTE**:
->
->Replace `<data_lake_account_name>` with the actual name of your Synapse Analytics primary data lake account.
+    ![Create new Spark table from product reviews file in primary data lake](media/lab-01-ex-03-task-02-new-spark-table.png)
 
-To view the table in the `Data`hub, expand the `default (Spark)` database in the `Workspace` section. Your table will show up in the `Tables` folder. Select the three dots at the right of the table name to view the `Machine Learning` option in the context menu and then select `Machine Learning > Enrich with existing model`.
+3. Attach the Apache Spark pool to the notebook and make sure `PySpark (Python)` is the selected language.
 
-In the `Enrich with existing model` dialog, select `Text Analytics - Sentiment Analysis` under `Azure Cognitive Services` and then select `Continue`.
+    ![The Spark pool and language are selected.](media/attach-cluster-to-notebook.png "Attach the Spark pool")
 
-![Select text analytics model from Azure Cognitive Services](media/lab-01-ex-03-task-02-text-analytics-model.png)
+4. Replace the content of the notebook cell with the following code and then run the cell:
 
-Next, provide values as follows:
+    ```python
+    %%pyspark
+    df = spark.read.load('abfss://wwi-02@<data_lake_account_name>.dfs.core.windows.net/sale-small-product-reviews/ProductReviews.csv', format='csv'
+    ,header=True
+    )
+    df.write.mode("overwrite").saveAsTable("default.ProductReview")
+    ```
 
-- **Azure subscription**: select the Azure subscription of your resource group.
-- **Cognitive Services account**: select the Cogntive Services account that has been provisioned in your resource group. The name should be `asagacognitiveservices<unique_suffix>`, where `<unique_suffix>` is the unique suffix you provided when deploying the Synapse Analytics workspace.
-- **Azure Key Vault linked service**: select the Azure Key Vault linked services that has been provisioned in your Synapse Analytics workspace. The name should be `asagakeyvault<unique_suffix>`, where `<unique_suffix>` is the unique suffix you provided when deploying the Synapse Analytics workspace.
-- **Secret name**: enter `ASA-GA-COGNITIVE-SERVICES` (the name of the secret that contains the key for the specified Cognitive Services account).
+    >**NOTE**:
+    >
+    >Replace `<data_lake_account_name>` with the actual name of your Synapse Analytics primary data lake account.
 
-Select `Continue` to move next.
+5. To view the table in the `Data` hub, expand the `default (Spark)` database in the `Workspace` section. Your **productreview** table will show up in the `Tables` folder. Select the three dots at the right of the table name to view the `Machine Learning` option in the context menu and then select `Machine Learning > Enrich with existing model`.
 
-![Configure Cognitive Services account details](media/lab-01-ex-03-task-02-connect-to-model.png)
+    ![The context menu is displayed on the new Spark table.](media/productreview-spark-table.png "productreview table with context menu")
 
-Next, provide values as follows:
+6. In the `Enrich with existing model` dialog, select `Text Analytics - Sentiment Analysis` under `Azure Cognitive Services` and then select `Continue`.
 
-- **Language**: select `English`.
-- **Text column**: select `ReviewText (string)`
+    ![Select text analytics model from Azure Cognitive Services](media/lab-01-ex-03-task-02-text-analytics-model.png)
 
-Select `Open notebook` to view the generated code.
+7. Next, provide values as follows:
 
->**NOTE**:
->
->When you created the `ProductReview` Spark table by running the notebook cell, you started a Spark session on that notebook. The default settings on your Synapse Analytics workspace will not allow you to start a new notebook that runs in parallel with that one.
-You will need to copy the contents of the two cells that contain to Cognitive Services integration code into that notebook and run them on the Spark session that you have already started. After copying the two cells, you should see a screen similar to this:
->
->![Text Analytics service integration code in notebook](media/lab-01-ex-03-task-02-text-analytics-code.png)
+   - **Azure subscription**: select the Azure subscription of your resource group.
+   - **Cognitive Services account**: select the Cogntive Services account that has been provisioned in your resource group. The name should be `asagacognitiveservices<unique_suffix>`, where `<unique_suffix>` is the unique suffix you provided when deploying the Synapse Analytics workspace.
+   - **Azure Key Vault linked service**: select the Azure Key Vault linked services that has been provisioned in your Synapse Analytics workspace. The name should be `asagakeyvault<unique_suffix>`, where `<unique_suffix>` is the unique suffix you provided when deploying the Synapse Analytics workspace.
+   - **Secret name**: enter `ASA-GA-COGNITIVE-SERVICES` (the name of the secret that contains the key for the specified Cognitive Services account).
 
->**NOTE**:
->To run the notebook generated by Synapse Studio without copying its cells, you can use the `Apache Spark applications` section of the `Monitor` hub where you can view and cancel running Spark session. For more details on this, see [Use Synapse Studio to monitor your Apache Spark applications](https://docs.microsoft.com/en-us/azure/synapse-analytics/monitoring/apache-spark-applications). In this lab, we used to copy cells approach to avoid the extra time required to cancel the running Spark session and start a new one afterwards.
+8. Select `Continue` to move next.
 
-Run cells 2 and 3 in the notebook to get the sentiment analysis results for your data.
+    ![Configure Cognitive Services account details](media/lab-01-ex-03-task-02-connect-to-model.png)
 
-![Sentiment analytis on data from the Spark table](media/lab-01-ex-03-task-02-text-analytics-results.png)
+9. Next, provide values as follows:
+
+   - **Language**: select `English`.
+   - **Text column**: select `ReviewText (string)`
+
+10. Select `Open notebook` to view the generated code.
+
+    >**NOTE**:
+    >
+    >When you created the `ProductReview` Spark table by running the notebook cell, you started a Spark session on that notebook. The default settings on your Synapse Analytics workspace will not allow you to start a new notebook that runs in parallel with that one.
+    You will need to copy the contents of the two cells that contain to Cognitive Services integration code into that notebook and run them on the Spark session that you have already started. After copying the two cells, you should see a screen similar to this:
+    >
+    >![Text Analytics service integration code in notebook](media/lab-01-ex-03-task-02-text-analytics-code.png)
+
+    >**NOTE**:
+    >To run the notebook generated by Synapse Studio without copying its cells, you can use the `Apache Spark applications` section of the `Monitor` hub where you can view and cancel running Spark session. For more details on this, see [Use Synapse Studio to monitor your Apache Spark applications](https://docs.microsoft.com/azure/synapse-analytics/monitoring/apache-spark-applications). In this lab, we used to copy cells approach to avoid the extra time required to cancel the running Spark session and start a new one afterwards.
+
+    Run cells 2 and 3 in the notebook to get the sentiment analysis results for your data.
+
+    ![Sentiment analysis on data from the Spark table](media/lab-01-ex-03-task-02-text-analytics-results.png)
 
 ### Task 3: Integrate a Machine Learning-based enrichment procedure in a Synapse pipeline
 
-In Synapse studio, select the `Integrate` hub on the left side and then select `+ > Pipeline` to create a new Synapse pipeline.
+1. Select the **Integrate** hub.
 
-Enter `Product Quantity Forecast` as the name of the pipeline on the right side.
+    ![The integrate hub is highlighted.](media/integrate-hub.png "Integrate hub")
 
-From the `Move & transform` section, add a `Copy data` activity and name it `Import forecast requests`.
+2. Select **+**, then **Pipeline** to create a new Synapse pipeline.
 
-![Create Product Quantity Forecast pipeline](media/lab-01-ex-03-task-03-create-pipeline.png)
+    ![The plus button and pipeline option are highlighted.](media/new-synapse-pipeline.png "New pipeline")
 
-In the `Source` section of the copy activity properties, provide the following values:
+3. Enter `Product Quantity Forecast` as the name of the pipeline in the properties pane, then select the **Properties** button to close the pane.
 
-- **Source dataset**: select the `wwi02_sale_small_product_quantity_forecast_adls` dataset.
-- **File path type**: select `Wildcard file path`
-- **Wildcard paths**: enter `sale-small-product-quantity-forecast` in the first textbox, and `*.csv` in the second.
+    ![The name is displayed in the properties pane.](media/pipeline-name.png "Properties: Name")
 
-![Copy activity source configuration](media/lab-01-ex-03-task-03-pipeline-source.png)
+4. From the `Move & transform` section, add a `Copy data` activity and name it `Import forecast requests`.
 
-In the `Sink` section of the copy activity properties, provide the following values:
+    ![Create Product Quantity Forecast pipeline](media/lab-01-ex-03-task-03-create-pipeline.png)
 
--**Sink dataset**: select the `wwi02_sale_small_product_quantity_forecast_asa` dataset.
+5. In the `Source` section of the copy activity properties, provide the following values:
 
-![Copy activity sink configuration](media/lab-01-ex-03-task-03-pipeline-sink.png)
+   - **Source dataset**: select the `wwi02_sale_small_product_quantity_forecast_adls` dataset.
+   - **File path type**: select `Wildcard file path`
+   - **Wildcard paths**: enter `sale-small-product-quantity-forecast` in the first textbox, and `*.csv` in the second.
 
-In the `Mapping` section of the copy activity properties, select `Import schemas` and check field mappings between source and sink.
+    ![Copy activity source configuration](media/lab-01-ex-03-task-03-pipeline-source.png)
 
-![Copy activity mapping configuration](media/lab-01-ex-03-task-03-pipeline-mapping.png)
+6. In the `Sink` section of the copy activity properties, provide the following values:
 
-In the `Settings` section of the copy activity properties, provide the following values:
+   - **Sink dataset**: select the `wwi02_sale_small_product_quantity_forecast_asa` dataset.
 
-- **Enable staging**: select the option.
-- **Staging account linked service**: select the `asagadatalake<unique_suffix>` linked service (where `<unique_suffix>` is the unique suffix you provided when deploying the Synapse Analytics workspace).
-- **Storage path**: enter `staging`.
+    ![Copy activity sink configuration](media/lab-01-ex-03-task-03-pipeline-sink.png)
 
-![Copy activity settings configuration](media/lab-01-ex-03-task-03-pipeline-staging.png)
+7. In the `Mapping` section of the copy activity properties, select `Import schemas` and check field mappings between source and sink.
 
-From the `Synapse` section, add a `SQL pool stored procedure` activity and name it `Forecast product quantities`. Connect the two pipeline activities to ensure the stored procedure runs after the data import.
+    ![Copy activity mapping configuration](media/lab-01-ex-03-task-03-pipeline-mapping.png)
 
-![Add forecasting store procedure to the pipeline](media/lab-01-ex-03-task-03-pipeline-stored-procedure-01.png)
+8. In the `Settings` section of the copy activity properties, provide the following values:
 
-In the `Settings` section of the stored procedure actity properties, provide the following values:
+   - **Enable staging**: select the option.
+   - **Staging account linked service**: select the `asagadatalake<unique_suffix>` linked service (where `<unique_suffix>` is the unique suffix you provided when deploying the Synapse Analytics workspace).
+   - **Storage path**: enter `staging`.
 
-- **Azure Synapse dedicated SQL pool**: select `SQLPool01`.
-- **Stored procedure name**: select `[wwi].[ForecastProductQuantity]`.
+    ![Copy activity settings configuration](media/lab-01-ex-03-task-03-pipeline-staging.png)
 
-Select `Debug` to make sure the pipeline works correctly.
-Select `Publish all` to publish the pipeline.
+9. From the `Synapse` section, add a `SQL pool stored procedure` activity and name it `Forecast product quantities`. Connect the two pipeline activities to ensure the stored procedure runs after the data import.
 
-Create a new SQL script and execute the following script against the `SQLPool01` pool:
+    ![Add forecasting store procedure to the pipeline](media/lab-01-ex-03-task-03-pipeline-stored-procedure-01.png)
 
-```sql
-SELECT  
-    *
-FROM
-    wwi.ProductQuantityForecast
-```
+10. In the `Settings` section of the stored procedure activity properties, provide the following values:
 
-In the results you should now see forecasted values for Hour = 11 (which are corresponding to rows imported by the pipeline):
+    - **Azure Synapse dedicated SQL pool**: select your dedicated SQL pool (eg. `SQLPool01`).
+    - **Stored procedure name**: select `[wwi].[ForecastProductQuantity]`.
 
-![Test forecast pipeline](media/lab-01-ex-03-task-03-pipeline-test.png)
+    ![The stored procedure activity settings are displayed.](media/pipeline-sproc-settings.png "Settings")
+
+11. Select **Debug** to make sure the pipeline works correctly.
+
+    ![The debug button is highlighted.](media/pipeline-debug.png "Debug")
+
+    The pipeline's **Output** tab will show the debug status. Wait until the status for both activities is `Succeeded`.
+
+    ![The activity status is Succeeded for both activities.](media/pipeline-debug-succeeded.png "Debug output")
+
+12. Select **Publish all**, then **Publish** to publish the pipeline.
+
+13. Select the **Develop** hub.
+
+    ![The develop hub is highlighted.](media/develop-hub.png "Develop hub")
+
+14. Select **+**, then select **SQL script**.
+
+    ![The new SQL script option is highlighted.](media/new-sql-script.png "New SQL script")
+
+15. Connect to your dedicated SQL pool, then execute the following script:
+
+    ```sql
+    SELECT  
+        *
+    FROM
+        wwi.ProductQuantityForecast
+    ```
+
+    In the results you should now see forecasted values for Hour = 11 (which are corresponding to rows imported by the pipeline):
+
+    ![Test forecast pipeline](media/lab-01-ex-03-task-03-pipeline-test.png)
 
 ## Exercise 4: Serve prediction results using Power BI
 
@@ -486,25 +531,25 @@ In this exercise you will view the prediction results in a Power BI report. You 
 
 First, you will publish a simple Product Quantity Forecast report to Power BI.
 
-Download the `ProductQuantityForecast.pbix` file from the GitHub repo: https://github.com/solliancenet/azure-synapse-analytics-ga-content-packs/blob/main/hands-on-labs/lab-01/ProductQuantityForecast.pbix (select `Download` on the GitHub page).
+1. Download the `ProductQuantityForecast.pbix` file from the GitHub repo: [ProductQuantityForecast.pbix](ProductQuantityForecast.pbix) (select `Download` on the GitHub page).
 
-Open the file with Power BI Desktop (ignore the warning about missing credentials). Also, if you are first prompted to update credentials, ignore the messages and close the pop-ups without updating the connection information.
+2. Open the file with Power BI Desktop (ignore the warning about missing credentials). Also, if you are first prompted to update credentials, ignore the messages and close the pop-ups without updating the connection information.
 
-In the `Home` section, select `Transform data`, then edit the `Source` entry in the `APPLIED STEPS` list of the `ProductQuantityForecast` query. Change the name of the server to `asagaworkspace<unique_suffix>.sql.azuresynapse.net` (where `<unique_suffix>` is the unique suffix you provided when deploying the Synapse Analytics workspace).
+3. In the `Home` section, select `Transform data`, then edit the `Source` entry in the `APPLIED STEPS` list of the `ProductQuantityForecast` query. Change the name of the server to `asagaworkspace<unique_suffix>.sql.azuresynapse.net` (where `<unique_suffix>` is the unique suffix for your Synapse Analytics workspace).
 
-![Edit server name in Power BI Desktop](media/lab-01-ex-04-task-01-server-in-power-bi-desktop.png)
+    ![Edit server name in Power BI Desktop](media/lab-01-ex-04-task-01-server-in-power-bi-desktop.png)
 
-The credentials window will pop up and promopt you to enter the credentials to connect to the Synapse Analytics SQL pool (in case it doesn't, select `Data source settings` on the ribbon, select your data source, select `Edit Permissions...`, and then select `Edit...` under `Credentials`).
+4. The credentials window will pop up and prompt you to enter the credentials to connect to the Synapse Analytics SQL pool (in case it doesn't, select `Data source settings` on the ribbon, select your data source, select `Edit Permissions...`, and then select `Edit...` under `Credentials`).
 
-In the credentials window, select `Microsoft account` and then select `Sign in`. Use your Power BI Pro account to sign in.
+5. In the credentials window, select `Microsoft account` and then select `Sign in`. Use your Power BI Pro account to sign in.
 
-![Edit credentials in Power BI Desktop](media/lab-01-ex-04-task-01-credentials-in-power-bi-desktop.png)
+    ![Edit credentials in Power BI Desktop](media/lab-01-ex-04-task-01-credentials-in-power-bi-desktop.png)
 
-Close all open popup windows, select `Close & Apply` and then publish the file to your Power BI workspace.
+6. Close all open popup windows, select `Close & Apply` and then publish the file to your Power BI workspace.
 
-To view the results of the report, in Synapse Studio, select the `Develop` hub on the left side, expand the `Power BI` section, and select the `ProductQuantityForecast` report under the `Power BI reports` section from your workspace.
+7. To view the results of the report, in Synapse Studio, select the `Develop` hub on the left side, expand the `Power BI` section, and select the `ProductQuantityForecast` report under the `Power BI reports` section from your workspace.
 
-![View Product Quantity Forecast report in Synapse Studio](media/lab-01-ex-04-task-01-view-report.png)
+    ![View Product Quantity Forecast report in Synapse Studio](media/lab-01-ex-04-task-01-view-report.png)
 
 ### Task 2: Trigger the pipeline using an event-based trigger
 

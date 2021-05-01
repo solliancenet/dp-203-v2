@@ -14,8 +14,9 @@ In this module, the student will be able to:
 - [Module 5 - Explore, transform, and load data into the Data Warehouse using Apache Spark](#module-5---explore-transform-and-load-data-into-the-data-warehouse-using-apache-spark)
   - [Lab details](#lab-details)
   - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
+  - [Exercise 0: Start the dedicated SQL pool](#exercise-0-start-the-dedicated-sql-pool)
   - [Exercise 1: Perform Data Exploration in Synapse Studio](#exercise-1-perform-data-exploration-in-synapse-studio)
-    - [Task 1: Exploring data using the Preview functionality of Synapse Studio](#task-1-exploring-data-using-the-preview-functionality-of-synapse-studio)
+    - [Task 1: Exploring data using the data previewer in Azure Synapse Studio](#task-1-exploring-data-using-the-data-previewer-in-azure-synapse-studio)
     - [Task 2: Using serverless SQL pools to explore files](#task-2-using-serverless-sql-pools-to-explore-files)
     - [Task 3: Exploring and fixing data with Synapse Spark](#task-3-exploring-and-fixing-data-with-synapse-spark)
   - [Exercise 2: Ingesting data with Spark notebooks in Azure Synapse Analytics](#exercise-2-ingesting-data-with-spark-notebooks-in-azure-synapse-analytics)
@@ -27,7 +28,7 @@ In this module, the student will be able to:
 
 ## Lab setup and pre-requisites
 
-> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 0.
 
 **Complete the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/04/README.md)** for this module.
 
@@ -43,6 +44,26 @@ Note, the following modules share this same environment:
 - [Module 12](labs/12/README.md)
 - [Module 13](labs/13/README.md)
 - [Module 16](labs/16/README.md)
+
+## Exercise 0: Start the dedicated SQL pool
+
+This lab uses the dedicated SQL pool. As a first step, make sure it is not paused. If so, start it by following these instructions:
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. If the dedicated SQL pool is paused, hover over the name of the pool and select **Resume (2)**.
+
+    ![The resume button is highlighted on the dedicated SQL pool.](media/resume-dedicated-sql-pool.png "Resume")
+
+4. When prompted, select **Resume**. It will take a minute or two to resume the pool.
+
+    ![The resume button is highlighted.](media/resume-dedicated-sql-pool-confirm.png "Resume")
+
+> **Continue to the next exercise** while the dedicated SQL pool resumes.
 
 ## Exercise 1: Perform Data Exploration in Synapse Studio
 

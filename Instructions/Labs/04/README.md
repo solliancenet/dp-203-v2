@@ -222,17 +222,7 @@ You decide to create an external table that connects to the external data source
 
     ![The run button is highlighted.](media/sql-run.png "Run")
 
-    Please note that there are no data results for this query. You should see messages similar to the following:
-
-    ```text
-    Started executing query at Line 1
-
-    (Affected rows: 0)
-    (Affected rows: 0)
-    (Affected rows: 0)
-    (Affected rows: 0)
-    Total execution time: 00:00:00.240
-    ```
+    Please note that there are no data results for this query.
 
 3. Replace the SQL script with the following to select from the population external table, filtered by 2019 data where the population is greater than 100 million:
 
@@ -363,7 +353,7 @@ In this segment, we will create security groups as described above. However, our
 
     ![New group button.](media/new-group.png "New group")
 
-5. Select `Security` from **Group type**. Enter `tailwind-history-owners` for the **Group name**, then select **Create**.
+5. Select `Security` from **Group type**. Enter `tailwind-history-owners-<suffix>` (where `<suffix>` is a unique value, such as your initials followed by two or more numbers) for the **Group name**, then select **Create**.
 
     ![The form is configured as described.](media/new-group-history-owners.png "New Group")
 
@@ -371,7 +361,7 @@ In this segment, we will create security groups as described above. However, our
 
     ![New group button.](media/new-group.png "New group")
 
-7. Select `Security` from **Group type**. Enter `tailwind-readers` for the **Group name**, then select **Create**.
+7. Select `Security` from **Group type**. Enter `tailwind-readers-<suffix>` (where `<suffix>` is a unique value, such as your initials followed by two or more numbers) for the **Group name**, then select **Create**.
 
     ![The form is configured as described.](media/new-group-readers.png "New Group")
 
@@ -379,7 +369,7 @@ In this segment, we will create security groups as described above. However, our
 
     ![New group button.](media/new-group.png "New group")
 
-9. Select `Security` from **Group type**. Enter `tailwind-current-writers` for the **Group name**, then select **Create**.
+9. Select `Security` from **Group type**. Enter `tailwind-current-writers-<suffix>` (where `<suffix>` is a unique value, such as your initials followed by two or more numbers) for the **Group name**, then select **Create**.
 
     ![The form is configured as described.](media/new-group-current-writers.png "New Group")
 
@@ -387,15 +377,15 @@ In this segment, we will create security groups as described above. However, our
 
     ![New group button.](media/new-group.png "New group")
 
-11. Select `Security` from **Group type**. Enter `tailwind-2019-writers` for the **Group name**, then select **Create**.
+11. Select `Security` from **Group type**. Enter `tailwind-2019-writers-<suffix>` (where `<suffix>` is a unique value, such as your initials followed by two or more numbers) for the **Group name**, then select **Create**.
 
     ![The form is configured as described.](media/new-group-2019-writers.png "New Group")
 
 ### Task 2: Add group members
 
-To test out the permissions, we will add our own account to the `tailwind-readers` group.
+To test out the permissions, we will add our own account to the `tailwind-readers-<suffix>` group.
 
-1. Open the newly created **`tailwind-readers`** group.
+1. Open the newly created **`tailwind-readers-<suffix>`** group.
 
 2. Select **Members (1)** on the left, then select **+ Add members (2)**.
 
@@ -405,13 +395,13 @@ To test out the permissions, we will add our own account to the `tailwind-reader
 
     ![The form is displayed.](media/add-members.png "Add members")
 
-4. Open the **`tailwind-2019-writers`** group.
+4. Open the **`tailwind-2019-writers-<suffix>`** group.
 
 5. Select **Members (1)** on the left, then select **+ Add members (2)**.
 
     ![The group is displayed and add members is highlighted.](media/tailwind-2019-writers.png "tailwind-2019-writers group")
 
-6. Search for `tailwind`, select the **`tailwind-current-writers`** group, then select **Select**.
+6. Search for `tailwind`, select the **`tailwind-current-writers-<suffix>`** group, then select **Select**.
 
     ![The form is displayed as described.](media/add-members-writers.png "Add members")
 
@@ -423,7 +413,7 @@ To test out the permissions, we will add our own account to the `tailwind-reader
 
 ### Task 3: Configure data lake security - Role-Based Access Control (RBAC)
 
-1. Open the `synapse-in-a-day-demos` Azure resource group.
+1. Open the Azure resource group for this lab, which contains the Synapse Analytics workspace.
 
 2. Open the default data lake storage account.
 
@@ -441,29 +431,29 @@ To test out the permissions, we will add our own account to the `tailwind-reader
 
     ![Add role assignment is highlighted.](media/add-role-assignment.png "Add role assignment")
 
-6. For **Role**, select **`Storage Blob Data Reader`**. Search for **`tailwind-readers`** and select it from the results, then select **Save**.
+6. For **Role**, select **`Storage Blob Data Reader`**. Search for **`tailwind-readers`** and select `tailwind-readers-<suffix>` from the results, then select **Save**.
 
     ![The form is displayed as described.](media/add-tailwind-readers.png "Add role assignment")
 
-    Since our user account is added to this group, we will have read access to all files in the blob containers of this account. Tailwind Traders will need to add all users to the `tailwind-readers` security group.
+    Since our user account is added to this group, we will have read access to all files in the blob containers of this account. Tailwind Traders will need to add all users to the `tailwind-readers-<suffix>` security group.
 
 7. Select **+ Add**, then **Add role assignment**.
 
     ![Add role assignment is highlighted.](media/add-role-assignment.png "Add role assignment")
 
-8. For **Role**, select **`Storage Blob Data Owner`**. Search for **`tailwind`** and select **`tailwind-history-owners`** from the results, then select **Save**.
+8. For **Role**, select **`Storage Blob Data Owner`**. Search for **`tailwind`** and select **`tailwind-history-owners-<suffix>`** from the results, then select **Save**.
 
     ![The form is displayed as described.](media/add-tailwind-history-owners.png "Add role assignment")
 
-    The `tailwind-history-owners` security group is now assigned to the Azure Storage built-in RBAC role `Storage Blob Data Owner` for the Azure Storage account containing the data lake. This allows Azure AD user and service principals that are added to this role to have the ability to modify all data.
+    The `tailwind-history-owners-<suffix>` security group is now assigned to the Azure Storage built-in RBAC role `Storage Blob Data Owner` for the Azure Storage account containing the data lake. This allows Azure AD user and service principals that are added to this role to have the ability to modify all data.
 
-    Tailwind Traders needs to add the user security principals who will have have permissions to modify all historical data to the `tailwind-history-owners` security group.
+    Tailwind Traders needs to add the user security principals who will have have permissions to modify all historical data to the `tailwind-history-owners-<suffix>` security group.
 
 9. In the **Access Control (IAM)** list for the storage account, select your Azure user account under the **Storage Blob Data Owner** role **(1)**, then select **Remove (2)**.
 
     ![The Access Control settings are displayed.](media/storage-access-control-updated.png "Access Control updated")
 
-    Notice that the `tailwind-history-owners` group is assigned to the **Storage Blob Data Owner** group **(3)**, and `tailwind-readers` is assigned to the **Storage Blob Data Reader** group **(4)**.
+    Notice that the `tailwind-history-owners-<suffix>` group is assigned to the **Storage Blob Data Owner** group **(3)**, and `tailwind-readers-<suffix>` is assigned to the **Storage Blob Data Reader** group **(4)**.
 
     > **Note**: You may need to navigate back to the resource group, then come back to this screen to see all of the new role assignments.
 
@@ -473,17 +463,17 @@ To test out the permissions, we will add our own account to the `tailwind-reader
 
     ![The 2019 folder is highlighted and Manage Access is selected.](media/manage-access-2019.png "Storage Explorer")
 
-2. Paste the **Object Id** value you copied from the **`tailwind-2019-writers`** security group into the **Add user, group, or service principal** text box, then select **Add**.
+2. Paste the **Object Id** value you copied from the **`tailwind-2019-writers-<suffix>`** security group into the **Add user, group, or service principal** text box, then select **Add**.
 
     ![The Object Id value is pasted in the field.](media/manage-access-2019-object-id.png "Manage Access")
 
-3. Now you should see that the `tailwind-2019-writers` group is selected in the Manage Access dialog **(1)**. Check the **Access** and **Default** check boxes and the **Read**, **Write**, and **Execute** checkboxes for each **(2)**, then select **Save**.
+3. Now you should see that the `tailwind-2019-writers-<suffix>` group is selected in the Manage Access dialog **(1)**. Check the **Access** and **Default** check boxes and the **Read**, **Write**, and **Execute** checkboxes for each **(2)**, then select **Save**.
 
     ![The permissions are configured as described.](media/manage-access-2019-permissions.png "Manage Access")
 
-    Now the security ACLs have been set to allow any users added to the `tailwind-current` security group to write to the `Year=2019` folder, by way of the `tailwind-2019-writers` group. These users can only manage current (2019 in this case) sales files.
+    Now the security ACLs have been set to allow any users added to the `tailwind-current-<suffix>` security group to write to the `Year=2019` folder, by way of the `tailwind-2019-writers-<suffix>` group. These users can only manage current (2019 in this case) sales files.
 
-    At the start of the following year, to revoke write access to the 2019 data they would remove the `tailwind-current-writers` security group from the `tailwind-2019-writers` group. Members of `tailwind-readers` would continue to be able to read the contents of the file system because they have been granted read and execute (list) permissions not by the ACLs but by the RBAC built in role at the level of the file system.
+    At the start of the following year, to revoke write access to the 2019 data they would remove the `tailwind-current-writers-<suffix>` security group from the `tailwind-2019-writers-<suffix>` group. Members of `tailwind-readers-<suffix>` would continue to be able to read the contents of the file system because they have been granted read and execute (list) permissions not by the ACLs but by the RBAC built in role at the level of the file system.
 
     Notice that we configured both the _access_ ACLs and _default_ ACLs in this configuration.
 
@@ -511,9 +501,9 @@ To test out the permissions, we will add our own account to the `tailwind-reader
 
     ![The cell output is displayed.](media/sql-on-demand-output.png "SQL output")
 
-    The read permissions to the Parquet file assigned to us through the `tailwind-readers` security group, which then is granted RBAC permissions on the storage account through the **Storage Blob Data Reader** role assignment, is what enabled us to view the file contents.
+    The read permissions to the Parquet file assigned to us through the `tailwind-readers-<suffix>` security group, which then is granted RBAC permissions on the storage account through the **Storage Blob Data Reader** role assignment, is what enabled us to view the file contents.
 
-    However, since we removed our account from the **Storage Blob Data Owner** role, and we did not add our account to the `tailwind-history-owners` security group, what if we try to write to this directory?
+    However, since we removed our account from the **Storage Blob Data Owner** role, and we did not add our account to the `tailwind-history-owners-<suffix>` security group, what if we try to write to this directory?
 
     Let's give it a try.
 
@@ -521,7 +511,15 @@ To test out the permissions, we will add our own account to the `tailwind-reader
 
     ![The Data hub is displayed with the options highlighted.](media/data-hub-parquet-new-notebook.png "New notebook")
 
-5. In the notebook, select **{} Add code** underneath Cell 1 **(1)**. Enter the following in the new cell, then **copy the Parquet path from cell 1** and paste the value to replace `REPLACE_WITH_PATH` **(2)**. Rename the Parquet file by adding `-test` to the end of the file name **(3)**:
+5. Attach your Spark pool to the notebook.
+
+    ![The Spark pool is highlighted.](media/notebook-attach-spark-pool.png "Attach Spark pool")
+
+6. In the notebook, select **+**, then **</> Code cell** underneath Cell 1 to add a new code cell.
+
+    ![The new code cell button is highlighted.](media/new-code-cell.png "New code cell")
+
+7. Enter the following in the new cell, then **copy the Parquet path from cell 1** and paste the value to replace `REPLACE_WITH_PATH` **(1)**. Rename the Parquet file by adding `-test` to the end of the file name **(2)**:
 
     ```python
     df.write.parquet('REPLACE_WITH_PATH')
@@ -529,44 +527,44 @@ To test out the permissions, we will add our own account to the `tailwind-reader
 
     ![The notebook is displayed with the new cell.](media/new-cell.png "New cell")
 
-6. Select **Run all** in the toolbar to run both cells. After a few minutes when the Spark pool starts and the cells run, you should see the file data in the output from cell 1 **(1)**. However, you should see a **403 error** in the output of cell 2 **(2)**.
+8. Select **Run all** in the toolbar to run both cells. After a few minutes when the Spark pool starts and the cells run, you should see the file data in the output from cell 1 **(1)**. However, you should see a **403 error** in the output of cell 2 **(2)**.
 
     ![The error is displayed in Cell 2's output.](media/notebook-error.png "Notebook error")
 
     As expected, we do not have write permissions. The error returned by cell 2 is, `This request is not authorized to perform this operation using this permission.`, with a status code of 403.
 
-7. Leave the notebook open and switch back to the Azure portal (<https://portal.azure.com>) in another tab.
+9. Leave the notebook open and switch back to the Azure portal (<https://portal.azure.com>) in another tab.
 
-8. Select the Azure menu **(1)**, then select **Azure Active Directory (2)**.
+10. Select the Azure menu **(1)**, then select **Azure Active Directory (2)**.
 
     ![The menu item is highlighted.](media/azure-ad-menu.png "Azure Active Directory")
 
-9. Select **Groups** in the left-hand menu.
+11. Select **Groups** in the left-hand menu.
 
     ![Groups is highlighted.](media/aad-groups-link.png "Azure Active Directory")
 
-10. Type **`tailwind`** in the search box **(1)**, then select **`tailwind-history-owners`** in the results **(2)**.
+12. Type **`tailwind`** in the search box **(1)**, then select **`tailwind-history-owners-<suffix>`** in the results **(2)**.
 
     ![The tailwind groups are displayed.](media/tailwind-groups.png "All groups")
 
-11. Select **Members (1)** on the left, then select **+ Add members (2)**.
+13. Select **Members (1)** on the left, then select **+ Add members (2)**.
 
     ![The group is displayed and add members is highlighted.](media/tailwind-history-owners.png "tailwind-history-owners group")
 
-12. Add your user account that you are signed into for the lab, then select **Select**.
+14. Add your user account that you are signed into for the lab, then select **Select**.
 
     ![The form is displayed.](media/add-members.png "Add members")
 
-13. Switch back to the open Synapse Notebook in Synapse Studio, then **Run** cell 2 once more **(1)**. You should see a status of **Succeeded (2)** after a few moments.
+15. Switch back to the open Synapse Notebook in Synapse Studio, then **Run** cell 2 once more **(1)**. You should see a status of **Succeeded (2)** after a few moments.
 
     ![Cell 2 succeeded.](media/notebook-succeeded.png "Notebook")
 
-    The cell succeeded this time because we added our account to the `tailwind-history-owners` group, which is assigned the **Storage Blob Data Owner** role.
+    The cell succeeded this time because we added our account to the `tailwind-history-owners-<suffix>` group, which is assigned the **Storage Blob Data Owner** role.
 
-    > **Note**: If you encounter the same error this time, stop the Spark session on the notebook, then select **Publish all**, then Publish. After publishing your changes, select your user profile on the top-right corner of the page and log out. Close the browser tab after logout is successful, then re-launch Synapse Studio, re-open the notebook, then re-run the cell. This may be needed because you must refresh the security token for the auth changes to take place.
+    > **Note**: If you encounter the same error this time, **stop the Spark session** on the notebook, then select **Publish all**, then Publish. After publishing your changes, select your user profile on the top-right corner of the page and **log out**. **Close the browser tab** after logout is successful, then re-launch Synapse Studio (<https://web.azuresynapse.net/>), re-open the notebook, then re-run the cell. This may be needed because you must refresh the security token for the auth changes to take place.
 
     Now let's verify that the file was written to the data lake.
 
-14. Navigate back to the `sale-small/Year=2016/Quarter=Q4/Month=12/Day=20161231` folder. You should now see a folder for the new `sale-small-20161231-snappy-test.parquet` file we wrote from the notebook **(1)**. If you don't see it listed here, select **... More** in the toolbar **(2)**, then select **Refresh (3)**.
+16. Navigate back to the `sale-small/Year=2016/Quarter=Q4/Month=12/Day=20161231` folder. You should now see a folder for the new `sale-small-20161231-snappy-test.parquet` file we wrote from the notebook **(1)**. If you don't see it listed here, select **... More** in the toolbar **(2)**, then select **Refresh (3)**.
 
     ![The test Parquet file is displayed.](media/test-parquet-file.png "Test parquet file")

@@ -335,9 +335,7 @@ Tailwind Traders wants to enforce that any kind of modifications to sales data c
 
 ### Task 1: Create Azure Active Directory security groups
 
-In this segment, we will create security groups as described above. However, our data set ends in 2019, so we will create a `tailwind-2019-writers` group instead of 2020.
-
-> **Note**: Since other students may be using the same Azure AD tenant, the four `tailwind-XXX` groups may already exist. If you find a group already exists, move on to the next step.
+In this segment, we will create security groups as described above. However, our data set ends in 2019, so we will create a `tailwind-2019-writers` group instead of 2021.
 
 1. Switch back to the Azure portal (<https://portal.azure.com>) in a different browser tab, leaving Synapse Studio open.
 

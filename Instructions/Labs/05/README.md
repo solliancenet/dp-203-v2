@@ -267,7 +267,11 @@ In this task, you will use a Synapse Spark notebook to explore a few of the file
 
     ![The develop hub is highlighted.](media/develop-hub.png "Develop hub")
 
-2. Download the [Lab 2 - Explore with Spark.ipynb](Lab%202%20-%20Explore%20with%20Spark.ipynb?raw=true) Jupyter notebook for this exercise. This will download a file named `Lab 2 - Explore with Spark.ipynb`.
+2. Download the Jupyter notebook for this exercise from <https://solliancepublicdata.blob.core.windows.net/notebooks/Lab%202%20-%20Explore%20with%20Spark.ipynb>. This will download a file named `Lab 2 - Explore with Spark.ipynb`.
+
+    The link will open the contents of the file in a new browser window. Select **Save As** in the File menu. By default, the browser will attempt to save this as a text file. If you have the option, set `Save as type` to **All files (*.*)**. Make sure the file name ends with `.ipynb`.
+
+    ![Save As dialog.](media/file-save-as.png "Save As")
 
 3. On the Develop hub, select the Add New Resource (**+**) button and then select **Import**.
 
@@ -349,7 +353,7 @@ You recommend using the Data hub to view the Parquet files in the connected stor
 
     ![The configured chart is displayed.](media/2010-sale-parquet-chart.png "Chart view")
 
-11. Create a new cell underneath by selecting **{} Add code** when hovering over the blank space at the bottom of the notebook.
+11. Create a new cell underneath by selecting **+**, then **</> Code cell** underneath the chart.
 
     ![The Add code button is highlighted underneath the chart.](media/chart-add-code.png "Add code")
 

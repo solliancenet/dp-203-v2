@@ -267,7 +267,7 @@ In this task, you will use a Synapse Spark notebook to explore a few of the file
 
     ![The develop hub is highlighted.](media/develop-hub.png "Develop hub")
 
-2. Download the [Lab 2 - Explore with Spark.ipynb](Lab%202%20-%20Explore%20with%20Spark.ipynb) Jupyter notebook for this exercise. This will download a file named `Lab 2 - Explore with Spark.ipynb`.
+2. Download the [Lab 2 - Explore with Spark.ipynb](Lab%202%20-%20Explore%20with%20Spark.ipynb?raw=true) Jupyter notebook for this exercise. This will download a file named `Lab 2 - Explore with Spark.ipynb`.
 
 3. On the Develop hub, select the Add New Resource (**+**) button and then select **Import**.
 

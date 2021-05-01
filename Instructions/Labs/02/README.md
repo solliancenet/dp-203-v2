@@ -12,6 +12,7 @@ In this module, the student will be able to:
 - [Module 2 - Design and Implement the serving layer](#module-2---design-and-implement-the-serving-layer)
   - [Lab details](#lab-details)
     - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
+  - [Exercise 0: Start the dedicated SQL pool](#exercise-0-start-the-dedicated-sql-pool)
     - [Exercise 1: Implementing a Star Schema](#exercise-1-implementing-a-star-schema)
       - [Task 1: Create star schema in SQL database](#task-1-create-star-schema-in-sql-database)
     - [Exercise 2: Implementing a Snowflake Schema](#exercise-2-implementing-a-snowflake-schema)
@@ -37,11 +38,31 @@ In this module, the student will be able to:
 
 ### Lab setup and pre-requisites
 
-> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 0.
 
 1. If you have not already, follow the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/02/README.md) for this module.
 
 2. Install [Azure Data Studio](https://docs.microsoft.com/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15) on your computer or lab virtual machine.
+
+## Exercise 0: Start the dedicated SQL pool
+
+This lab uses the dedicated SQL pool. As a first step, make sure it is not paused. If so, start it by following these instructions:
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. If the dedicated SQL pool is paused, hover over the name of the pool and select **Resume (2)**.
+
+    ![The resume button is highlighted on the dedicated SQL pool.](media/resume-dedicated-sql-pool.png "Resume")
+
+4. When prompted, select **Resume**. It will take a minute or two to resume the pool.
+
+    ![The resume button is highlighted.](media/resume-dedicated-sql-pool-confirm.png "Resume")
+
+> **Continue to the next exercise** while the dedicated SQL pool resumes.
 
 ### Exercise 1: Implementing a Star Schema
 
@@ -1393,7 +1414,7 @@ Linked services in Synapse Analytics enables you to manage connections to extern
     - **Database name**: Select `SourceDB`
     - **Authentication type**: Select `SQL authentication`
     - **Username**: Enter `sqladmin`
-    - **Password**: Enter the password you provided during the environment setup (also used at the beginning of this lab)
+    - **Password**: Enter the password you provided during the environment setup, or that was given to you if this is a hosted lab environment (also used at the beginning of this lab)
 
     ![The form is completed as described.](media/new-linked-service-sql-form.png "New linked service form")
 
@@ -1531,7 +1552,7 @@ In this task, you create a mapping data flow to create a Type 1 SCD.
 
     ![The value field is highlighted.](media/dimcustomer-dataset.png "DimCustomer dataset")
 
-26. Select **+** to the right of the `CreateCustomerHash` derived column on the canvas, then select **Exists**.
+26. Switch back to your data flow. *Do not* close the `DimCustomer` dataset. Select **+** to the right of the `CreateCustomerHash` derived column on the canvas, then select **Exists**.
 
     ![The plus button and exists menu item are both highlighted.](media/data-flow-new-exists.png "New Exists")
 
@@ -1674,9 +1695,13 @@ In this task, you create a new Synapse integration pipeline to execute the mappi
 
     ![The data flow has an arrow from the activities pane to the canvas on the right.](media/pipeline-add-data-flow.png "Add data flow activity")
 
-5. In the `Adding data flow` dialog, select **Use existing data flow**, then select the `UpdateCustomerDimension` data flow. Select **OK** to close the dialog.
+5. Under the `General` tab, enter **UpdateCustomerDimension** for the name.
 
-    ![The data flow is selected in the dialog.](media/pipeline-add-data-flow-dialog.png "Adding data flow")
+    ![The name is entered as described.](media/pipeline-dataflow-general.png "General")
+
+6. Under the `Settings` tab, select the **UpdateCustomerDimension** data flow.
+
+    ![The settings are configured as described.](media/pipeline-dataflow-settings.png "Data flow settings")
 
 6. Select **Publish all**, then select **Publish** in the dialog that appears.
 

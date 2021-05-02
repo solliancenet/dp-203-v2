@@ -267,6 +267,8 @@ Now let's see how to perform the same load operation with the COPY statement.
 
 2. Select **Run** from the toolbar menu to execute the SQL command. It takes a few minutes to execute this command. **Take note** of how long it took to execute this query.
 
+    > While this is running, read the rest of the lab instructions to familiarize yourself with the content.
+
 3. In the query window, replace the script with the following to see how many rows were imported:
 
     ```sql

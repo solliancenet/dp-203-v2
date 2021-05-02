@@ -11,15 +11,14 @@ In this module, the student will be able to:
 - [Module 9 - Integrate data from notebooks with Azure Data Factory or Azure Synapse Pipelines](#module-9---integrate-data-from-notebooks-with-azure-data-factory-or-azure-synapse-pipelines)
   - [Lab details](#lab-details)
   - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
-  - [Exercise 0: Start the dedicated SQL pool](#exercise-0-start-the-dedicated-sql-pool)
-  - [Exercise 1: Lab setup](#exercise-1-lab-setup)
+  - [Exercise 1: Linked service and datasets](#exercise-1-linked-service-and-datasets)
     - [Task 1: Create linked service](#task-1-create-linked-service)
     - [Task 2: Create datasets](#task-2-create-datasets)
   - [Exercise 2: Create mapping data flow and pipeline](#exercise-2-create-mapping-data-flow-and-pipeline)
     - [Task 1: Retrieve the ADLS Gen2 linked service name](#task-1-retrieve-the-adls-gen2-linked-service-name)
     - [Task 2: Create mapping data flow](#task-2-create-mapping-data-flow)
     - [Task 3: Create pipeline](#task-3-create-pipeline)
-      - [Task 4: Trigger the pipeline](#task-4-trigger-the-pipeline)
+    - [Task 4: Trigger the pipeline](#task-4-trigger-the-pipeline)
   - [Exercise 3: Create Synapse Spark notebook to find top products](#exercise-3-create-synapse-spark-notebook-to-find-top-products)
     - [Task 1: Create notebook](#task-1-create-notebook)
     - [Task 2: Add the Notebook to the pipeline](#task-2-add-the-notebook-to-the-pipeline)
@@ -28,7 +27,7 @@ In this module, the student will be able to:
 
 ## Lab setup and pre-requisites
 
-> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 0.
+> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
 
 **Complete the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/04/README.md)** for this module.
 
@@ -45,27 +44,7 @@ Note, the following modules share this same environment:
 - [Module 13](labs/13/README.md)
 - [Module 16](labs/16/README.md)
 
-## Exercise 0: Start the dedicated SQL pool
-
-This lab uses the dedicated SQL pool. As a first step, make sure it is not paused. If so, start it by following these instructions:
-
-1. Open Synapse Studio (<https://web.azuresynapse.net/>).
-
-2. Select the **Manage** hub.
-
-    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
-
-3. Select **SQL pools** in the left-hand menu **(1)**. If the dedicated SQL pool is paused, hover over the name of the pool and select **Resume (2)**.
-
-    ![The resume button is highlighted on the dedicated SQL pool.](media/resume-dedicated-sql-pool.png "Resume")
-
-4. When prompted, select **Resume**. It will take a minute or two to resume the pool.
-
-    ![The resume button is highlighted.](media/resume-dedicated-sql-pool-confirm.png "Resume")
-
-> **Continue to the next exercise** while the dedicated SQL pool resumes.
-
-## Exercise 1: Lab setup
+## Exercise 1: Linked service and datasets
 
 **Note**: Complete this exercise if you **have not** completed Module 8, or if you do not have the following Synapse artifacts:
 
@@ -74,10 +53,6 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 - Datasets:
   - `asal400_ecommerce_userprofiles_source`
   - `asal400_customerprofile_cosmosdb`
-- Data flows:
-  - `write_user_profile_to_asa`
-- Pipelines:
-  - `Write User Profile Data to ASA`
 
 If you completed Module 8 or already have these artifacts, skip ahead to Exercise 2.
 
@@ -294,7 +269,7 @@ In this step, you create a new integration pipeline to execute the data flow.
 
     ![Publish all is highlighted.](media/publish-all-1.png "Publish all")
 
-#### Task 4: Trigger the pipeline
+### Task 4: Trigger the pipeline
 
 1. At the top of the pipeline, select **Add trigger (1)**, then **Trigger now (2)**.
 

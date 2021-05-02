@@ -235,15 +235,15 @@ PolyBase requires the following elements:
 
 4. Select **Run** from the toolbar menu to execute the SQL command.
 
-**DO NOT RUN the next command in step 5** 
-
-5. In the query window, replace the script with the following to load the data into the `wwi_staging.SalesHeap` table. **DO NOT RUN** this command. In the interest of time, we will skip this command since it takes around 10 minutes to execute:
+5. In the query window, replace the script with the following to load the data into the `wwi_staging.SalesHeap` table. This command takes approximately 10 minutes to execute:
 
     ```sql
     INSERT INTO [wwi_staging].[SaleHeap]
     SELECT *
     FROM [wwi_external].[Sales]
     ```
+
+    > While this is running, read the rest of the lab instructions to familiarize yourself with the content.
 
 ### Task 3: Configure and run the COPY statement
 

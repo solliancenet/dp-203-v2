@@ -85,11 +85,43 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
     ![The SQL script context menu item is highlighted.](media/synapse-studio-new-sql-script.png "New SQL script")
 
-4. In the toolbar menu, connect to the **SQLPool01** database to execute the query.
+4. In the toolbar menu, connect to the **SQLPool01** dedicated SQL pool as well as the **SQLPool01** database.
 
     ![The connect to option is highlighted in the query toolbar.](media/synapse-studio-query-toolbar-connect.png "Query toolbar")
 
-5. In the query window, replace the script with the following Database Console Command (DBCC):
+5. Paste the following script to create a hash-distributed Clustered Columnstore Index (CCI) table using CTAS (Create Table As Select) if it does not already exist:
+
+     ```sql
+    IF OBJECT_ID(N'[wwi_perf].[Sale_Hash]', N'U') IS NULL
+    BEGIN
+        CREATE TABLE [wwi_perf].[Sale_Hash]
+        WITH
+        (
+            DISTRIBUTION = HASH ( [CustomerId] ),
+            CLUSTERED COLUMNSTORE INDEX
+        )
+        AS
+        SELECT
+            *
+        FROM
+            [wwi_poc].[Sale]
+    END
+    ```
+
+6. Select **Run** from the toolbar menu to execute the SQL command.
+
+    ![The run button is highlighted in the query toolbar.](media/synapse-studio-query-toolbar-run.png "Run")
+
+    **If the table does not already exist**, the query will take around **10 minutes** to complete. While this is running, read the rest of the lab instructions to familiarize yourself with the content.
+
+    > **NOTE**
+    >
+    > CTAS is a more customizable version of the SELECT...INTO statement.
+    > SELECT...INTO doesn't allow you to change either the distribution method or the index type as part of the operation. You create the new table by using the default distribution type of ROUND_ROBIN, and the default table structure of CLUSTERED COLUMNSTORE INDEX.
+    >
+    > With CTAS, on the other hand, you can specify both the distribution of the table data as well as the table structure type.
+
+7. In the query window, replace the script with the following Database Console Command (DBCC):
 
     ```sql
     DBCC PDW_SHOWSPACEUSED('wwi_perf.Sale_Hash');
@@ -97,7 +129,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
     ![Show table space usage](./media/lab3_table_space_usage.png)
 
-6. Analyze the number of rows in each distribution. Those numbers should be as even as possible. You can see from the results that rows are equally distributed across distributions. Let's dive a bit more into this analysis. Use the following query to get customers with the most sale transaction items:
+8. Analyze the number of rows in each distribution. Those numbers should be as even as possible. You can see from the results that rows are equally distributed across distributions. Let's dive a bit more into this analysis. Use the following query to get customers with the most sale transaction items:
 
     ```sql
     SELECT TOP 1000
@@ -129,7 +161,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
     ![Customers with most sale transaction items](./media/lab4_data_skew_2.png)
 
-    Notice the largest number of transaction items is 69 and the smallest is 16.
+    Notice that in our environment, the largest number of transaction items is 3,377 and the smallest is 62.
 
     Let's find now the distribution of per-customer transaction item counts. Run the following query:
 
@@ -141,7 +173,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
         (
             SELECT
                 CustomerId,
-                (count(*) - 16) / 100 as TransactionItemsCountBucket
+                (count(*) - 62) / 100 as TransactionItemsCountBucket
             FROM
                 [wwi_perf].[Sale_Hash]
             GROUP BY
@@ -291,12 +323,11 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
     sys.dm_pdw_nodes | Holds information about the nodes from the SQL pool. Filtered to include only compute nodes (`type` = `COMPUTE`).
     sys.dm_pdw_nodes_db_partition_stats | Returns page and row-count information for every partition in the current database.
 
-2. Run the following script to view the details about the structure of the tables in the `wwi_perf` schema:
+2. Run the following script to view the details about the structure of the tables in the `wwi_perf` schema, as well as the `[wwi_poc].[Sale]` table, which was used as the source for the `Sale_Hash` table.:
 
     ```sql
     SELECT
-        database_name
-    ,    schema_name
+        schema_name
     ,    table_name
     ,    distribution_policy_name
     ,      distribution_column
@@ -310,7 +341,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
     FROM
         [wwi_perf].[vTableSizes]
     WHERE
-        schema_name = 'wwi_perf'
+        schema_name = 'wwi_perf' OR (schema_name = 'wwi_poc' AND table_name = 'sale')
     GROUP BY
         database_name
     ,    schema_name
@@ -326,9 +357,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
     ![Detailed table space usage](./media/lab4_table_space.png)
 
-    Notice the significant difference between the space used by `CLUSTERED COLUMNSTORE` and `HEAP` or `CLUSTERED` tables. This provides a clear indication on the significant advantages columnstore indexes have.
-
-    Also notice the slight increase of storage space for ordered CCI table (`Sale_Hash_Ordered`).
+    Notice the significant difference between the space used by `CLUSTERED COLUMNSTORE` and `HEAP` or `CLUSTERED` tables. This provides a clear indication on the significant advantages columnstore indexes have. **Make note of the row counts**.
 
 ## Exercise 2 - Understand column store storage details
 
@@ -425,7 +454,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
 ### Task 1 - Create and populate tables with optimal column data types
 
-Use the following query to create two tables (`Sale_Hash_Projection` and `Sale_Hash_Projection2`) which contain a subset of the columns from `Sale_Heap`:
+Use the following query to create two tables (`Sale_Hash_Projection` and `Sale_Hash_Projection2`) which contain a subset of the columns from `Sale_Hash_Ordered`:
 
 ```sql
 CREATE TABLE [wwi_perf].[Sale_Hash_Projection]
@@ -440,7 +469,7 @@ SELECT
 	,[ProductId]
 	,[Quantity]
 FROM
-	[wwi_perf].[Sale_Heap]
+	[wwi_perf].[Sale_Hash_Ordered]
 
 CREATE TABLE [wwi_perf].[Sale_Hash_Projection2]
 WITH
@@ -454,10 +483,10 @@ SELECT
 	,[ProductId]
 	,[Quantity]
 FROM
-	[wwi_perf].[Sale_Heap]
+	[wwi_perf].[Sale_Hash_Ordered]
 ```
 
-The query should finish execution in a few minutes.
+> The query should finish execution in less than four minutes. While this is running, read the rest of the lab instructions to familiarize yourself with the content.
 
 ### Task 2 - Create and populate tables with sub-optimal column data types
 
@@ -476,7 +505,7 @@ SELECT
 	,CAST([ProductId] as bigint) as [ProductId]
 	,CAST([Quantity] as bigint) as [Quantity]
 FROM
-	[wwi_perf].[Sale_Heap]
+	[wwi_perf].[Sale_Hash_Ordered]
 
 CREATE TABLE [wwi_perf].[Sale_Hash_Projection_Big2]
 WITH
@@ -490,8 +519,10 @@ SELECT
 	,CAST([ProductId] as bigint) as [ProductId]
 	,CAST([Quantity] as bigint) as [Quantity]
 FROM
-	[wwi_perf].[Sale_Heap]
+	[wwi_perf].[Sale_Hash_Ordered]
 ```
+
+> The query should finish execution in about the same amount of time. While this is running, continue reading the lab instructions.
 
 ### Task 3 - Compare storage requirements
 
@@ -511,9 +542,7 @@ FROM
 
     ```sql
     SELECT
-        database_name
-    ,    schema_name
-    ,    table_name
+        table_name
     ,    distribution_policy_name
     ,      distribution_column
     ,    index_type_desc
@@ -537,15 +566,18 @@ FROM
     ,      distribution_column
     ,    index_type_desc
     ORDER BY
-        table_reserved_space_GB desc
+        table_data_space_GB desc
     ```
 
 3. Analyze the results:
 
     ![Data type selection impact on table storage](./media/lab4_data_type_selection.png)
 
-    There are two important conclusions to draw here:
-    - In the case of `HEAP` tables, the storage impact of using `BIGINT` instead of `SMALLINT`(for `ProductId`) and `TINYINT` (for `QUANTITY`) is almost 1 GB (0.8941 GB). We're talking here about only two columns and a moderate number of rows (2.9 billion).
+    With a small number of rows (around 340 million), you can see some space differences caused by the `BIGINT` column type versus `SMALLINT` and `TINYINT`.
+    
+    We ran this same query after loading 2.9 billion rows, and the results were more pronounced. There are two important conclusions to draw here:
+
+    - In the case of `HEAP` tables, the storage impact of using `BIGINT` instead of `SMALLINT` (for `ProductId`) and `TINYINT` (for `QUANTITY`) is almost 1 GB (0.8941 GB). We're talking here about only two columns and a moderate number of rows (2.9 billion).
     - Even in the case of `CLUSTERED COLUMNSTORE` tables, where compression will offset some of the differences, there is still a difference of 12.7 MB.
 
 Minimizing the size of data types shortens the row length, which leads to better query performance. Use the smallest data type that works for your data:
@@ -983,7 +1015,7 @@ Loading data into a non-empty table with a clustered index can often contain a m
         CustomerId >= 900000
     ```
 
-    The query should execute within about a minute. All that would remain to complete the process would be to delete the `Sale_Heap` table and rename `Sale_Heap_v2` to `Sale_Heap`.
+    The query should execute within about 90 seconds. All that would remain to complete the process would be to delete the `Sale_Heap` table and rename `Sale_Heap_v2` to `Sale_Heap`.
 
 3. Compare the previous operation with a classical delete:
 
@@ -996,4 +1028,4 @@ Loading data into a non-empty table with a clustered index can often contain a m
 
     >**Note**
     >
-    >The query will run for a potentially long time. Once the time exceeds significantly the time to run the previous CTAS query, you can cancel it (as you can already see the benefit of the CTAS-based approach).
+    >The query will run for a potentially long time (>12 minutes). Once the time exceeds significantly the time to run the previous CTAS query, you can cancel it (as you can already see the benefit of the CTAS-based approach).

@@ -102,7 +102,7 @@ Azure Synapse Analytics (ASA) is a powerful solution that handles security for m
 
  The SQL Active Directory Admin can be a user (the default) or group (best practice so that more than one user can be provided these permissions) security principal. The principal assigned to this will have administrative permissions to the SQL Pools contained in the workspace.
 
-1. In the **Azure Portal**, browse to your lab resource group, and from the list of resources open your Synapse workspace (do not launch Synapse Studio).
+1. In the **Azure Portal** (<https://portal.azure.com>), browse to your lab resource group, and from the list of resources open your Synapse workspace (do not launch Synapse Studio).
 
 2. From the left menu, select **SQL Active Directory admin** and observe who is listed as a SQL Active Directory Admin. Is it a user or group?
 
@@ -130,13 +130,15 @@ Having robust Internet security is a must for every technology system. One way t
 
 When dealing with connectivity to external data sources and services, sensitive connection information such as passwords and access keys should be properly handled. It is recommended that this type of information be stored in an Azure Key Vault. Leveraging Azure Key Vault not only protects against secrets being compromised, it also serves as a central source of truth; meaning that if a secret value needs to be updated (such as when cycling access keys on a storage account), it can be changed in one place and all services consuming this key will start pulling the new value immediately. Azure Key Vault encrypts and decrypts information transparently using 256-bit AES encryption, which is FIPS 140-2 compliant.
 
-1. In the **Azure Portal**, open the `Synapse-WS-L400-NNNNNN` resource group and from the list of resources and select the **Key vault** resource.
+1. In the **Azure Portal**, open the resource group for this lab, and from the list of resources, select the **Key vault** resource.
 
     ![Key vault is selected in the resource group.](media/resource-group-key-vault.png "Key vault")
 
 2. From the left menu, under Settings, select **Access Policies**.
 
-3. Observe that Managed Service Identity (MSI) representing your Synapse workpace (it has a name similar to `asaworkspaceNNNNNN`) has already been listed under Application and it has 4 selected Secret Permissions.
+3. Observe that Managed Service Identity (MSI) representing your Synapse workspace (it has a name similar to `asaworkspaceNNNNNN`) has already been listed under Application and it has 4 selected Secret Permissions.
+
+    ![The Synapse workspace account and its assigned secret permissions are highlighted.](media/key-vault-access-policies.png "Access policies")
 
 4. Select the drop-down that reads `4 selected` under `Secret Permissions`, observe that Get (which allows your workspace to retrieve the values of secrets from Key Vault) and List (which allows your workspace to enumerate secrets) are set.
 
@@ -146,9 +148,15 @@ Linked Services are synonymous with connection strings in Azure Synapse Analytic
 
 In order to leverage Azure Key Vault in linked services, you must first add `asakeyvaultXX` as a linked service in Azure Synapse Analytics.
 
-1. In **Azure Synapse Studio** (<https://web.azuresynapse.net/>), select **Manage** from the left menu.
+1. Navigate to **Azure Synapse Studio** (<https://web.azuresynapse.net/>) and sign in with the same user account you did in the Azure portal.
 
-2. Beneath **External Connections**, select **Linked Services**, observe that a Linked Service pointing to your Key Vault has been provided in the environment.
+2. Select the **Manage** hub from the left menu.
+
+    ![The Manage hub is selected.](media/manage-hub.png "Manage hub")
+
+3. Beneath **External Connections**, select **Linked Services**, observe that a Linked Service pointing to your Key Vault has been provided in the environment.
+
+    ![The Key Vault linked service is highlighted.](media/key-vault-linked-service.png "Key Vault linked service")
 
 Since we have the Azure Key Vault set up as a linked service, we can leverage it when defining new linked services. Every New linked service provides the option to retrieve secrets from Azure Key Vault. The form requests the selection of the Azure Key Vault linked service, the secret name, and (optional) specific version of the secret.
 
@@ -158,33 +166,35 @@ Since we have the Azure Key Vault set up as a linked service, we can leverage it
 
 It is recommended to store any secrets that are part of your pipeline in Azure Key Vault. In this task you will retrieve these values using a Web activity, just to show the mechanics. The second part of this task demonstrates using a Web activity in the pipeline to retrieve a secret from the Key Vault.
 
-1. Open the `asakeyvaultXX` Azure Key Vault resource, and select **Secrets** from the left menu. From the top toolbar, select **+ Generate/Import**.
+1. Return to the Azure portal.
+
+2. Open the `asakeyvaultXX` Azure Key Vault resource, and select **Secrets** from the left menu. From the top toolbar, select **+ Generate/Import**.
 
    ![In Azure Key Vault, Secrets is selected from the left menu, and + Generate/Import is selected from the top toolbar.](media/lab5_pipelinekeyvaultsecretmenu.png)
 
-2. Create a secret, with the name **PipelineSecret** and assign it a value of **IsNotASecret**, and select the **Create** button.
+3. Create a secret, with the name **PipelineSecret** and assign it a value of **IsNotASecret**, and select the **Create** button.
 
    ![The Create a secret form is displayed populated with the specified values.](media/lab5_keyvaultcreatesecretforpipeline.png)
 
-3. Open the secret that you just created, drill into the current version, and copy the value in the Secret Identifier field. Save this value in a text editor, or retain it in your clipboard for a future step.
+4. Open the secret that you just created, drill into the current version, and copy the value in the Secret Identifier field. Save this value in a text editor, or retain it in your clipboard for a future step.
 
     ![On the Secret Version form, the Copy icon is selected next to the Secret Identifier text field.](media/lab5_keyvaultsecretidentifier.png)
 
-4. Open the Azure Synapse Analytics Studio, select **Integrate** from the left menu.
+5. Switch back to Synapse Studio, then select the **Integrate** hub from the left menu.
 
     ![Integrate hub.](media/integrate-hub.png "Integrate hub")
 
-5. From the **Integrate** blade, select the **+** button and add a new **Pipeline**.
+6. From the **Integrate** blade, select the **+** button and add a new **Pipeline**.
 
     ![On the Orchestrate blade the + button is expanded with the Pipeline item selected beneath it.](media/new-pipeline.png)
 
-6. On the **Pipeline** tab, in the **Activities** pane search for **Web** and then drag an instance of a **Web** activity to the design area.
+7. On the **Pipeline** tab, in the **Activities** pane search for **Web** and then drag an instance of a **Web** activity to the design area.
 
     ![In the Activities pane, Web is entered into the search field. Under General, the Web activity is displayed in the search results. An arrow indicates the drag and drop movement of the activity to the design surface of the pipeline. The Web activity is displayed on the design surface.](media/lab5_pipelinewebactivitynew.png)
 
-7. Select the **Web1** web activity, and select the **Settings** tab. Fill out the form as follows:
+8. Select the **Web1** web activity, and select the **Settings** tab. Fill out the form as follows:
 
-    1. **URL**: Paste the Secret Identifier value for the secret **append** `?api-version=7.0` to this value.
+    1. **URL**: Paste the Key Vault Secret Identifier value you copied in step 4 above, then **append** `?api-version=7.0` to to the end of this value. For example, it should look something like: `https://asakeyvaultNNNNN.vault.azure.net/secrets/PipelineSecret/f808d4fa99d84861872010f6c8d25c68?api-version=7.0`.
   
     2. **Method**: Select **Get**.
 
@@ -194,17 +204,17 @@ It is recommended to store any secrets that are part of your pipeline in Azure K
 
     ![The Web Activity Settings tab is selected and the form is populated with the values indicated above.](media/lab5_pipelineconfigurewebactivity.png)
 
-8. From the Activities pane, add a **Set variable** activity to the design surface of the pipeline.
+9. From the Activities pane, add a **Set variable** activity to the design surface of the pipeline.
 
     ![An arrow goes from the set variable item under Activities to the pipeline canvas.](media/pipeline-activities-set-variable.png "Activities: Set variable")
 
-9. On the design surface of the pipeline, select the **Web1** activity and drag a **Success** activity pipeline connection (green box) to the **Set variable1** activity.
+10. On the design surface of the pipeline, select the **Web1** activity and drag a **Success** activity pipeline connection (green box) to the **Set variable1** activity.
 
-10. With the pipeline selected in the designer (e.g., neither of the activities are selected), select the **Variables** tab and add a new **String** parameter named **SecretValue**.
+11. With the pipeline selected in the designer (e.g., neither of the activities are selected), select the **Variables** tab and add a new **String** parameter named **SecretValue**.
 
       ![The design surface of the pipeline is shown with a new pipeline arrow connecting the Web1 and Set variable1 activities. The pipeline is selected, and beneath the design surface, the Variables tab is selected with a variable with the name of SecretValue highlighted.](media/lab5_newpipelinevariable.png)
 
-11. Select the **Set variable1** activity and select the **Variables** tab. Fill out the form as follows:
+12. Select the **Set variable1** activity and select the **Variables** tab. Fill out the form as follows:
 
     1. **Name**: Select `SecretValue` (the variable that we just created on our pipeline).
 
@@ -212,7 +222,7 @@ It is recommended to store any secrets that are part of your pipeline in Azure K
 
     ![On the pipeline designer, the Set Variable1 activity is selected. Below the designer, the Variables tab is selected with the form set the previously specified values.](media/lab5_pipelineconfigsetvaractivity.png)
 
-12. Debug the pipeline by selecting **Debug** from the toolbar menu. When it runs observe the inputs and outputs of both activities from the **Output** tab of the pipeline.
+13. Debug the pipeline by selecting **Debug** from the toolbar menu. When it runs observe the inputs and outputs of both activities from the **Output** tab of the pipeline.
 
     ![The pipeline toolbar is displayed with the Debug item highlighted.](media/lab5_pipelinedebugmenu.png)
 
@@ -224,18 +234,15 @@ It is recommended to store any secrets that are part of your pipeline in Azure K
 
 Transparent Data Encryption (TDE) is a feature of SQL Server that provides encryption and decryption of data at rest, this includes: databases, log files, and back ups. When using this feature with Synapse Analytics dedicated SQL pools, it will use a built-in symmetric Database Encryption Key (DEK) that is provided by the pool itself. With TDE, all stored data is encrypted on disk, when the data is requested, TDE will decrypt this data at the page level as it's read into memory, and vice-versa encrypting in-memory data before it gets written back to disk. As with the name, this happens transparently without affecting any application code. When creating a dedicated SQL pool through Synapse Analytics, Transparent Data Encryption is not enabled. The first part of this task will show you how to enable this feature.
 
-1. In the **Azure Portal**, open your resource group, then locate and open the `SqlPool01` resource.
+1. In the **Azure Portal**, open your resource group, then locate and open the `SqlPool01` dedicated SQL pool resource.
 
     ![The SQLPool01 resource is highlighted in the Resource Group.](media/resource-group-sqlpool01.png "Resource Group: SQLPool01")
 
-2. On the **SQL pool** resource screen, select **Transparent data encryption** from the left menu.
-   ![On the SQL pool resource screen, Transparent data encryption is selected from the menu.](media/lab5_sqlpoolresourcetransparentdataencryptionmenu.png)
+2. On the **SQL pool** resource screen, select **Transparent data encryption** from the left-hand menu. **DO NOT** turn on data encryption.
 
-3. If your SQL Pool is not currently taking advantage of TDE, slide the **Data encryption** slider to the **ON** position, and select **Save**.
+   ![On the SQL pool resource screen, Transparent data encryption is selected from the menu.](media/tde-form.png)
 
-    ![On the SQL Pool Transparent Data Encryption screen, the Data Encryption toggle is set to the ON position and the Save button is highlighted in the toolbar.](media/lab5_sqlpoolenabletdeform.png)
-
-> **Note**: This operation can take several minutes to complete. You will not be able to the next exercise until this operation is completed.
+    By default, this option is turned off. When you enable data encryption on this dedicated SQL pool, the pool is taken offline for a few minutes while TDE is applied.
 
 ## Exercise 3 - Securing Azure Synapse Analytics workspace data
 

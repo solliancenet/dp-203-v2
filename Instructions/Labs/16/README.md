@@ -109,7 +109,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
     ![The Got it button is highlighted.](media/pbi-try-pro-confirm.png "Power BI Pro is yours for 60 days")
 
-3. Set the name to **synapse-training**, then select **Save**.
+3. Set the name to **synapse-training**, then select **Save**. If you receive a message that `synapse-training` is not available, append your initials or other characters to make the workspace name unique in your organization.
 
     ![The form is displayed.](media/pbi-create-workspace-form.png "Create a workspace")
 
@@ -138,13 +138,17 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
 5. Select **Create**.
 
+6. Select **Publish all**, then **Publish**.
+
+    ![Publish button.](media/publish.png "Publish all")
+
 ### Task 4: Explore the Power BI linked service in Synapse Studio
 
 1. In  [**Azure Synapse Studio**](<https://web.azuresynapse.net/>) and navigate to the **Develop** hub using the left menu option.
 
     ![Develop option in Azure Synapse Workspace.](media/develop-hub.png "Develop hub")
 
-2. Expand `Power BI`, expand `SynapseDemos` (or `synapse-training`, named after your resource group) and observe that you have access to your Power BI datasets and reports, directly from Synapse Studio.
+2. Expand `Power BI`, expand `handson_powerbi` and observe that you have access to your Power BI datasets and reports, directly from Synapse Studio.
 
     ![Explore the linked Power BI workspace in Azure Synapse Studio](media/pbi-workspace.png)
 
@@ -182,7 +186,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
     ![The plus button and SQL script menu item are both highlighted.](media/new-sql-script.png "New SQL script")
 
-3. Connect to **SQLPool01**, then execute the following query to get an approximation of its execution time. This will be the query we'll use to bring data in the Power BI report you'll build later in this exercise.
+3. Connect to **SQLPool01**, then execute the following query to get an approximation of its execution time (may be around 1 minute). This will be the query we'll use to bring data in the Power BI report you'll build later in this exercise.
 
     ```sql
     SELECT count(*) FROM
@@ -277,33 +281,65 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
     > It will take around 40-60 seconds for the visualization to render, due to the live query execution on the Synapse dedicated SQL pool.
 
-11. Switching back to Azure Synapse Studio, you can check the query executed while configuring the visualization in the Power BI Desktop application. Open the **Monitor** hub, and under the **Activities** section, open the **SQL requests** monitor. Make sure you select **SQLPool01** in the Pool filter, as by default SQL on-demand is selected.
+11. You can check the query executed while configuring the visualization in the Power BI Desktop application. Switch back to Synapse Studio, then select the **Monitor** hub from the left-hand menu.
+
+    ![The Monitor hub is selected.](media/monitor-hub.png "Monitor hub")
+
+12. Under the **Activities** section, open the **SQL requests** monitor. Make sure you select **SQLPool01** in the Pool filter, as by default Built-In is selected.
 
     ![Open query monitoring from Synapse Studio.](media/monitor-query-execution.png "Monitor SQL queries")
 
-12. Identify the query behind your visualization in the topmost requests you see in the log and observe the duration which is about 30 seconds. Use the **Request content** option to look into the actual query submitted from Power BI Desktop.
+13. Identify the query behind your visualization in the topmost requests you see in the log and observe the duration which is about 20-30 seconds. Select **More** on a request to look into the actual query submitted from Power BI Desktop.
 
     ![Check the request content in monitor.](media/check-request-content.png "SQL queries")
 
     ![View query submitted from Power BI.](media/view-request-content.png "Request content")
 
-13. Switch back to the Power BI Desktop application, then click **Save** in the top-left corner.
+14. Switch back to the Power BI Desktop application, then click **Save** in the top-left corner.
 
     ![The save button is highlighted.](media/pbi-save-report.png "Save report")
 
-14. Specify a file name, such as `synapse-lab`, then click **Save**.
+15. Specify a file name, such as `synapse-lab`, then click **Save**.
 
     ![The save dialog is displayed.](media/pbi-save-report-dialog.png "Save As")
 
-15. Click **Publish** above the saved report. Make sure that, in Power BI Desktop, you are signed in with the same account you use in the Power BI portal and in Synapse Studio. You can switch to the proper account from the right topmost corner of the window. In the **Publish to Power BI** dialog, select the workspace you linked to Synapse (for example, **synapse-training**), then click **Select**.
+16. Click **Publish** above the saved report. Make sure that, in Power BI Desktop, you are signed in with the same account you use in the Power BI portal and in Synapse Studio. You can switch to the proper account from the right topmost corner of the window.
+
+    ![The publish button is highlighted.](media/pbi-publish-button.png "Publish to Power BI")
+
+    If you are not currently signed in to Power BI desktop, you will be prompted to enter your email address. Use the account credentials you are using for connecting to the Azure portal and Synapse Studio in this lab.
+
+    ![The sign in form is displayed.](media/pbi-enter-email.png "Enter your email address")
+
+    Follow the prompts to complete signing in to your account.
+
+17. In the **Publish to Power BI** dialog, select the workspace you linked to Synapse (for example, **synapse-training**), then click **Select**.
 
     ![Publish report to the linked workspace.](media/pbi-publish.png "Publish to Power BI")
 
-16. Wait until the publish operation successfully completes.
+18. Wait until the publish operation successfully completes.
 
     ![The publish dialog is displayed.](media/pbi-publish-complete.png "Publish complete")
 
-    After the operation successfully completes, you should be able to see this report published in the Power BI portal, as well as in Synapse Studio. To view it in Synapse Studio, navigate to the Develop hub and refresh the Power BI reports node.
+19. Switch back to the Power BI service, or navigate to it in a new browser tab if you closed it earlier (<https://powerbi.microsoft.com/>).
+
+20. Select the **synapse-training** workspace you created earlier. If you already had it open, refresh the page to see the new report and dataset.
+
+    ![The workspace is displayed with the new report and dataset.](media/pbi-com-workspace.png "Synapse training workspace")
+
+21. Select the **Settings** gear icon on the upper-right of the page, then select **Settings**. If you do not see the gear icon,you will need to select the ellipses (...) to view the menu item.
+
+    ![The settings menu item is selected.](media/pbi-com-settings-button.png "Settings")
+
+22. Select the **Datasets** tab. If you see an error message under `Data source credentials` that your data source can't be refreshed because the credentials are invalid, select **Edit credentials**. It may take a few seconds for this section to appear.
+
+    ![The datasets settings are displayed.](media/pbi-com-settings-datasets.png "Datasets")
+
+23. In the dialog that appears, select the **OAuth2** authentication method, then select **Sign in**. Enter your credentials if prompted.
+
+    ![The OAuth2 authentication method is highlighted.](media/pbi-com-oauth2.png "Configure synapse-lab")
+
+24. Now you should be able to see this report published in Synapse Studio. Switch back to Synapse Studio, select the **Develop** hub and refresh the Power BI reports node.
 
     ![The published report is displayed.](media/pbi-published-report.png "Published report")
 
@@ -400,27 +436,31 @@ Let's recall the performance optimization options we have when integrating Power
     )
     AS
     SELECT
-        S.CustomerId
+        FS.CustomerID
+        ,P.Seasonality
         ,D.Year
         ,D.Quarter
         ,D.Month
-        ,SUM(S.TotalAmount) as TotalAmount
-        ,SUM(S.ProfitAmount) as TotalProfit
+        ,avg(FS.TotalAmount) as AvgTotalAmount
+        ,avg(FS.ProfitAmount) as AvgProfitAmount
+        ,sum(FS.TotalAmount) as TotalAmount
+        ,sum(FS.ProfitAmount) as ProfitAmount
     FROM
-        [wwi_perf].[Sale_Partition02] S
-        join [wwi].[Date] D on
-            S.TransactionDateId = D.DateId
+        wwi.SaleSmall FS
+        JOIN wwi.Product P ON P.ProductId = FS.ProductId
+        JOIN wwi.Date D ON FS.TransactionDateId = D.DateId
     GROUP BY
-        S.CustomerId
+        FS.CustomerID
+        ,P.Seasonality
         ,D.Year
         ,D.Quarter
         ,D.Month
     GO
     ```
 
-    > This query will take between 30 and 120 seconds to complete.
+    > This query will take between 60 and 150 seconds to complete.
     >
-    > We first drop the view if it exists, since we create it in an earlier lab.
+    > We first drop the view if it exists, in case it already exists from an earlier lab.
 
 6. Run the following query to check that it actually hits the created materialized view.
 
@@ -428,20 +468,20 @@ Let's recall the performance optimization options we have when integrating Power
     EXPLAIN
     SELECT * FROM
     (
-    SELECT
-    FS.CustomerID
-    ,P.Seasonality
-    ,D.Year
-    ,D.Quarter
-    ,D.Month
-    ,avg(FS.TotalAmount) as AvgTotalAmount
-    ,avg(FS.ProfitAmount) as AvgProfitAmount
-    ,sum(FS.TotalAmount) as TotalAmount
-    ,sum(FS.ProfitAmount) as ProfitAmount
+        SELECT
+        FS.CustomerID
+        ,P.Seasonality
+        ,D.Year
+        ,D.Quarter
+        ,D.Month
+        ,avg(FS.TotalAmount) as AvgTotalAmount
+        ,avg(FS.ProfitAmount) as AvgProfitAmount
+        ,sum(FS.TotalAmount) as TotalAmount
+        ,sum(FS.ProfitAmount) as ProfitAmount
     FROM
-        wwi_pbi.SaleSmall FS
-        JOIN wwi_pbi.Product P ON P.ProductId = FS.ProductId
-        JOIN wwi_pbi.Date D ON FS.TransactionDateId = D.DateId
+        wwi.SaleSmall FS
+        JOIN wwi.Product P ON P.ProductId = FS.ProductId
+        JOIN wwi.Date D ON FS.TransactionDateId = D.DateId
     GROUP BY
         FS.CustomerID
         ,P.Seasonality
@@ -449,40 +489,15 @@ Let's recall the performance optimization options we have when integrating Power
         ,D.Quarter
         ,D.Month
     ) T
-
     ```
 
-7. Switch back to the Power BI Desktop report, then click on **Transform data**.
-
-    ![The transform data button is highlighted.](media/pbi-transform-data.png "Transform data")
-
-8. In the Power Query editor, open the settings page of the **Source** step in the query. Expand the **Advanced options** section, paste the following query to use the new materialized view, then click **OK**.
-
-    ![Datasource change dialog.](media/pbi-source-query-updated.png "Advanced options")
-
-    ```sql
-    SELECT [CustomerID]
-    ,[Seasonality]
-    ,[Year]
-    ,[Quarter]
-    ,[Month]
-    ,[TotalAmount]
-    ,[ProfitAmount]
-    ,[cb]
-    FROM [wwi].[mvCustomerSales]
-    ```
-
-9. Select **Close & Apply** on the topmost left corner of the editor window to apply the query and fetch the initial schema in the Power BI designer window.
-
-    ![Save query properties.](media/pbi-query-close-apply.png "Close & Apply")
-
-10. Click the **Refresh** button above the report to submit the query against the new materialized view.
+7. Switch back to the Power BI Desktop report, then click on the **Refresh** button above the report to submit the query. The query optimizer should use the new materialized view.
 
     ![Refresh data to hit the materialized view.](media/pbi-report-refresh.png "Refresh")
 
     > Notice that the data refresh only takes a few seconds now, compared to before.
 
-11. Check the duration of the query again in Synapse Studio, in the monitoring hub, under SQL requests. Notice that the Power BI queries using the new materialized view run much faster (Duration ~ 10s).
+8. Check the duration of the query again in Synapse Studio, in the monitoring hub, under SQL requests. Notice that the Power BI queries using the new materialized view run much faster (Duration ~ 10s).
 
     ![The SQL requests that execute against the materialized view run faster than earlier queries.](media/monitor-sql-queries-materialized-view.png "SQL requests")
 
@@ -517,6 +532,8 @@ Let's recall the performance optimization options we have when integrating Power
 
     ![The query is displayed.](media/turn-result-set-caching-on.png "Result set caching")
 
+    > This process takes a couple of minutes to complete. While this is running, continue reading to familiarize yourself with the rest of the lab content.
+    
     >**Important**
     >
     >The operations to create result set cache and retrieve data from the cache happen on the control node of a Synapse SQL pool instance. When result set caching is turned ON, running queries that return large result set (for example, >1GB) can cause high throttling on the control node and slow down the overall query response on the instance. Those queries are commonly used during data exploration or ETL operations. To avoid stressing the control node and cause performance issue, users should turn OFF result set caching on the database before running those types of queries.
@@ -530,6 +547,15 @@ Let's recall the performance optimization options we have when integrating Power
 7. Check the duration of the query again in Synapse Studio, in the Monitoring hub - SQL Requests page. Notice that now it runs almost instantly (Duration = 0s).
 
     ![The duration is 0s.](media/query-results-caching.png "SQL requests")
+
+8. Return to the SQL script (or create a new one if you closed it) and run the following on the **master** database while connected to the dedicated SQL pool to turn result set caching back off:
+
+    ```sql
+    ALTER DATABASE [SQLPool01]
+    SET RESULT_SET_CACHING OFF
+    ```
+
+    ![The query is shown.](media/result-set-caching-off.png "Turn off result set caching")
 
 ## Exercise 3: Visualize data with SQL Serverless
 
@@ -697,18 +723,37 @@ First, let's prepare the Power BI report query by exploring the data source we'l
 
     ![The publish dialog is displayed.](media/pbi-publish-serverless-complete.png "Publish complete")
 
-14. In [Azure Synapse Studio](https://web.azuresynapse.net), navigate to the **Develop** hub.
+
+14. Switch back to the Power BI service, or navigate to it in a new browser tab if you closed it earlier (<https://powerbi.microsoft.com/>).
+
+15. Select the **synapse-training** workspace you created earlier. If you already had it open, refresh the page to see the new report and dataset.
+
+    ![The workspace is displayed with the new report and dataset.](media/pbi-com-workspace-2.png "Synapse training workspace")
+
+16. Select the **Settings** gear icon on the upper-right of the page, then select **Settings**. If you do not see the gear icon,you will need to select the ellipses (...) to view the menu item.
+
+    ![The settings menu item is selected.](media/pbi-com-settings-button.png "Settings")
+
+17. Select the **Datasets** tab **(1)**, then select the **synapse-sql-serverless** dataset **(2)**. If you see an error message under `Data source credentials` that your data source can't be refreshed because the credentials are invalid, select **Edit credentials (3)**. It may take a few seconds for this section to appear.
+
+    ![The datasets settings are displayed.](media/pbi-com-settings-datasets-2.png "Datasets")
+
+18. In the dialog that appears, select the **OAuth2** authentication method, then select **Sign in**. Enter your credentials if prompted.
+
+    ![The OAuth2 authentication method is highlighted.](media/pbi-com-oauth2.png "Configure synapse-lab")
+
+19. In [Azure Synapse Studio](https://web.azuresynapse.net), navigate to the **Develop** hub.
 
     ![Develop hub.](media/develop-hub.png "Develop hub")
 
-15. Expand the Power BI group, expand your Power BI linked service (for example, `synapse-training`), right-click on **Power BI reports** and select **Refresh** to update the list of reports. You should see the two Power BI reports you created in this lab (`synapse-lab` and `synapse-sql-serverless`).
+20. Expand the Power BI group, expand your Power BI linked service (for example, `handson_powerbi`), right-click on **Power BI reports** and select **Refresh** to update the list of reports. You should see the two Power BI reports you created in this lab (`synapse-lab` and `synapse-sql-serverless`).
 
     ![The new reports are displayed.](media/data-pbi-reports-refreshed.png "Refresh Power BI reports")
 
-16. Select the **`synapse-lab`** report. You can view and edit the report directly within Synapse Studio!
+21. Select the **`synapse-lab`** report. You can view and edit the report directly within Synapse Studio!
 
     ![The report is embedded in Synapse Studio.](media/data-synapse-lab-report.png "Report")
 
-17. Select the **`synapse-sql-serverless`** report. You should be able to view and edit this report as well.
+22. Select the **`synapse-sql-serverless`** report. You should be able to view and edit this report as well.
 
     ![The report is embedded in Synapse Studio.](media/data-synapse-sql-serverless-report.png "Report")

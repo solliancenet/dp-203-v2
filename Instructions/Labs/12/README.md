@@ -50,7 +50,13 @@ Note, the following modules share this same environment:
 
 Complete the steps below to create an Azure Cosmos DB linked service.
 
-> **Note**: Skip this section if you have already created a Cosmos DB linked service.
+> **Note**: Skip this section if you have already created the following within this environment in a previous module:
+> 
+> Linked service:
+> - `asacosmosdb01` (Cosmos DB)
+> 
+> Integration dataset:
+> - `asal400_customerprofile_cosmosdb`
 
 1. Open Synapse Studio (<https://web.azuresynapse.net/>), and then navigate to the **Manage** hub.
 
@@ -114,7 +120,7 @@ By combining the distributed scale of Cosmos DB's transactional processing with 
 
 ### Task 1: Enable Azure Synapse Link
 
-1. Navigate to the Azure portal (<https://portal.azure.com>) and open the `synapse-in-a-day` resource group (or whichever resource group you are using for the demo).
+1. Navigate to the Azure portal (<https://portal.azure.com>) and open the resource group for your lab environment.
 
 2. Select the **Azure Cosmos DB account**.
 
@@ -130,7 +136,7 @@ By combining the distributed scale of Cosmos DB's transactional processing with 
 
     Before we can create an Azure Cosmos DB container with an analytical store, we must first enable Azure Synapse Link.
 
-5. You must wait for this operation to complete before continuing. Check the status by selecting the Azure **Notifications** icon.
+5. You must wait for this operation to complete before continuing, which should take about a minute. Check the status by selecting the Azure **Notifications** icon.
 
     ![The Enabling Synapse Link process is running.](media/notifications-running.png "Notifications")
 
@@ -222,7 +228,7 @@ Now that we have the new Azure Cosmos DB container with the analytical store ena
 
     ![The pipeline run is shown as successfully completed.](media/pipeline-run-status.png "Pipeline runs")
 
-    > This may take around 4 minutes to complete.
+    > This may take **around 4 minutes** to complete. While this is running, read the rest of the lab instructions to familiarize yourself with the content.
 
 ## Exercise 3: Querying Azure Cosmos DB with Apache Spark for Synapse Analytics
 
@@ -240,9 +246,13 @@ Tailwind Traders is trying to solve how they can use the list of preferred produ
 
     ![The new notebook gesture is highlighted.](media/new-notebook.png "New notebook")
 
-    Notice that the `UserProfileHTAP` container that we created has a slightly different icon than the other two containers. This indicates that the analytical store is enabled.
+    Notice that the `UserProfileHTAP` container that we created has a slightly different icon than the other container. This indicates that the analytical store is enabled.
 
-3. Select **Run all (1)**.
+3. In the new notebook, select your Spark pool in the **Attach to** dropdown list.
+
+    ![The Attach to dropdown list is highlighted.](media/notebook-attach.png "Attach the Spark pool")
+
+4. Select **Run all (1)**.
 
     ![Thew new notebook is shown with the cell 1 output.](media/notebook-cell1.png "Cell 1")
 
@@ -254,11 +264,11 @@ Tailwind Traders is trying to solve how they can use the list of preferred produ
 
     The first `option` configures the name of the Azure Cosmos DB linked service **(3)**. The second `option` defines the Azure Cosmos DB container from which we want to read **(4)**.
 
-4. Hover your mouse underneath the cell, then select **{} Add code**.
+5. Select the **+** button underneath the cell you executed, then select **</> Code cell**. This adds a new code cell beneath the first one.
 
     ![The add code button is highlighted.](media/add-code.png "Add code")
 
-5. The DataFrame contains extra columns that we don't need. Let's remove the unwanted columns and create a clean version of the DataFrame. To do this, enter the following in the new cell and **run** it:
+6. The DataFrame contains extra columns that we don't need. Let's remove the unwanted columns and create a clean version of the DataFrame. To do this, enter the following in the new cell and **run** it:
 
     ```python
     unwanted_cols = {'_attachments','_etag','_rid','_self','_ts','collectionType','id'}
@@ -275,7 +285,7 @@ Tailwind Traders is trying to solve how they can use the list of preferred produ
 
     ![The cell's output is displayed.](media/cell2.png "Cell 2 output")
 
-6. We should know how many records we're dealing with. To do this, enter the following in a new cell and **run** it:
+7. We should know how many records we're dealing with. To do this, enter the following in a new cell and **run** it:
 
     ```python
     profiles.count()
@@ -283,7 +293,7 @@ Tailwind Traders is trying to solve how they can use the list of preferred produ
 
     You should see a count result of 100,000.
 
-7. We want to use the `preferredProducts` column array and `productReviews` column array for each user and create a graph of products that are from their preferred list that match with products that they have reviewed. To do this, we need to create two new DataFrames that contain flattened values from those two columns so we can join them in a later step. Enter the following in a new cell and **run** it:
+8. We want to use the `preferredProducts` column array and `productReviews` column array for each user and create a graph of products that are from their preferred list that match with products that they have reviewed. To do this, we need to create two new DataFrames that contain flattened values from those two columns so we can join them in a later step. Enter the following in a new cell and **run** it:
 
     ```python
     from pyspark.sql.functions import udf, explode
@@ -299,7 +309,7 @@ Tailwind Traders is trying to solve how they can use the list of preferred produ
 
     Observe the cell output where we display the `productReviewFlat` DataFrame contents. We see a new `productReviews` column that contains the `productId` we want to match to the preferred products list for the user, as well as the `reviewText` that we want to display or save.
 
-8. Let's look at the `preferredProductsFlat` DataFrame contents. To do this, enter the following in a new cell and **run** it:
+9. Let's look at the `preferredProductsFlat` DataFrame contents. To do this, enter the following in a new cell and **run** it:
 
     ```python
     display(preferredProductsFlat.limit(20))
@@ -309,7 +319,7 @@ Tailwind Traders is trying to solve how they can use the list of preferred produ
 
     Since we used the `explode` function on the preferred products array, we have flattened the column values to `userId` and `productId` rows, ordered by user.
 
-9. Now we need to further flatten the `productReviewFlat` DataFrame contents to extract the `productReviews.productId` and `productReviews.reviewText` fields and create new rows for each data combination. To do this, enter the following in a new cell and **run** it:
+10. Now we need to further flatten the `productReviewFlat` DataFrame contents to extract the `productReviews.productId` and `productReviews.reviewText` fields and create new rows for each data combination. To do this, enter the following in a new cell and **run** it:
 
     ```python
     productReviews = (productReviewsFlat.select('userId','productReviews.productId','productReviews.reviewText')
@@ -322,7 +332,7 @@ Tailwind Traders is trying to solve how they can use the list of preferred produ
 
     ![Cell output.](media/cell6.png "Cell 6 results")
 
-10. The final step is to join the `preferredProductsFlat` and `productReviews` DataFrames on the `userId` and `productId` values to build our graph of preferred product reviews. To do this, enter the following in a new cell and **run** it:
+11. The final step is to join the `preferredProductsFlat` and `productReviews` DataFrames on the `userId` and `productId` values to build our graph of preferred product reviews. To do this, enter the following in a new cell and **run** it:
 
     ```python
     preferredProductReviews = (preferredProductsFlat.join(productReviews,

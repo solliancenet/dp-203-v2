@@ -180,7 +180,7 @@ Also, Hyperspace allows users to compare their original plan versus the updated 
 10. Add another new code cell to your notebook with the following code:
 
     ```python
-    df1 = dfSales.filter("""CustomerId = 203""").select("""TotalAmount""")
+    df1 = dfSales.filter("""CustomerId = 200""").select("""TotalAmount""")
     df1.show()
     df1.explain(True)
     ```
@@ -194,7 +194,7 @@ Also, Hyperspace allows users to compare their original plan versus the updated 
     ```python
     # Enable Hyperspace - Hyperspace optimization rules become visible to the Spark optimizer and exploit existing Hyperspace indexes to optimize user queries
     Hyperspace.enable(spark)
-    df1 = dfSales.filter("""CustomerId = 203""").select("""TotalAmount""")
+    df1 = dfSales.filter("""CustomerId = 200""").select("""TotalAmount""")
     df1.show()
     df1.explain(True)
     ```
@@ -206,7 +206,7 @@ Also, Hyperspace allows users to compare their original plan versus the updated 
 14. Hyperspace provides an Explain API that allows you to compare the execution plans without indexes vs. with indexes. Add a new cell with the following code:
 
     ```python
-    df1 = dfSales.filter("""CustomerId = 203""").select("""TotalAmount""")
+    df1 = dfSales.filter("""CustomerId = 200""").select("""TotalAmount""")
 
     spark.conf.set("spark.hyperspace.explain.displayMode", "html")
     hyperspace.explain(df1, True, displayHTML)

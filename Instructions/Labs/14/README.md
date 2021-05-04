@@ -19,6 +19,7 @@ In this module, the student will be able to:
     - [Power BI](#power-bi)
   - [Scenario overview](#scenario-overview)
   - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
+  - [Exercise 0: Start the dedicated SQL pool](#exercise-0-start-the-dedicated-sql-pool)
   - [Exercise 1: Configure services](#exercise-1-configure-services)
     - [Task 1: Configure Event Hubs](#task-1-configure-event-hubs)
     - [Task 2: Configure Synapse Analytics](#task-2-configure-synapse-analytics)
@@ -27,6 +28,10 @@ In this module, the student will be able to:
     - [Task 1: Run data generator](#task-1-run-data-generator)
     - [Task 2: Create Power BI dashboard](#task-2-create-power-bi-dashboard)
     - [Task 3: View aggregate data in Synapse Analytics](#task-3-view-aggregate-data-in-synapse-analytics)
+  - [Exercise 3: Cleanup](#exercise-3-cleanup)
+    - [Task 1: Stop the data generator](#task-1-stop-the-data-generator)
+    - [Task 2: Stop the Stream Analytics job](#task-2-stop-the-stream-analytics-job)
+    - [Task 3: Pause the dedicated SQL pool](#task-3-pause-the-dedicated-sql-pool)
 
 ## Technology overview
 
@@ -58,11 +63,31 @@ In this experience, you will use Azure Event Hubs to ingest streaming vehicle te
 
 ## Lab setup and pre-requisites
 
-> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 0.
 
 - Azure subscription
 - Power BI account (sign up at <https://powerbi.microsoft.com>)
 - [Lab environment setup](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/tree/main/setup/14)
+
+## Exercise 0: Start the dedicated SQL pool
+
+This lab uses the dedicated SQL pool. As a first step, make sure it is not paused. If so, start it by following these instructions:
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. If the dedicated SQL pool is paused, hover over the name of the pool and select **Resume (2)**.
+
+    ![The resume button is highlighted on the dedicated SQL pool.](media/resume-dedicated-sql-pool.png "Resume")
+
+4. When prompted, select **Resume**. It will take a minute or two to resume the pool.
+
+    ![The resume button is highlighted.](media/resume-dedicated-sql-pool-confirm.png "Resume")
+
+> **Continue to the next exercise** while the dedicated SQL pool resumes.
 
 ## Exercise 1: Configure services
 
@@ -248,11 +273,11 @@ In this task, you will configure Stream Analytics to use the event hub you creat
 
 16. In the **New Output** blade, configure the following:
 
-    - **Output alias:** Enter "powerBIAlerts".
+    - **Output alias:** Enter `powerBIAlerts`.
     - **Authentication mode:** Select "User token".
     - **Group workspace:** Select "My Workspace" (if you do not see this option, select the "User token" authentication mode first).
-    - **Dataset name:** Enter "ContosoAutoVehicleAnomalies".
-    - **Table name:** Enter "Alerts".
+    - **Dataset name:** Enter `ContosoAutoVehicleAnomalies`.
+    - **Table name:** Enter `Alerts`.
 
     ![The New Output form is filled out with the previously mentioned settings entered into the appropriate fields.](media/stream-analytics-new-output.png 'New Output')
 
@@ -271,7 +296,7 @@ In this task, you will configure Stream Analytics to use the event hub you creat
     - **Table:** Enter `dbo.VehicleAverages`
     - **Authentication mode:** Select "Connection string".
     - **Username:** Enter `asa.sql.admin`
-    - **Password:** Enter the SQL admin password value you entered when deploying the lab environment.
+    - **Password:** Enter the SQL admin password value you entered when deploying the lab environment, or which was provided to you as part of your hosted lab environment. **Note**: This password is most likely not the same as the password you used to sign in to the Azure portal.
 
     ![The New Output form is filled out with the previously mentioned settings entered into the appropriate fields.](media/synapse-new-output.png "New Output")
 
@@ -403,7 +428,7 @@ In this task, you will configure and run the data generator. The data generator 
 
    1. Windows:
 
-      * Simply execute **DataGenerator.exe** inside the `win-x64` folder.
+      * Simply execute **TransactionGenerator.exe** inside the `win-x64` folder.
 
    2. Linux:
 
@@ -416,6 +441,12 @@ In this task, you will configure and run the data generator. The data generator 
       * Open a new terminal.
       * Navigate to the `osx-x64` directory.
       * Run `./DataGenerator`.
+
+6. If you are using Windows and receive a dialog after trying to execute the data generator, select **More info**, then **Run anyway**.
+
+    ![More info is highlighted.](media/microsoft-defender-moreinfo.png "Windows protected your PC")
+
+    ![The Run anyway button is highlighted.](media/microsoft-defender-runanyway.png "Run anyway")
 
 6.  A new console window will open, and you should see it start to send data after a few seconds. Once you see that it is sending data to Event Hubs, _minimize_ the window and keep it running in the background.
 
@@ -562,3 +593,35 @@ In this task, you will view the anomaly data within Synapse Analytics.
 9. Select the **Chart** view in the Results output, then set the chart type to **Area**. This visualization shows the average engine temperature correlated with the average speed over time. Feel free to experiment with the chart settings.
 
 ![The chart view is displayed.](media/synapse-vehicleaverage-chart.png "VehicleAverages chart")
+
+## Exercise 3: Cleanup
+
+Complete these steps to stop the data generator and free up resources you no longer need.
+
+### Task 1: Stop the data generator
+
+1. Go back to the console/terminal window in which your data generator is running. Close the window to stop the generator.
+
+### Task 2: Stop the Stream Analytics job
+
+1. Navigate to the Stream Analytics job in the Azure portal.
+
+2. In the Overview pane, select **Stop**, then select **Yes** when prompted.
+
+    ![The stop button is highlighted.](media/asa-stop.png "Stop")
+
+### Task 3: Pause the dedicated SQL pool
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. Hover over the name of the dedicated SQL pool and select **Pause (2)**.
+
+    ![The pause button is highlighted on the dedicated SQL pool.](media/pause-dedicated-sql-pool.png "Pause")
+
+4. When prompted, select **Resume**.
+
+    ![The pause button is highlighted.](media/pause-dedicated-sql-pool-confirm.png "Pause")

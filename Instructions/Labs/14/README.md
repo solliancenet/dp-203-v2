@@ -622,6 +622,6 @@ Complete these steps to stop the data generator and free up resources you no lon
 
     ![The pause button is highlighted on the dedicated SQL pool.](media/pause-dedicated-sql-pool.png "Pause")
 
-4. When prompted, select **Resume**.
+4. When prompted, select **Pause**.
 
     ![The pause button is highlighted.](media/pause-dedicated-sql-pool-confirm.png "Pause")

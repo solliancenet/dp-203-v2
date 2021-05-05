@@ -13,28 +13,30 @@ In this module, the student will be able to:
   - [Lab details](#lab-details)
     - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
   - [Exercise 0: Start the dedicated SQL pool](#exercise-0-start-the-dedicated-sql-pool)
-    - [Exercise 1: Implementing a Star Schema](#exercise-1-implementing-a-star-schema)
-      - [Task 1: Create star schema in SQL database](#task-1-create-star-schema-in-sql-database)
-    - [Exercise 2: Implementing a Snowflake Schema](#exercise-2-implementing-a-snowflake-schema)
-      - [Task 1: Create product snowflake schema in SQL database](#task-1-create-product-snowflake-schema-in-sql-database)
-      - [Task 2: Create reseller snowflake schema in SQL database](#task-2-create-reseller-snowflake-schema-in-sql-database)
-    - [Exercise 3: Implementing a Time Dimension Table](#exercise-3-implementing-a-time-dimension-table)
-      - [Task 1: Create time dimension table](#task-1-create-time-dimension-table)
-      - [Task 2: Populate the time dimension table](#task-2-populate-the-time-dimension-table)
-      - [Task 3: Load data into other tables](#task-3-load-data-into-other-tables)
-      - [Task 4: Query data](#task-4-query-data)
-    - [Exercise 4: Implementing a Star Schema in Synapse Analytics](#exercise-4-implementing-a-star-schema-in-synapse-analytics)
-      - [Task 1: Create star schema in Synapse dedicated SQL](#task-1-create-star-schema-in-synapse-dedicated-sql)
-      - [Task 2: Load data into Synapse tables](#task-2-load-data-into-synapse-tables)
-      - [Task 3: Query data from Synapse](#task-3-query-data-from-synapse)
-    - [Exercise 5: Updating slowly changing dimensions with mapping data flows](#exercise-5-updating-slowly-changing-dimensions-with-mapping-data-flows)
-      - [Task 1: Create the Azure SQL Database linked service](#task-1-create-the-azure-sql-database-linked-service)
-      - [Task 2: Create a mapping data flow](#task-2-create-a-mapping-data-flow)
-      - [Task 3: Create a pipeline and run the data flow](#task-3-create-a-pipeline-and-run-the-data-flow)
-      - [Task 4: View inserted data](#task-4-view-inserted-data)
-      - [Task 5: Update a source customer record](#task-5-update-a-source-customer-record)
-      - [Task 6: Re-run mapping data flow](#task-6-re-run-mapping-data-flow)
-      - [Task 7: Verify record updated](#task-7-verify-record-updated)
+  - [Exercise 1: Implementing a Star Schema](#exercise-1-implementing-a-star-schema)
+    - [Task 1: Create star schema in SQL database](#task-1-create-star-schema-in-sql-database)
+  - [Exercise 2: Implementing a Snowflake Schema](#exercise-2-implementing-a-snowflake-schema)
+    - [Task 1: Create product snowflake schema in SQL database](#task-1-create-product-snowflake-schema-in-sql-database)
+    - [Task 2: Create reseller snowflake schema in SQL database](#task-2-create-reseller-snowflake-schema-in-sql-database)
+  - [Exercise 3: Implementing a Time Dimension Table](#exercise-3-implementing-a-time-dimension-table)
+    - [Task 1: Create time dimension table](#task-1-create-time-dimension-table)
+    - [Task 2: Populate the time dimension table](#task-2-populate-the-time-dimension-table)
+    - [Task 3: Load data into other tables](#task-3-load-data-into-other-tables)
+    - [Task 4: Query data](#task-4-query-data)
+  - [Exercise 4: Implementing a Star Schema in Synapse Analytics](#exercise-4-implementing-a-star-schema-in-synapse-analytics)
+    - [Task 1: Create star schema in Synapse dedicated SQL](#task-1-create-star-schema-in-synapse-dedicated-sql)
+    - [Task 2: Load data into Synapse tables](#task-2-load-data-into-synapse-tables)
+    - [Task 3: Query data from Synapse](#task-3-query-data-from-synapse)
+  - [Exercise 5: Updating slowly changing dimensions with mapping data flows](#exercise-5-updating-slowly-changing-dimensions-with-mapping-data-flows)
+    - [Task 1: Create the Azure SQL Database linked service](#task-1-create-the-azure-sql-database-linked-service)
+    - [Task 2: Create a mapping data flow](#task-2-create-a-mapping-data-flow)
+    - [Task 3: Create a pipeline and run the data flow](#task-3-create-a-pipeline-and-run-the-data-flow)
+    - [Task 4: View inserted data](#task-4-view-inserted-data)
+    - [Task 5: Update a source customer record](#task-5-update-a-source-customer-record)
+    - [Task 6: Re-run mapping data flow](#task-6-re-run-mapping-data-flow)
+    - [Task 7: Verify record updated](#task-7-verify-record-updated)
+  - [Exercise 6: Cleanup](#exercise-6-cleanup)
+    - [Task 1: Pause the dedicated SQL pool](#task-1-pause-the-dedicated-sql-pool)
 
 ### Lab setup and pre-requisites
 
@@ -64,7 +66,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
 > **Continue to the next exercise** while the dedicated SQL pool resumes.
 
-### Exercise 1: Implementing a Star Schema
+## Exercise 1: Implementing a Star Schema
 
 Star schema is a mature modeling approach widely adopted by relational data warehouses. It requires modelers to classify their model tables as either dimension or fact.
 
@@ -80,7 +82,7 @@ Below is an example star schema, where the fact table is in the middle, surround
 
 ![Example star schema.](media/star-schema.png "Star schema")
 
-#### Task 1: Create star schema in SQL database
+### Task 1: Create star schema in SQL database
 
 In this task, you create a star schema in SQL database, using foreign key constraints. The first step is to create the base dimension and fact tables.
 
@@ -340,7 +342,7 @@ In this task, you create a star schema in SQL database, using foreign key constr
 
     ![The star schema is displayed with relationship keys.](media/star-schema-relationships.png "Star schema with relationships")
 
-### Exercise 2: Implementing a Snowflake Schema
+## Exercise 2: Implementing a Snowflake Schema
 
 A **snowflake schema** is a set of normalized tables for a single business entity. For example, Adventure Works classifies products by category and subcategory. Categories are assigned to subcategories, and products are in turn assigned to subcategories. In the Adventure Works relational data warehouse, the product dimension is normalized and stored in three related tables: `DimProductCategory`, `DimProductSubcategory`, and `DimProduct`.
 
@@ -348,7 +350,7 @@ The snowflake schema is a variation of the star schema. You add normalized dimen
 
 ![Sample snowflake schema.](media/snowflake-schema.png "Snowflake schema")
 
-#### Task 1: Create product snowflake schema in SQL database
+### Task 1: Create product snowflake schema in SQL database
 
 In this task, you add two new dimension tables: `DimProductCategory` and `DimProductSubcategory`. You create a relationship between these two tables and the `DimProduct` table to create a normalized product dimension, known as a snowflake dimension. Doing so updates the star schema to include the normalized product dimension, transforming it into a snowflake schema.
 
@@ -443,7 +445,7 @@ In this task, you add two new dimension tables: `DimProductCategory` and `DimPro
 
     ![The snowflake schema is shown.](media/snowflake-schema-completed.png "Snowflake schema")
 
-#### Task 2: Create reseller snowflake schema in SQL database
+### Task 2: Create reseller snowflake schema in SQL database
 
 In this task, you add two new dimension tables: `DimCustomer` and `DimGeography`. You create a relationship between these two tables and the `DimReseller` table to create a normalized reseller dimension, or snowflake dimension.
 
@@ -552,7 +554,7 @@ In this task, you add two new dimension tables: `DimCustomer` and `DimGeography`
 
     ![The finalized snowflake schema.](media/snowflake-schema-final.png "Snowflake schema")
 
-### Exercise 3: Implementing a Time Dimension Table
+## Exercise 3: Implementing a Time Dimension Table
 
 A time dimension table is one of the most consistently used dimension tables. This type of table enables consistent granularity for temporal analysis and reporting and usually contains temporal hierarchies, such as `Year` > `Quarter` > `Month` > `Day`.
 
@@ -574,7 +576,7 @@ This is the schema of the time dimension table that you will create:
 | FiscalYear | `int` |
 | FiscalQuarter | `int` |
 
-#### Task 1: Create time dimension table
+### Task 1: Create time dimension table
 
 In this task, you add the time dimension table and create foreign key relationships to the `FactRetailerSales` table.
 
@@ -631,7 +633,7 @@ In this task, you add the time dimension table and create foreign key relationsh
 
     ![The time dimension table is highlighted in the snowflake schema.](media/snowflake-schema-time-dimension.png "Time dimension added to snowflake schema")
 
-#### Task 2: Populate the time dimension table
+### Task 2: Populate the time dimension table
 
 You can populate time dimension tables in one of many ways, including T-SQL scripts using date/time functions, Microsoft Excel functions, importing from a flat file, or auto-generation by BI (business intelligence) tools. In this task, you populate the time dimension table using T-SQL, comparing generation methods along the way.
 
@@ -732,7 +734,7 @@ You can populate time dimension tables in one of many ways, including T-SQL scri
 
     > In our environment, it took **less than one second** to execute the CTE query.
 
-#### Task 3: Load data into other tables
+### Task 3: Load data into other tables
 
 In this task, you load the dimension and fact tables with data from a public data source.
 
@@ -858,7 +860,7 @@ In this task, you load the dimension and fact tables with data from a public dat
     GO
     ```
 
-#### Task 4: Query data
+### Task 4: Query data
 
 1. Paste **and execute** the following query to retrieve reseller sales data from the snowflake schema at the reseller, product, and month granularity:
 
@@ -951,7 +953,7 @@ In this task, you load the dimension and fact tables with data from a public dat
 
     > Notice how using the **time dimension table** makes filtering by specific date parts and logical dates (such as fiscal year) easier and more performant than calculating date functions on the fly.
 
-### Exercise 4: Implementing a Star Schema in Synapse Analytics
+## Exercise 4: Implementing a Star Schema in Synapse Analytics
 
 For larger data sets you may implement your data warehouse in Azure Synapse instead of SQL Server. Star schema models are still a best practice for modeling data in Synapse dedicated SQL pools. You may notice some differences with creating tables in Synapse Analytics vs. SQL database, but the same data modeling principles apply.
 
@@ -967,7 +969,7 @@ Since Synapse Analytics is a [massively parallel processing](https://docs.micros
 
 In the case of the dimension tables in this exercise, the amount of data stored per table falls well within the criteria for using a replicated distribution.
 
-#### Task 1: Create star schema in Synapse dedicated SQL
+### Task 1: Create star schema in Synapse dedicated SQL
 
 In this task, you create a star schema in Azure Synapse dedicated pool. The first step is to create the base dimension and fact tables.
 
@@ -1212,7 +1214,7 @@ In this task, you create a star schema in Azure Synapse dedicated pool. The firs
     You will find `Run` in the top left corner of the script window.
     ![The script and Run button are both highlighted.](media/synapse-create-table-script.png "Create table script")
 
-#### Task 2: Load data into Synapse tables
+### Task 2: Load data into Synapse tables
 
 In this task, you load the Synapse dimension and fact tables with data from a public data source. There are two ways to load this data from Azure Storage files using T-SQL: the COPY command or selecting from external tables using Polybase. For this task you will use COPY since it is a simple and flexible syntax for loading delimited data from Azure Storage. If the source were a private storage account you would include a CREDENTIAL option to authorize the COPY command to read the data, but for this example that is not required.
 
@@ -1290,7 +1292,7 @@ In this task, you load the Synapse dimension and fact tables with data from a pu
     GO
     ```
 
-#### Task 3: Query data from Synapse
+### Task 3: Query data from Synapse
 
 1. Paste **and execute** the following query to retrieve reseller sales data from the Synapse star schema at the reseller location, product, and month granularity:
 
@@ -1369,7 +1371,7 @@ In this task, you load the Synapse dimension and fact tables with data from a pu
 
     > Notice how using the **time dimension table** makes filtering by specific date parts and logical dates (such as fiscal year) easier and more performant than calculating date functions on the fly.
 
-### Exercise 5: Updating slowly changing dimensions with mapping data flows
+## Exercise 5: Updating slowly changing dimensions with mapping data flows
 
 A **slowly changing dimension** (SCD) is one that appropriately manages change of dimension members over time. It applies when business entity values change over time, and in an ad hoc manner. A good example of a slowly changing dimension is a customer dimension, specifically its contact detail columns like email address and phone number. In contrast, some dimensions are considered to be rapidly changing when a dimension attribute changes often, like a stock's market price. The common design approach in these instances is to store rapidly changing attribute values in a fact table measure.
 
@@ -1389,7 +1391,7 @@ It's important to understand that when the source data doesn't store versions, y
 
 In this exercise, you create a Type 1 SCD with Azure SQL Database as the source, and your Synapse dedicated SQL pool as the destination.
 
-#### Task 1: Create the Azure SQL Database linked service
+### Task 1: Create the Azure SQL Database linked service
 
 Linked services in Synapse Analytics enables you to manage connections to external resources. In this task, you create a linked service for the Azure SQL Database used as the data source for the `DimCustomer` dimension table.
 
@@ -1420,7 +1422,7 @@ Linked services in Synapse Analytics enables you to manage connections to extern
 
 5. Select **Create**.
 
-#### Task 2: Create a mapping data flow
+### Task 2: Create a mapping data flow
 
 Mapping Data flows are pipeline activities that provide a visual way of specifying how to transform data, through a code-free experience. This feature offers data cleansing, transformation, aggregation, conversion, joins, data copy operations, etc.
 
@@ -1675,7 +1677,7 @@ In this task, you create a mapping data flow to create a Type 1 SCD.
 
     ![The publish button is highlighted.](media/publish-all.png "Publish all")
 
-#### Task 3: Create a pipeline and run the data flow
+### Task 3: Create a pipeline and run the data flow
 
 In this task, you create a new Synapse integration pipeline to execute the mapping data flow, then run it to upsert customer records.
 
@@ -1723,7 +1725,7 @@ In this task, you create a new Synapse integration pipeline to execute the mappi
 
     ![The pipeline run successfully completed.](media/pipeline-runs.png "Pipeline runs")
 
-#### Task 4: View inserted data
+### Task 4: View inserted data
 
 1. Navigate to the **Data** hub.
 
@@ -1741,7 +1743,7 @@ In this task, you create a new Synapse integration pipeline to execute the mappi
 
     ![The script is displayed with the customer table output.](media/first-customer-script-run.png "Customer list output")
 
-#### Task 5: Update a source customer record
+### Task 5: Update a source customer record
 
 1. Open Azure Data Studio, or switch back to it if still open.
 
@@ -1770,7 +1772,7 @@ In this task, you create a new Synapse integration pipeline to execute the mappi
 
     ![The customer's last name was changed to Smith.](media/customer-record-updated.png "Customer record updated")
 
-#### Task 6: Re-run mapping data flow
+### Task 6: Re-run mapping data flow
 
 1. Switch back to Synapse Studio.
 
@@ -1798,7 +1800,7 @@ In this task, you create a new Synapse integration pipeline to execute the mappi
 
     ![The pipeline run successfully completed.](media/pipeline-runs2.png "Pipeline runs")
 
-#### Task 7: Verify record updated
+### Task 7: Verify record updated
 
 1. Navigate to the **Data** hub.
 
@@ -1817,3 +1819,23 @@ In this task, you create a new Synapse integration pipeline to execute the mappi
     ![The script is displayed with the updated customer table output.](media/second-customer-script-run.png "Updated customer output")
 
     As we can see, the customer record successfully updated to modify the `LastName` value to match the source record.
+
+## Exercise 6: Cleanup
+
+Complete these steps to free up resources you no longer need.
+
+### Task 1: Pause the dedicated SQL pool
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. Hover over the name of the dedicated SQL pool and select **Pause (2)**.
+
+    ![The pause button is highlighted on the dedicated SQL pool.](media/pause-dedicated-sql-pool.png "Pause")
+
+4. When prompted, select **Pause**.
+
+    ![The pause button is highlighted.](media/pause-dedicated-sql-pool-confirm.png "Pause")

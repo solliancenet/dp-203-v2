@@ -25,6 +25,8 @@ In this module, the student will be able to:
     - [Task 1: Query and transform JSON data with Apache Spark for Azure Synapse](#task-1-query-and-transform-json-data-with-apache-spark-for-azure-synapse)
   - [Exercise 4: Integrating SQL and Spark pools in Azure Synapse Analytics](#exercise-4-integrating-sql-and-spark-pools-in-azure-synapse-analytics)
     - [Task 1: Update notebook](#task-1-update-notebook)
+  - [Exercise 5: Cleanup](#exercise-5-cleanup)
+    - [Task 1: Pause the dedicated SQL pool](#task-1-pause-the-dedicated-sql-pool)
 
 ## Lab setup and pre-requisites
 
@@ -732,3 +734,23 @@ The Apache Spark pool to Synapse SQL connector is a data source implementation f
     > **Note**: Feel free to click on the column headers in the Table view to sort the result set.
 
     ![The cell contents and output are displayed.](media/join-output.png "Join output")
+
+## Exercise 5: Cleanup
+
+Complete these steps to free up resources you no longer need.
+
+### Task 1: Pause the dedicated SQL pool
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. Hover over the name of the dedicated SQL pool and select **Pause (2)**.
+
+    ![The pause button is highlighted on the dedicated SQL pool.](media/pause-dedicated-sql-pool.png "Pause")
+
+4. When prompted, select **Pause**.
+
+    ![The pause button is highlighted.](media/pause-dedicated-sql-pool-confirm.png "Pause")

@@ -31,6 +31,8 @@ In this module, the student will be able to:
   - [Exercise 5 - Avoid extensive logging](#exercise-5---avoid-extensive-logging)
     - [Task 1 - Explore rules for minimally logged operations](#task-1---explore-rules-for-minimally-logged-operations)
     - [Task 2 - Optimizing a delete operation](#task-2---optimizing-a-delete-operation)
+  - [Exercise 6: Cleanup](#exercise-6-cleanup)
+    - [Task 1: Pause the dedicated SQL pool](#task-1-pause-the-dedicated-sql-pool)
 
 ## Lab setup and pre-requisites
 
@@ -1029,3 +1031,23 @@ Loading data into a non-empty table with a clustered index can often contain a m
     >**Note**
     >
     >The query will run for a potentially long time (>12 minutes). Once the time exceeds significantly the time to run the previous CTAS query, you can cancel it (as you can already see the benefit of the CTAS-based approach).
+
+## Exercise 6: Cleanup
+
+Complete these steps to free up resources you no longer need.
+
+### Task 1: Pause the dedicated SQL pool
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. Hover over the name of the dedicated SQL pool and select **Pause (2)**.
+
+    ![The pause button is highlighted on the dedicated SQL pool.](media/pause-dedicated-sql-pool.png "Pause")
+
+4. When prompted, select **Pause**.
+
+    ![The pause button is highlighted.](media/pause-dedicated-sql-pool-confirm.png "Pause")

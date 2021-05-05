@@ -27,6 +27,8 @@ In this module, the student will be able to:
     - [Task 1 - Column Level Security](#task-1---column-level-security)
     - [Task 2 - Row level security](#task-2---row-level-security)
     - [Task 3 - Dynamic data masking](#task-3---dynamic-data-masking)
+  - [Exercise 4: Cleanup](#exercise-4-cleanup)
+    - [Task 1: Pause the dedicated SQL pool](#task-1-pause-the-dedicated-sql-pool)
   - [Reference](#reference)
   - [Other Resources](#other-resources)
 
@@ -307,6 +309,26 @@ It is important to identify data columns of that hold sensitive information. Typ
    ![The Synapse Studio toolbar is displayed with the Run button selected.](media/lab5_synapsestudioqueryruntoolbarmenu.png)
 
 5. You may now close the script tab, when prompted choose to **Discard all changes**.
+
+## Exercise 4: Cleanup
+
+Complete these steps to free up resources you no longer need.
+
+### Task 1: Pause the dedicated SQL pool
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. Hover over the name of the dedicated SQL pool and select **Pause (2)**.
+
+    ![The pause button is highlighted on the dedicated SQL pool.](media/pause-dedicated-sql-pool.png "Pause")
+
+4. When prompted, select **Pause**.
+
+    ![The pause button is highlighted.](media/pause-dedicated-sql-pool-confirm.png "Pause")
 
 ## Reference
 

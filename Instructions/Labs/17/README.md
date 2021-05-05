@@ -25,6 +25,8 @@ After completing the lab, you will understand the main steps of an end-to-end Ma
     - [Task 3: Integrate a Machine Learning-based enrichment procedure in a Synapse pipeline](#task-3-integrate-a-machine-learning-based-enrichment-procedure-in-a-synapse-pipeline)
   - [Exercise 4: Serve prediction results using Power BI](#exercise-4-serve-prediction-results-using-power-bi)
     - [Task 1: Display prediction results in a Power BI report](#task-1-display-prediction-results-in-a-power-bi-report)
+  - [Exercise 5: Cleanup](#exercise-5-cleanup)
+    - [Task 1: Pause the dedicated SQL pool](#task-1-pause-the-dedicated-sql-pool)
   - [Resources](#resources)
 
 ## Pre-requisites
@@ -643,6 +645,26 @@ First, you will publish a simple Product Quantity Forecast report to Power BI.
 8. n Synapse Studio, select the `Data` hub on the left side, navigate to the primary data lake account in the `Linked` section, and open the `wwi-02 > sale-small-product-quantity-forecast` path. Delete the existing `ProductQuantity-20201209-11.csv` file and upload the `ProductQuantity-20201209-12.csv` file. This will trigger the `Product Quantity Forecast` pipeline which will import the forecast requests from the CSV file and run the forecasting stored procedure.
 
 9. In Synapse Studio, select the `Monitor` hub on the left side, and then select `Trigger runs` to see the newly activated pipeline run. Once the pipeline is finished, refresh the Power BI report in Synapse Studio to view the updated data. -->
+
+## Exercise 5: Cleanup
+
+Complete these steps to free up resources you no longer need.
+
+### Task 1: Pause the dedicated SQL pool
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. Hover over the name of the dedicated SQL pool and select **Pause (2)**.
+
+    ![The pause button is highlighted on the dedicated SQL pool.](media/pause-dedicated-sql-pool.png "Pause")
+
+4. When prompted, select **Pause**.
+
+    ![The pause button is highlighted.](media/pause-dedicated-sql-pool-confirm.png "Pause")
 
 ## Resources
 

@@ -30,6 +30,8 @@ In this module, the student will be able to:
   - [Exercise 3: Visualize data with SQL Serverless](#exercise-3-visualize-data-with-sql-serverless)
     - [Task 1: Explore the data lake with SQL Serverless](#task-1-explore-the-data-lake-with-sql-serverless)
     - [Task 2: Visualize data with SQL serverless and create a Power BI report](#task-2-visualize-data-with-sql-serverless-and-create-a-power-bi-report)
+  - [Exercise 4: Cleanup](#exercise-4-cleanup)
+    - [Task 1: Pause the dedicated SQL pool](#task-1-pause-the-dedicated-sql-pool)
 
 ## Resource naming throughout this lab
 
@@ -757,3 +759,23 @@ First, let's prepare the Power BI report query by exploring the data source we'l
 22. Select the **`synapse-sql-serverless`** report. You should be able to view and edit this report as well.
 
     ![The report is embedded in Synapse Studio.](media/data-synapse-sql-serverless-report.png "Report")
+
+## Exercise 4: Cleanup
+
+Complete these steps to free up resources you no longer need.
+
+### Task 1: Pause the dedicated SQL pool
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. Hover over the name of the dedicated SQL pool and select **Pause (2)**.
+
+    ![The pause button is highlighted on the dedicated SQL pool.](media/pause-dedicated-sql-pool.png "Pause")
+
+4. When prompted, select **Pause**.
+
+    ![The pause button is highlighted.](media/pause-dedicated-sql-pool-confirm.png "Pause")

@@ -31,6 +31,8 @@ In this module, the student will be able to:
     - [Exercise 1: Create, trigger, and monitor pipeline](#exercise-1-create-trigger-and-monitor-pipeline)
       - [Task 1: Create pipeline](#task-1-create-pipeline)
       - [Task 2: Trigger, monitor, and analyze the user profile data pipeline](#task-2-trigger-monitor-and-analyze-the-user-profile-data-pipeline)
+    - [Exercise 2: Cleanup](#exercise-2-cleanup)
+      - [Task 1: Pause the dedicated SQL pool](#task-1-pause-the-dedicated-sql-pool)
 
 ## Lab setup and pre-requisites
 
@@ -1007,3 +1009,23 @@ You have decided to show Tailwind Traders how to manually trigger, monitor, then
 8. Select the `UserTopProductPurchasesASA` sink **(1)** to view its details. We can see that **1,622,203 rows** were calculated **(2)** with a total of 30 partitions. It took around **eight seconds** to stage the data **(3)** in ADLS Gen2 prior to writing the data to the SQL table. The total sink processing time in our case was around **44 seconds (4)**. It is also apparent that we have a **hot partition (5)** that is significantly larger than the others. If we need to squeeze extra performance out of this pipeline, we can re-evaluate data partitioning to more evenly spread the partitions to better facilitate parallel data loading and filtering. We could also experiment with disabling staging to see if there's a processing time difference. Finally, the size of the dedicated SQL pool plays a factor in how long it takes to ingest data into the sink.
 
     ![The sink details are displayed.](media/pipeline-user-profiles-data-flow-sink-details.png "Sink details")
+
+### Exercise 2: Cleanup
+
+Complete these steps to free up resources you no longer need.
+
+#### Task 1: Pause the dedicated SQL pool
+
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
+
+2. Select the **Manage** hub.
+
+    ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
+
+3. Select **SQL pools** in the left-hand menu **(1)**. Hover over the name of the dedicated SQL pool and select **Pause (2)**.
+
+    ![The pause button is highlighted on the dedicated SQL pool.](media/pause-dedicated-sql-pool.png "Pause")
+
+4. When prompted, select **Pause**.
+
+    ![The pause button is highlighted.](media/pause-dedicated-sql-pool-confirm.png "Pause")

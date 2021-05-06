@@ -196,7 +196,7 @@ It is recommended to store any secrets that are part of your pipeline in Azure K
 
 8. Select the **Web1** web activity, and select the **Settings** tab. Fill out the form as follows:
 
-    1. **URL**: Paste the Key Vault Secret Identifier value you copied in step 4 above, then **append** `?api-version=7.0` to to the end of this value. For example, it should look something like: `https://asakeyvaultNNNNN.vault.azure.net/secrets/PipelineSecret/f808d4fa99d84861872010f6c8d25c68?api-version=7.0`.
+    1. **URL**: Paste the Key Vault Secret Identifier value you copied in step 4 above, then **append** `?api-version=7.1` to to the end of this value. For example, it should look something like: `https://asakeyvaultNNNNN.vault.azure.net/secrets/PipelineSecret/f808d4fa99d84861872010f6c8d25c68?api-version=7.1`.
   
     2. **Method**: Select **Get**.
 

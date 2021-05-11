@@ -158,7 +158,7 @@ After creating the container, we will create a new Synapse Pipeline to copy data
 
     ![The button is highlighted.](media/new-container-button.png "New Container")
 
-3. For **Database id**, select **Use existing**, then select **`CustomerProfile` (1)**. Enter **`UserProfileHTAP`** for the **Container id (2)**, then enter **`/userId`** for the **Partition key (3)**. For **Throughput**, select **Autoscale (4)**, then enter **`4000`** for the **Max RU/s** value **(5)**. Finally, set **Analytical store** to **On (6)**, then select **OK**.
+3. For **Database id**, select **Use existing**, then select **`CustomerProfile` (1)**. Enter **`UserProfileHTAP`** for the **Container id (2)**, then enter **`/userId`** for the **Partition key (3)**. For **Throughput**, select **Autoscale (4)**, then enter **`4000`** for the **Max RU/s** value **(5)**. Finally, expand Advanced and set **Analytical store** to **On (6)**, then select **OK**.
 
     ![The form is configured as described.](media/new-container.png "New container")
 

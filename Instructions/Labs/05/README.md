@@ -307,7 +307,7 @@ You recommend using the Data hub to view the Parquet files in the connected stor
 
     ![The Parquet file is displayed as described.](media/2010-sale-parquet-new-notebook.png "New notebook")
 
-    This generates a notebook with PySpark code to load the data in a Spark dataframe and display 100 rows with the header.
+    This generates a notebook with PySpark code to load the data in a Spark dataframe and display 10 rows with the header.
 
 4. Make sure the Spark pool is attached to the notebook.
 

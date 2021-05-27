@@ -2,7 +2,7 @@
 
 In this lab, you will be directed by your instructor to work alone, or in groups for 20 minutes to read through the following information presented below. You will then answer the questions and present back to the classroom your findings based on the requirements. 
 
-## Team whiteboard activity
+## Team activity
 
 Wide World Importers is ready to build a pipeline that copies their sales transactions from a table in an Oracle database to the data lake.
 
@@ -25,13 +25,7 @@ WWI has provided the following example of the data to you. You can assume they h
 |294020|98706|0|0|168|2012-01-04|156|57894|IT joke mug - keyboard not found � press F1 to continue (White)|Each|10|13.00|15.000|130.00|19.50|85.00|149.50|10|0|14
 |294021|98706|0|0|100|2012-01-04|156|57894|Dinosaur battery-powered slippers (Green) L|Each|4|32.00|15.000|128.00|19.20|96.00|147.20|4|0|14
 
-## Whiteboard
-
-Open your whiteboard for the event, and in the area for Activity 1 provide your answers to the following challenges.
-
-*The following challenges are already present within the whiteboard template provided.*
-
-Challenges
+**Challenges**I
 
 1. What file format should they use for the raw data? Why did you recommend this file format, provide at least two reasons?
 

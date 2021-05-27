@@ -25,7 +25,7 @@ In this module the student will be able to:
     - [Exercise 3: Complete the Display Function notebook](#exercise-3-complete-the-display-function-notebook)
     - [Exercise 4: Complete the Distinct Articles exercise notebook](#exercise-4-complete-the-distinct-articles-exercise-notebook)
   - [Lab 2 - Working with DataFrames advanced methods](#lab-2---working-with-dataframes-advanced-methods)
-    - [Exercise 1: Complete the lab notebook](#exercise-1-complete-the-lab-notebook)
+    - [Exercise 1: Run and complete the lab notebook](#exercise-1-run-and-complete-the-lab-notebook)
       - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive-1)
       - [Task 2: Complete the Date and Time Manipulation notebook](#task-2-complete-the-date-and-time-manipulation-notebook)
     - [Exercise 2: Complete the Use Aggregate Functions notebook](#exercise-2-complete-the-use-aggregate-functions-notebook)
@@ -129,7 +129,7 @@ After you've completed the notebook, return to this screen, and continue to the 
 
 This lab builds on the Azure Databricks DataFrames concepts learned in the previous lab above by exploring some advanced methods data engineers can use to read, write, and transform data using DataFrames.
 
-### Exercise 1: Complete the lab notebook
+### Exercise 1: Run and complete the lab notebook
 
 #### Task 1: Clone the Databricks archive
 

@@ -309,7 +309,7 @@ You recommend using the Data hub to view the Parquet files in the connected stor
 
     This generates a notebook with PySpark code to load the data in a Spark dataframe and display 10 rows with the header.
 
-4. Make sure the Spark pool is attached to the notebook.
+4. Make sure the Spark pool is attached to the notebook. **Do not run/execute the cell at this stage**, as we need to create a variable for the name of your datalake first.
 
     ![The Spark pool is highlighted.](media/2010-sale-parquet-notebook-sparkpool.png "Notebook")
 

@@ -247,6 +247,12 @@ PolyBase requires the following elements:
 
     > While this is running, read the rest of the lab instructions to familiarize yourself with the content.
 
+6. In the query window, replace the script with the following to see how many rows were imported:
+
+    ```sql
+    SELECT COUNT(1) FROM wwi_staging.SaleHeap(nolock)
+    ```
+
 ### Task 3: Configure and run the COPY statement
 
 Now let's see how to perform the same load operation with the COPY statement.

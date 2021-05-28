@@ -226,7 +226,7 @@ PolyBase requires the following elements:
         )
     WITH
         (
-            LOCATION = '/sale-small%2FYear%3D2019',  
+            LOCATION = '/sale-small/Year=2019',  
             DATA_SOURCE = ABSS,
             FILE_FORMAT = [ParquetFormat]  
         )  
@@ -259,7 +259,7 @@ Now let's see how to perform the same load operation with the COPY statement.
 
     -- Replace <PrimaryStorage> with the workspace default storage account name.
     COPY INTO wwi_staging.SaleHeap
-    FROM 'https://asadatalakeSUFFIX.dfs.core.windows.net/wwi-02/sale-small%2FYear%3D2019'
+    FROM 'https://asadatalakeSUFFIX.dfs.core.windows.net/wwi-02/sale-small/Year=2019'
     WITH (
         FILE_TYPE = 'PARQUET',
         COMPRESSION = 'SNAPPY'
@@ -290,7 +290,7 @@ For both of the load operations above, we inserted data into the heap table. Wha
     ```sql
     -- Replace SUFFIX with the workspace default storage account name.
     COPY INTO wwi_staging.Sale
-    FROM 'https://asadatalakeSUFFIX.dfs.core.windows.net/wwi-02/sale-small%2FYear%3D2019'
+    FROM 'https://asadatalakeSUFFIX.dfs.core.windows.net/wwi-02/sale-small/Year=2019'
     WITH (
         FILE_TYPE = 'PARQUET',
         COMPRESSION = 'SNAPPY'

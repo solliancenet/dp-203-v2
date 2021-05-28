@@ -1017,7 +1017,7 @@ Loading data into a non-empty table with a clustered index can often contain a m
         CustomerId >= 900000
     ```
 
-    The query should execute within about 90 seconds. All that would remain to complete the process would be to delete the `Sale_Heap` table and rename `Sale_Heap_v2` to `Sale_Heap`.
+    The query should execute within about 90 seconds. All that would remain to complete the process would be to delete the original `Sale_Hash` table first, and rename `Sale_Hash_v2` to `Sale_Hash`.
 
 3. Compare the previous operation with a classical delete:
 

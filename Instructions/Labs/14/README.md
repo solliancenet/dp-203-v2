@@ -296,7 +296,7 @@ In this task, you will configure Stream Analytics to use the event hub you creat
     - **Table:** Enter `dbo.VehicleAverages`
     - **Authentication mode:** Select "Connection string".
     - **Username:** Enter `asa.sql.admin`
-    - **Password:** Enter the SQL admin password value you entered when deploying the lab environment, or which was provided to you as part of your hosted lab environment. **Note**: This password is most likely not the same as the password you used to sign in to the Azure portal.
+    - **Password:** Enter the password of `P4ssw.rd` or the SQL admin password value you entered when deploying the lab environment, or which was provided to you as part of your hosted lab environment. **Note**: This password is most likely not the same as the password you used to sign in to the Azure portal.
 
     ![The New Output form is filled out with the previously mentioned settings entered into the appropriate fields.](media/synapse-new-output.png "New Output")
 

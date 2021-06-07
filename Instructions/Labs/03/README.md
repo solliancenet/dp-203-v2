@@ -11,7 +11,7 @@ Wide World Importers is ready to build a pipeline that copies their sales transa
 * The pipeline that copies data will run on a scheduled basis, once per day.
 * They would like to ingest this raw data applying the minimal amount of transformations to it.
 * They want to ensure that their data lake always contains a copy of the original data, so that if their downstream processing has calculation or transformation errors, they can always re-compute from the original.
-* Additionally, they want to avoid the file format prescribing what tools can be used to examine and process the data by making sure that the file format selected can be used by the broadest possible range of of industry standard tools.
+* Additionally, they want to avoid the file format prescribing what tools can be used to examine and process the data by making sure that the file format selected can be used by the broadest possible range of industry standard tools.
 * The folder structure needs to be performant for typical exploratory and analytic queries for this type of data.  
 
 **Example of the data**

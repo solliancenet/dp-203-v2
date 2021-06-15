@@ -115,7 +115,7 @@ This lab requires a dedicated SQL pool. As a first step, create a new dedicated 
 
    3. Enter the name of the resource group you created at the beginning of the environment setup (such as `data-engineering-synapse`). This will make sure automation runs against the correct environment you provisioned in Azure.
 
-> **NOTE** This script will take about 15-25 minutes to complete.
+> **NOTE** This script will take about 40-45 minutes to complete.
 
 #### Potential errors that you can ignore
 

@@ -135,7 +135,7 @@ Control-SQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGrou
 Wait-ForSQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -TargetStatus Online
 }
 
-Write-Information "Scale up the $($sqlPoolName) SQL pool to DW500c to prepare for data import."
+Write-Information "Scale up the $($sqlPoolName) SQL pool to prepare for data import."
 
 Control-SQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -Action scale -SKU DW500c
 Wait-ForSQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -TargetStatus Online

@@ -160,6 +160,8 @@ We highly recommend executing the PowerShell scripts on an Azure Virtual Machine
 
     ![The Yes button is highlighted.](media/rdp-connect-certificate.png "Remote Desktop Connection")
 
+8. Install [Power BI Desktop](https://www.microsoft.com/download/details.aspx?id=58494) on the VM.
+
 ### Task 4: Create Azure Synapse Analytics workspace
 
 1. Deploy the workspace through the following Azure ARM template (select the button below):

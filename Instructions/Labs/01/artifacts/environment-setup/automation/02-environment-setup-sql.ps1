@@ -137,7 +137,7 @@ Wait-ForSQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGrou
 
 Write-Information "Scale up the $($sqlPoolName) SQL pool to DW500c to prepare for data import."
 
-Control-SQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -Action scale -SKU DW3000c
+Control-SQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -Action scale -SKU DW500c
 Wait-ForSQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -TargetStatus Online
 
 Ensure-ValidTokens $true
@@ -329,7 +329,7 @@ foreach ($script in $scripts.Keys) {
 
 Write-Information "Scale down the $($sqlPoolName) SQL pool to DW200c after data import."
 
-Control-SQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -Action scale -SKU DW500c
+Control-SQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -Action scale -SKU DW200c
 Wait-ForSQLPool -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -TargetStatus Online
 
 Write-Information "Create linked service for SQL pool $($sqlPoolName) with user asa.sql.import01"

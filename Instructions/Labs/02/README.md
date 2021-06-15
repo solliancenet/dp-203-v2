@@ -1713,13 +1713,11 @@ In this task, you create a new Synapse integration pipeline to execute the mappi
 
     ![The add trigger button and trigger now menu item are both highlighted.](media/pipeline-trigger.png "Pipeline trigger")
 
-8. In the `Pipeline run` dialog, under Parameters, type the value SQLPool01 under value for the the parameter named DatabaseName, and then click on OK
-
-9. Navigate to the **Monitor** hub.
+8. Navigate to the **Monitor** hub.
 
     ![Monitor hub.](media/monitor-hub.png "Monitor hub")
 
-10. Select **Pipeline runs** in the left-hand menu **(1)** and wait for the pipeline run to successfully complete **(2)**. You may have to select **Refresh (3)** several times until the pipeline run completes.
+9. Select **Pipeline runs** in the left-hand menu **(1)** and wait for the pipeline run to successfully complete **(2)**. You may have to select **Refresh (3)** several times until the pipeline run completes.
 
     ![The pipeline run successfully completed.](media/pipeline-runs.png "Pipeline runs")
 

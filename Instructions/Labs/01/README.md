@@ -12,8 +12,7 @@
     - [Task 4: Create Azure Synapse Analytics workspace](#task-4-create-azure-synapse-analytics-workspace)
     - [Task 5: Create an Azure Databricks workspace](#task-5-create-an-azure-databricks-workspace)
     - [Task 6: Create a cluster](#task-6-create-a-cluster)
-  - [Before starting](#before-starting)
-  - [Steps & Timing](#steps--timing)
+  - [Exercise 2: Setup Synapse Analytics workspace](#exercise-2-setup-synapse-analytics-workspace)
     - [Task 1: Pre-requisites](#task-1-pre-requisites)
     - [Task 2: Download artifacts and install PowerShell modules](#task-2-download-artifacts-and-install-powershell-modules)
     - [Task 3: Execute setup scripts](#task-3-execute-setup-scripts)
@@ -175,7 +174,7 @@ We highly recommend executing the PowerShell scripts on an Azure Virtual Machine
 
         > **Important**: The `Region` field under 'Parameters' will list the Azure regions where Azure Synapse Analytics is available as of November 2020. This will help you find a region where the service is available without being limited to where the resource group is defined.
 
-   - **Unique Suffix**: This unique suffix will be used naming resources that will created as part of your deployment. Make sure you follow correct Azure [Resource naming](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/naming-and-tagging#resource-naming) conventions.
+   - **Unique Suffix**: This unique suffix will be used naming resources that will created as part of your deployment, such as your initials followed by the current date in YYYYMMDD format (ex. `jdh20210615`). Make sure you follow correct Azure [Resource naming](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/naming-and-tagging#resource-naming) conventions.
    - **SQL Administrator Login Password**: Provide a strong password for the SQLPool that will be created as part of your deployment. [Visit here](https://docs.microsoft.com/en-us/sql/relational-databases/security/password-policy?view=sql-server-ver15#password-complexity) to read about password rules in place. Your password will be needed during the next steps. Make sure you have your password noted and secured.
 
    ![The form is configured as described.](media/synapse-arm-template.png "Deploy an Azure Synapse Analytics workspace")
@@ -221,15 +220,12 @@ We highly recommend executing the PowerShell scripts on an Azure Virtual Machine
 8. Check **Spot instances** to optimize costs.
 9. Select **Create Cluster**.
 
-## Before starting
+## Exercise 2: Setup Synapse Analytics workspace
 
-## Steps & Timing
-
-The entire script will take between 1.5 and 2 hours to complete. Major steps include:
+The entire script will take about 40 minutes to complete. Major steps include:
 
 - Configure Synapse resources
 - Download all data sets and files into the data lake (~15 mins)
-- Execute the setup and execute the SQL pipeline (~30 mins)
 - Execute the Cosmos DB pipeline (~25 mins)
 
 ### Task 1: Pre-requisites
@@ -254,7 +250,7 @@ Perform all of the steps below from your **deployment VM**:
 
     cd c:\labfiles
 
-    git clone https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy.git data-engineering-ilt-deployment
+    git clone -b optimizations https://github.com/solliancenet/DP-203T00-Data-Engineering-on-Microsoft-Azure.git data-engineering-ilt-deployment
     ```
 
 * Install Azure PowerShell module

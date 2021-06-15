@@ -8,7 +8,7 @@
   - [Exercise 1: Azure setup](#exercise-1-azure-setup)
     - [Task 1: Register resource providers](#task-1-register-resource-providers)
     - [Task 2: Create a resource group in Azure](#task-2-create-a-resource-group-in-azure)
-    - [Task 2: Create an Azure VM for the deployment scripts and desktop applications](#task-2-create-an-azure-vm-for-the-deployment-scripts-and-desktop-applications)
+    - [Task 3: Create an Azure VM for the deployment scripts and desktop applications](#task-3-create-an-azure-vm-for-the-deployment-scripts-and-desktop-applications)
     - [Task 4: Create Azure Synapse Analytics workspace](#task-4-create-azure-synapse-analytics-workspace)
     - [Task 5: Create an Azure Databricks workspace](#task-5-create-an-azure-databricks-workspace)
     - [Task 6: Create a cluster](#task-6-create-a-cluster)
@@ -111,7 +111,7 @@ In Azure, you must register specific resource providers on your subscription bef
 
 > **Important**: Take note of the _exact_ resource group name you provided for the steps that follow.
 
-### Task 2: Create an Azure VM for the deployment scripts and desktop applications
+### Task 3: Create an Azure VM for the deployment scripts and desktop applications
 
 We highly recommend executing the PowerShell scripts on an Azure Virtual Machine instead of from your local machine. Doing so eliminates issues due to pre-existing dependencies and more importantly, network/bandwidth-related issues while executing the scripts.
 
@@ -165,7 +165,7 @@ We highly recommend executing the PowerShell scripts on an Azure Virtual Machine
 
 1. Deploy the workspace through the following Azure ARM template (select the button below):
 
-    <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsolliancenet%2Fmicrosoft-data-engineering-ilt-deploy%2Fmain%2Fsetup%2F04%2Fartifacts%2Fenvironment-setup%2fautomation%2F00-asa-workspace-core.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
+    <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsolliancenet%2FDP-203T00-Data-Engineering-on-Microsoft-Azure%2Foptimizations%2FInstructions%2FLabs%2F01%2Fartifacts%2Fenvironment-setup%2fautomation%2F00-asa-workspace-core.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
 
 2. On the **Custom deployment** form fill in the fields described below.
 

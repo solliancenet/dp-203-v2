@@ -61,15 +61,15 @@ This lab requires a dedicated SQL pool. As a first step, create a new dedicated 
 
     ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
 
-3. Select **SQL pools** in the left-hand menu **(1)**. If the dedicated SQL pool is paused, hover over the name of the pool and select **Resume (2)**.
+3. Select **SQL pools** in the left-hand menu **(1)**, then select **+ New (2)**.
 
-    ![The resume button is highlighted on the dedicated SQL pool.](media/resume-dedicated-sql-pool.png "Resume")
+    ![The new button is highlighted.](media/new-dedicated-sql-pool.png "New dedicated SQL pool")
 
-4. When prompted, select **Resume**. It will take a minute or two to resume the pool.
+4. In the `Create dedicated SQL pool` form, enter **`SQLPool01`** (copy and paste since the name must be exact) for the pool name, then set the performance level to **DW200c**. Select **Create** on the validation step.
 
-    ![The resume button is highlighted.](media/resume-dedicated-sql-pool-confirm.png "Resume")
+    ![The form is completed as described.](media/create-dedicated-sql-pool.png "Create dedicated SQL pool")
 
-> **Continue to the next exercise** while the dedicated SQL pool resumes.
+> **Continue to the next exercise** while the dedicated SQL pool is created.
 
 ### Task 2: Execute PowerShell script
 

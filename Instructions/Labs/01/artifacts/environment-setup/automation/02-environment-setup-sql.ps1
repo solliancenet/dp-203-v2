@@ -166,16 +166,7 @@ $params = @{}
 $result = Execute-SQLScriptFile -SQLScriptsPath $sqlScriptsPath -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -FileName "04-create-tables-in-wwi-schema" -Parameters $params
 $result
 
-
-#Write-Information "Create tables in the [wwi_ml] schema in $($sqlPoolName)"
-
-#$dataLakeAccountKey = List-StorageAccountKeys -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -Name $dataLakeAccountName
-#$params = @{ 
-#        DATA_LAKE_ACCOUNT_NAME = $dataLakeAccountName  
-#        DATA_LAKE_ACCOUNT_KEY = $dataLakeAccountKey 
-#}
-#$result = Execute-SQLScriptFile -SQLScriptsPath $sqlScriptsPath -WorkspaceName $workspaceName -SQLPoolName $sqlPoolName -FileName "05-create-tables-in-wwi-ml-schema" -Parameters $params
-#$result
+$dataLakeAccountKey = List-StorageAccountKeys -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroupName -Name $dataLakeAccountName
 
 Write-Information "Create tables in the [wwi_security] schema in $($sqlPoolName)"
 

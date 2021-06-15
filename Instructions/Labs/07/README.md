@@ -13,7 +13,10 @@ In this module, the student will be able to:
 - [Module 7 - Ingest and load data into the Data Warehouse](#module-7---ingest-and-load-data-into-the-data-warehouse)
   - [Lab details](#lab-details)
   - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
-  - [Exercise 0: Start the dedicated SQL pool](#exercise-0-start-the-dedicated-sql-pool)
+  - [Exercise 0: Create a new dedicated SQL pool and run setup script](#exercise-0-create-a-new-dedicated-sql-pool-and-run-setup-script)
+    - [Task 1: Create dedicated SQL pool](#task-1-create-dedicated-sql-pool)
+    - [Task 2: Execute PowerShell script](#task-2-execute-powershell-script)
+      - [Potential errors that you can ignore](#potential-errors-that-you-can-ignore)
   - [Exercise 1: Import data with PolyBase and COPY using T-SQL](#exercise-1-import-data-with-polybase-and-copy-using-t-sql)
     - [Task 1: Create staging tables](#task-1-create-staging-tables)
     - [Task 2: Configure and run PolyBase load operation](#task-2-configure-and-run-polybase-load-operation)
@@ -46,9 +49,11 @@ Note, the following modules share this same environment:
 - [Module 13](labs/13/README.md)
 - [Module 16](labs/16/README.md)
 
-## Exercise 0: Start the dedicated SQL pool
+## Exercise 0: Create a new dedicated SQL pool and run setup script
 
-This lab uses the dedicated SQL pool. As a first step, make sure it is not paused. If so, start it by following these instructions:
+This lab requires a dedicated SQL pool. As a first step, create a new dedicated SQL pool. Then, execute a PowerShell script to load the dedicated SQL pool with data.
+
+### Task 1: Create dedicated SQL pool
 
 1. Open Synapse Studio (<https://web.azuresynapse.net/>).
 
@@ -65,6 +70,60 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
     ![The resume button is highlighted.](media/resume-dedicated-sql-pool-confirm.png "Resume")
 
 > **Continue to the next exercise** while the dedicated SQL pool resumes.
+
+### Task 2: Execute PowerShell script
+
+1. Connect to your **lab VM**. You can find it by connecting to the [Azure portal](https://portal.azure.com) and entering `virtual machines` into the top search bar. Select **Virtual machines** from the search results.
+
+    ![The Virtual Machines service is selected.](media/virtual-machines.png "Virtual machines")
+
+2. Select your lab VM from the list of virtual machines.
+
+    ![The virtual machine is selected.](media/select-virtual-machine.png "Virtual machines")
+
+3. If the virtual machine is stopped, select **Start** and confirm that you wish to start the virtual machine.
+
+    ![The start button is highlighted.](media/start-virtual-machine.png "Start virtual machine")
+
+4. After the virtual machine successfully starts, connect to it and complete the steps that follow.
+
+5. Execute the following to set the execution policy to Unrestricted so you can run the local PowerShell script file:
+
+    ```powershell
+    Set-ExecutionPolicy Unrestricted
+    ```
+
+    > [!Note]: If you receive a prompt that you are installing the module from an untrusted repository, select **Yes to All** to proceed with the setup.
+
+6. Change directories to the root of this repo within your local file system.
+
+    ```powershell
+    cd C:\labfiles\data-engineering-ilt-deployment\Instructions\Labs\01\artifacts\environment-setup\automation\
+    ```
+
+7. Execute `Connect-AzAccount` and sign in to your Microsoft user account when prompted.
+
+    > [!WARNING]: You may receive the message "TenantId 'xxxxxx-xxxx-xxxx-xxxx' contains more than one active subscription. The first one will be selected for further use. You can ignore this at this point. When you execute the environment setup, you will choose the subscription in which you deployed the environment resources.
+
+8. Execute `.\02-environment-setup-sql.ps1`
+
+   1. You will be prompted to setup your Azure PowerShell and Azure CLI context.
+
+   2. If you have more than one Azure Subscription, you will be prompted to enter the name of your desired Azure Subscription. You can copy and paste the value from the list to select one. For example:
+
+       ![A subscription is copied and pasted into the text entry.](media/select-desired-subscription.png "Select desired subscription")
+
+   3. Enter the name of the resource group you created at the beginning of the environment setup (such as `data-engineering-synapse`). This will make sure automation runs against the correct environment you provisioned in Azure.
+
+> **NOTE** This script will take about 15-25 minutes to complete.
+
+#### Potential errors that you can ignore
+
+You may encounter a few errors and warnings during the script execution. The errors below can safely be ignored:
+
+1. The following error may occur when creating SQL users and adding role assignments in the dedicated SQL pool, and can safely be ignored: `Principal 'xxx@xxx.com' could not be created. Only connections established with Active Directory accounts can create other Active Directory users.`
+
+    ![Error is displayed.](media/error-cannot-create-principal.png "Cannot create principal")
 
 ## Exercise 1: Import data with PolyBase and COPY using T-SQL
 

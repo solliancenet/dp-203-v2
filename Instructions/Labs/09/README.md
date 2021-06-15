@@ -23,8 +23,6 @@ In this module, the student will be able to:
     - [Task 1: Create notebook](#task-1-create-notebook)
     - [Task 2: Add the Notebook to the pipeline](#task-2-add-the-notebook-to-the-pipeline)
 
-> **TODO:** Include the data sources, mapping data flow, and pipeline from Module 9 in the setup for Module 10.
-
 ## Lab setup and pre-requisites
 
 > **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.

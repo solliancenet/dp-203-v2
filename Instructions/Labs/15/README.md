@@ -18,8 +18,10 @@ In this module, the student will be able to:
   - [Event Hubs and Spark Structured Streaming](#event-hubs-and-spark-structured-streaming)
   - [Streaming concepts](#streaming-concepts)
   - [Lab](#lab)
-    - [Before the hands-on lab](#before-the-hands-on-lab)
-      - [Task 1: Create and configure the Azure Databricks workspace](#task-1-create-and-configure-the-azure-databricks-workspace)
+    - [Exercise 0: Provision lab resources](#exercise-0-provision-lab-resources)
+      - [Task 1: Create an Event Hubs namespace](#task-1-create-an-event-hubs-namespace)
+      - [Task 2: Create an event hub](#task-2-create-an-event-hub)
+      - [Task 3: Copy the connection string primary key for the shared access policy](#task-3-copy-the-connection-string-primary-key-for-the-shared-access-policy)
     - [Exercise 1: Complete the Structured Streaming Concepts notebook](#exercise-1-complete-the-structured-streaming-concepts-notebook)
       - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive)
       - [Task 2: Complete the notebook](#task-2-complete-the-notebook)
@@ -51,15 +53,54 @@ A streaming system consists of:
 
 You need to complete the exercises within Databricks Notebooks. To begin, you need to have access to an Azure Databricks workspace. If you do not have a workspace available, follow the instructions below. Otherwise, you can skip ahead to the `Clone the Databricks archive` step.
 
-### Before the hands-on lab
+### Exercise 0: Provision lab resources
 
-> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
+To complete this lab, you will need to create an event hub.
 
-Before stepping through the exercises in this lab, make sure you have access to an Azure Databricks workspace with an available cluster. Perform the tasks below to configure the workspace.
+#### Task 1: Create an Event Hubs namespace
 
-#### Task 1: Create and configure the Azure Databricks workspace
+1. In the [Azure portal](https://portal.azure.com), select **+ Create a resource**. Enter event hubs into the Search the Marketplace box, select Event Hubs from the results, and then select **Create**.
 
-Follow the [lab 15 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/15/lab-01-setup.md) to create and configure the workspace.
+   ![Screenshot of the Azure portal with selections for creating an event hub](media/create-resource.png "Create a resource")
+
+2. In the Create Namespace pane, enter the following information:
+
+   - **Subscription**: Select the subscription group you're using for this module.
+   - **Resource group**: Choose your module resource group.
+   - **Namespace name**: Enter a unique name, such as **databricksdemoeventhubs**. Uniqueness will be indicated by a green check mark.
+   - **Location**: Select the location you're using for this module.
+   - **Pricing tier**: Select **Basic**.
+
+   Select **Review + create**, then select **Create**.
+
+   ![Screenshot of the "Create Namespace" pane](media/create-namespace.png "Create namespace")
+
+#### Task 2: Create an event hub
+
+1. After your Event Hubs namespace is provisioned, browse to it and add a new event hub by selecting the **+ Event Hub** button on the toolbar.
+
+   ![Screenshot of an Event Hubs namespace with the button for adding an event hub highlighted](media/add-event-hub.png "Add event hub")
+
+2. On the **Create Event Hub** pane, enter:
+
+   - **Name**: Enter `databricks-demo-eventhub`.
+   - **Partition Count**: Enter **2**.
+
+   Select **Create**.
+
+   ![Screenshot of the "Create Event Hub" pane](media/create-event-hub-pane.png "Create Event Hub")
+
+#### Task 3: Copy the connection string primary key for the shared access policy
+
+1. On the left-hand menu in your Event Hubs namespace, select **Shared access policies** under **Settings**, then select the **RootManageSharedAccessKey** policy.
+
+   ![Shared access policies.](media/shared-access-policies.png "Shared access policies")
+
+2. Copy the connection string for the primary key by selecting the copy button.
+
+   ![Selected shared access policy with information about connection string and primary key](media/copy-connection-string.png "Connection string--primary key")
+
+3. Save the copied primary key to Notepad.exe or another text editor for later reference.
 
 ### Exercise 1: Complete the Structured Streaming Concepts notebook
 

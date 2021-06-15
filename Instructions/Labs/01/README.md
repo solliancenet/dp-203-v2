@@ -222,11 +222,11 @@ We highly recommend executing the PowerShell scripts on an Azure Virtual Machine
 
 ## Exercise 2: Setup Synapse Analytics workspace
 
-The entire script will take about 40 minutes to complete. Major steps include:
+The entire script will take about 15 minutes to complete. Major steps include:
 
 - Configure Synapse resources
-- Download all data sets and files into the data lake (~15 mins)
-- Execute the Cosmos DB pipeline (~25 mins)
+- Download all data sets and files into the data lake (~5 mins)
+- Execute the Cosmos DB pipeline (~10 mins)
 
 ### Task 1: Pre-requisites
 
@@ -253,7 +253,7 @@ Perform all of the steps below from your **deployment VM**:
     git clone -b optimizations https://github.com/solliancenet/DP-203T00-Data-Engineering-on-Microsoft-Azure.git data-engineering-ilt-deployment
     ```
 
-* Install Azure PowerShell module
+2. Install Azure PowerShell module
 
     Open Windows PowerShell as an Administrator on your desktop and execute the following:
 
@@ -269,7 +269,7 @@ Perform all of the steps below from your **deployment VM**:
 
     > [!Note]: You may be prompted to install NuGet providers, and receive a prompt that you are installing the module from an untrusted repository. Select **Yes** in both instances to proceed with the setup
 
-* Install `Az.CosmosDB` module
+3. Install `Az.CosmosDB` module
 
     ```powershell
     Install-Module -Name Az.CosmosDB -AllowClobber
@@ -277,13 +277,13 @@ Perform all of the steps below from your **deployment VM**:
 
     > [!Note]: If you receive a prompt that you are installing the module from an untrusted repository, select **Yes to All** to proceed with the setup.
 
-* Install `sqlserver` module
+4. Install `sqlserver` module
 
     ```powershell
     Install-Module -Name SqlServer -AllowClobber
     ```
 
-* Install Azure CLI
+5. Install Azure CLI
 
     ```powershell
     Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
@@ -291,13 +291,19 @@ Perform all of the steps below from your **deployment VM**:
 
 **IMPORTANT**
 
-* Once the last command has completed, **close the Windows PowerShell window** so you can import the newly installed Az.CosmosDB cmdlet.
+- Once the last command has completed, **close the Windows PowerShell window** so you can import the newly installed Az.CosmosDB cmdlet.
 
 ### Task 3: Execute setup scripts
 
 Perform all of the steps below from your **deployment VM**:
 
-* Open Windows PowerShell as an Administrator and execute the following:
+1. Open Windows PowerShell as an Administrator and execute the following to set the `PSGallery` as a trusted repository:
+
+    ```powershell
+    Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+    ```
+
+2. Execute the following to set the execution policy to Unrestricted so you can run the local PowerShell script file:
 
     ```powershell
     Set-ExecutionPolicy Unrestricted
@@ -305,41 +311,41 @@ Perform all of the steps below from your **deployment VM**:
 
     > [!Note]: If you receive a prompt that you are installing the module from an untrusted repository, select **Yes to All** to proceed with the setup.
 
-* Execute the following to import the `Az.CosmosDB` module:
+3. Execute the following to import the `Az.CosmosDB` module:
 
     ```powershell
     Import-Module Az.CosmosDB
     ```
 
-* Change directories to the root of this repo within your local file system.
+4. Change directories to the root of this repo within your local file system.
 
     ```powershell
-    cd c:\labfiles\data-engineering-ilt-deployment\setup\04\artifacts\environment-setup\automation\
+    cd C:\labfiles\data-engineering-ilt-deployment\Instructions\Labs\01\artifacts\environment-setup\automation\
     ```
 
-* Execute `Connect-AzAccount` and sign in to your Microsoft user account when prompted.
+5. Execute `Connect-AzAccount` and sign in to your Microsoft user account when prompted.
 
     > [!WARNING]: You may receive the message "TenantId 'xxxxxx-xxxx-xxxx-xxxx' contains more than one active subscription. The first one will be selected for further use. You can ignore this at this point. When you execute the environment setup, you will choose the subscription in which you deployed the environment resources.
 
-* Execute `az login` and sign in to your Microsoft user account when prompted.
+6. Execute `az login` and sign in to your Microsoft user account when prompted.
 
     > If you receive the following error, and have already closed and re-opened the PowerShell window, you need to restart your computer and restart the steps in this task: `The term 'az' is not recognized as the name of a cmdlet, function, script file, or operable program`.
 
-* Execute `.\01-environment-setup.ps1`
+7. Execute `.\01-environment-setup.ps1`
 
-1. You will be prompted to setup your Azure PowerShell and Azure CLI context.
+   1. You will be prompted to setup your Azure PowerShell and Azure CLI context.
 
-2. If you have more than one Azure Subscription, you will be prompted to enter the name of your desired Azure Subscription. You can copy and paste the value from the list to select one. For example:
+   2. If you have more than one Azure Subscription, you will be prompted to enter the name of your desired Azure Subscription. You can copy and paste the value from the list to select one. For example:
 
-    ![A subscription is copied and pasted into the text entry.](media/select-desired-subscription.png "Select desired subscription")
+       ![A subscription is copied and pasted into the text entry.](media/select-desired-subscription.png "Select desired subscription")
 
-3. Enter the name of the resource group you created at the beginning of the environment setup (such as `data-engineering-synapse`). This will make sure automation runs against the correct environment you provisioned in Azure.
+   3. Enter the name of the resource group you created at the beginning of the environment setup (such as `data-engineering-synapse`). This will make sure automation runs against the correct environment you provisioned in Azure.
 
-    During the execution of the automation script you may be prompted to approve installations from PS-Gallery. Please approve to proceed with the automation.
+       During the execution of the automation script you may be prompted to approve installations from PS-Gallery. Please approve to proceed with the automation.
 
-    ![The Azure Cloud Shell window is displayed with a sample of the output from the preceding command.](media/untrusted-repo.png)
+       ![The Azure Cloud Shell window is displayed with a sample of the output from the preceding command.](media/untrusted-repo.png)
 
-    > **NOTE** This script will take between 90 and 150 minutes to complete.
+       > **NOTE** This script will take about 15-25 minutes to complete.
 
 #### Potential errors that you can ignore
 

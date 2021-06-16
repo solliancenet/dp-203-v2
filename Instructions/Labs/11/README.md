@@ -573,11 +573,9 @@ FROM
 
 3. Analyze the results:
 
-    ![Data type selection impact on table storage](./media/lab4_data_type_selection.png)
-
-    With a small number of rows (around 340 million), you can see some space differences caused by the `BIGINT` column type versus `SMALLINT` and `TINYINT`.
+    With a small number of rows (around 340 million), there are some space differences caused by the `BIGINT` column type versus `SMALLINT` and `TINYINT`.
     
-    We ran this same query after loading 2.9 billion rows, and the results were more pronounced. There are two important conclusions to draw here:
+    Outside this lab, as an experiment, we ran this same query after loading 2.9 billion rows, and the results were more pronounced. The two important conclusions gathered from the experiment are:
 
     - In the case of `HEAP` tables, the storage impact of using `BIGINT` instead of `SMALLINT` (for `ProductId`) and `TINYINT` (for `QUANTITY`) is almost 1 GB (0.8941 GB). We're talking here about only two columns and a moderate number of rows (2.9 billion).
     - Even in the case of `CLUSTERED COLUMNSTORE` tables, where compression will offset some of the differences, there is still a difference of 12.7 MB.

@@ -196,8 +196,12 @@ Wait-ForOperation -WorkspaceName $workspaceName -OperationId $result.operationId
 Write-Information "Create data sets for data load in SQL pool $($sqlPoolName)"
 
 $loadingDatasets = @{
-        wwi02_sale_small_adls = $dataLakeAccountName
-        wwi02_sale_small_asa = "$($sqlPoolName.ToLower())_highperf"
+        wwi02_date_adls = $dataLakeAccountName
+                wwi02_product_adls = $dataLakeAccountName
+                wwi02_sale_small_adls = $dataLakeAccountName
+                wwi02_date_asa = $sqlPoolName.ToLower()
+                wwi02_product_asa = $sqlPoolName.ToLower()
+                wwi02_sale_small_asa = "$($sqlPoolName.ToLower())_highperf"
 }
 
 foreach ($dataset in $loadingDatasets.Keys) {

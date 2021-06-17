@@ -191,29 +191,26 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 3. Connect to **SQLPool01**, then execute the following query to get an approximation of its execution time (may be around 1 minute). This will be the query we'll use to bring data in the Power BI report you'll build later in this exercise.
 
     ```sql
-    SELECT count(*) FROM
-    (
-        SELECT
-            FS.CustomerID
-            ,P.Seasonality
-            ,D.Year
-            ,D.Quarter
-            ,D.Month
-            ,avg(FS.TotalAmount) as AvgTotalAmount
-            ,avg(FS.ProfitAmount) as AvgProfitAmount
-            ,sum(FS.TotalAmount) as TotalAmount
-            ,sum(FS.ProfitAmount) as ProfitAmount
-        FROM
-            wwi.SaleSmall FS
-            JOIN wwi.Product P ON P.ProductId = FS.ProductId
-            JOIN wwi.Date D ON FS.TransactionDateId = D.DateId
-        GROUP BY
-            FS.CustomerID
-            ,P.Seasonality
-            ,D.Year
-            ,D.Quarter
-            ,D.Month
-    ) T
+    SELECT
+        FS.CustomerID
+        ,P.Seasonality
+        ,D.Year
+        ,D.Quarter
+        ,D.Month
+        ,avg(FS.TotalAmount) as AvgTotalAmount
+        ,avg(FS.ProfitAmount) as AvgProfitAmount
+        ,sum(FS.TotalAmount) as TotalAmount
+        ,sum(FS.ProfitAmount) as ProfitAmount
+    FROM
+        wwi.SaleSmall FS
+        JOIN wwi.Product P ON P.ProductId = FS.ProductId
+        JOIN wwi.Date D ON FS.TransactionDateId = D.DateId
+    GROUP BY
+        FS.CustomerID
+        ,P.Seasonality
+        ,D.Year
+        ,D.Quarter
+        ,D.Month
     ```
 
     You should see a query result of 32654168.

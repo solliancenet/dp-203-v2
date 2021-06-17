@@ -1,8 +1,10 @@
-# Module 1 - Lab environment setup
+# Module 0 - Lab environment setup
+
+This module helps learners prepare their lab environments for the modules that follow. Please run through these instructions prior to starting Module 1.
 
 ## Lab details
 
-- [Module 1 - Lab environment setup](#module-1---lab-environment-setup)
+- [Module 0 - Lab environment setup](#module-0---lab-environment-setup)
   - [Lab details](#lab-details)
   - [Requirements](#requirements)
   - [Exercise 1: Azure setup](#exercise-1-azure-setup)
@@ -166,7 +168,7 @@ We highly recommend executing the PowerShell scripts on an Azure Virtual Machine
 
 1. Deploy the workspace through the following Azure ARM template (select the button below):
 
-    <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsolliancenet%2FDP-203T00-Data-Engineering-on-Microsoft-Azure%2Foptimizations%2FInstructions%2FLabs%2F01%2Fartifacts%2Fenvironment-setup%2fautomation%2F00-asa-workspace-core.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
+    <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsolliancenet%2FDP-203T00-Data-Engineering-on-Microsoft-Azure%2Foptimizations%2FInstructions%2FLabs%2F00%2Fartifacts%2Fenvironment-setup%2fautomation%2F00-asa-workspace-core.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
 
 2. On the **Custom deployment** form fill in the fields described below.
 

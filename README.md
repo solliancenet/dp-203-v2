@@ -38,6 +38,10 @@ The following is a summary of the lab objectives for each module:
 
 Complete the lab environment setup for this course.
 
+#### [Explore compute and storage options for data engineering workloads](Instructions/Labs/01/README.md)
+
+This lab teaches ways to structure the data lake, and to optimize the files for exploration, streaming, and batch workloads. The student will learn how to organize the data lake into levels of data refinement as they transform files through batch and stream processing. The students will also experience working with Apache Spark in Azure Synapse Analytics.  They will learn how to create indexes on their datasets, such as CSV, JSON, and Parquet files, and use them for potential query and workload acceleration using Spark libraries including Hyperspace and MSSParkUtils.
+
 #### [Run interactive queries using Azure Synapse Analytics serverless SQL pools](Instructions/Labs/04/README.md)
 
 In this lab, students will learn how to work with files stored in the data lake and external file sources, through T-SQL statements executed by a serverless SQL pool in Azure Synapse Analytics. Students will query Parquet files stored in a data lake, as well as CSV files stored in an external data store. Next, they will create Azure Active Directory security groups and enforce access to files in the data lake through Role-Based Access Control (RBAC) and Access Control Lists (ACLs).

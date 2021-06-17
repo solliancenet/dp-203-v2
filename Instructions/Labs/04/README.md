@@ -31,7 +31,7 @@ Tailwind Trader's Data Engineers want a way to explore the data lake, transform 
 
 ## Lab setup and pre-requisites
 
-- You have successfully completed [Module 1](../01/README.md) to create your lab environment.
+- You have successfully completed [Module 0](../00/README.md) to create your lab environment.
 - You must have permissions to create new Azure Active Directory security groups and assign members to them.
 
 ## Exercise 1: Querying a Data Lake Store using serverless SQL pools in Azure Synapse Analytics
@@ -228,7 +228,7 @@ You decide to create an external table that connects to the external data source
     - **Chart type**: Select `Bar`.
     - **Category column**: Select `country_name`.
     - **Legend (series) columns**: Select `population`.
-    - **Legend position**: Select `center - bottom`.
+    - **Legend position**: Select `bottom - center`.
 
     ![The chart is displayed.](media/population-chart.png "Population chart")
 

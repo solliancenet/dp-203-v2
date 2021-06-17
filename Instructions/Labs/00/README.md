@@ -31,6 +31,8 @@ This module helps learners prepare their lab environments for the modules that f
 
 ### Task 1: Register resource providers
 
+Time to complete: 3 minutes
+
 In Azure, you must register specific resource providers on your subscription before you can deploy services such as Synapse Analytics and Azure Databricks.
 
 1. Log in to the Azure portal (<https://portal.azure.com>).
@@ -165,6 +167,8 @@ We highly recommend executing the PowerShell scripts on an Azure Virtual Machine
 
 ### Task 4: Create Azure resources
 
+Time to complete: 6 minutes
+
 The below ARM template deploys several Azure resources for the labs, including Azure Synapse Analytics, Azure Databricks, storage accounts, Event Hubs, Stream Analytics, Key Vault, Azure Cosmos DB, etc.
 
 1. Deploy the workspace through the following Azure ARM template (select the button below):
@@ -184,7 +188,7 @@ The below ARM template deploys several Azure resources for the labs, including A
 
    ![The form is configured as described.](media/synapse-arm-template.png "Deploy an Azure Synapse Analytics workspace")
 
-3. Select the **Review + create** button, then **Create**. The provisioning of your deployment resources will take approximately 13 minutes.
+3. Select the **Review + create** button, then **Create**. The provisioning of your deployment resources will take approximately 6 minutes.
 
     During workspace creation, the portal displays the Submitting deployment for Azure Databricks tile on the right side. You may need to scroll right on your dashboard to see the tile. There is also a progress bar displayed near the top of the screen. You can watch either area for progress.
 
@@ -265,6 +269,8 @@ Perform all of the steps below from your **deployment VM**:
 
 ### Task 3: Execute setup scripts
 
+Time to complete: 15 minutes
+
 Perform all of the steps below from your **deployment VM**:
 
 1. **Important step:** Go back to the Azure portal to make sure the **ARM template deployment has completed**. If it has not, these scripts will fail. *Wait until the deployment successfully completes*.
@@ -299,11 +305,7 @@ Perform all of the steps below from your **deployment VM**:
 
     > [!WARNING]: You may receive the message "TenantId 'xxxxxx-xxxx-xxxx-xxxx' contains more than one active subscription. The first one will be selected for further use. You can ignore this at this point. When you execute the environment setup, you will choose the subscription in which you deployed the environment resources.
 
-7. Execute `az login` and sign in to your Microsoft user account when prompted.
-
-    > If you receive the following error, and have already closed and re-opened the PowerShell window, you need to restart your computer and restart the steps in this task: `The term 'az' is not recognized as the name of a cmdlet, function, script file, or operable program`.
-
-8. Execute `.\01-environment-setup.ps1`
+7. Execute `.\01-environment-setup.ps1`
 
    1. You will be prompted to setup your Azure PowerShell and Azure CLI context.
 
@@ -317,12 +319,20 @@ Perform all of the steps below from your **deployment VM**:
 
        ![The Azure Cloud Shell window is displayed with a sample of the output from the preceding command.](media/untrusted-repo.png)
 
-       > **NOTE** This script will take about 15-25 minutes to complete.
+       > **NOTE** This script will take about 15-20 minutes to complete.
 
 ### Task 4: Create an Azure Databricks cluster
 
+Time to complete: 5 minutes
+
 1. While the PowerShell script executes, go back to the Azure portal. Navigate to your Azure resource group for this lab, then select the Azure Databricks workspace.
+
+    ![The Azure Databricks service is highlighted.](media/select-databricks-workspace.png "Select Azure Databricks service")
+
 2. Select **Launch Workspace** to open your Databricks workspace in a new tab.
+
+    ![The Azure Databricks Launch Workspace button is displayed.](media/databricks-launch-workspace.png "Launch Workspace")
+
 3. In the left-hand menu of your Databricks workspace, select **Compute**.
 4. Select **Create Cluster** to add a new cluster.
 

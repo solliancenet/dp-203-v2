@@ -161,7 +161,11 @@ Also, Hyperspace allows users to compare their original plan versus the updated 
     >
     > The first time you execute a cell in the notebook will take a few minutes since it must start a new Spark cluster. Each subsequent cell execution should be must faster.
 
-8. Add a new code cell to your notebook with the following code:
+8. Select the **+** button beneath the cell output, then select **</> Code cell** to create a new code cell beneath.
+
+    ![The plus button and code cell button are both highlighted.](media/new-code-cell.png "New code cell")
+
+9. Paste the following code into the new cell:
 
     ```python
     #create indexes: each one contains a name, a set of indexed columns and a set of included columns
@@ -173,11 +177,11 @@ Also, Hyperspace allows users to compare their original plan versus the updated 
     hyperspace.indexes().show()
     ```
 
-9. Run the new cell. It will create two indexes and display their structure.
+10. Run the new cell. It will create two indexes and display their structure.
 
     ![Create new indexes and display their structure](media/lab-02-ex-02-task-02-create-indexes.png "New indexes")
 
-10. Add another new code cell to your notebook with the following code:
+11. Add another new code cell to your notebook with the following code:
 
     ```python
     df1 = dfSales.filter("""CustomerId = 200""").select("""TotalAmount""")
@@ -185,11 +189,11 @@ Also, Hyperspace allows users to compare their original plan versus the updated 
     df1.explain(True)
     ```
 
-11. Run the new cell. The output will show that the physical execution plan is not taking into account any of the indexes (performs a file scan on the original data file).
+12. Run the new cell. The output will show that the physical execution plan is not taking into account any of the indexes (performs a file scan on the original data file).
 
     ![Hyperspace explained - no indexes used](media/lab-02-ex-02-task-02-explain-hyperspace-01.png)
 
-12. Now add another new cell to your notebook with the following code (notice the extra line at the beginning used to enable Hyperspace optimization in the Spark engine):
+13. Now add another new cell to your notebook with the following code (notice the extra line at the beginning used to enable Hyperspace optimization in the Spark engine):
 
     ```python
     # Enable Hyperspace - Hyperspace optimization rules become visible to the Spark optimizer and exploit existing Hyperspace indexes to optimize user queries
@@ -199,11 +203,11 @@ Also, Hyperspace allows users to compare their original plan versus the updated 
     df1.explain(True)
     ```
 
-13. Run the new cell. The output will show that the physical execution plan is now using the index instead of the original data file.
+14. Run the new cell. The output will show that the physical execution plan is now using the index instead of the original data file.
 
     ![Hyperspace explained - using an index](media/lab-02-ex-02-task-02-explain-hyperspace-02.png)
 
-14. Hyperspace provides an Explain API that allows you to compare the execution plans without indexes vs. with indexes. Add a new cell with the following code:
+15. Hyperspace provides an Explain API that allows you to compare the execution plans without indexes vs. with indexes. Add a new cell with the following code:
 
     ```python
     df1 = dfSales.filter("""CustomerId = 200""").select("""TotalAmount""")
@@ -212,11 +216,11 @@ Also, Hyperspace allows users to compare their original plan versus the updated 
     hyperspace.explain(df1, True, displayHTML)
     ```
 
-15. Run the new cell. The output shows a comparison `Plan with indexes` vs. `Plan without indexes`. Observe how, in the first case the index file is used while in the second case the original data file is used.
+16. Run the new cell. The output shows a comparison `Plan with indexes` vs. `Plan without indexes`. Observe how, in the first case the index file is used while in the second case the original data file is used.
 
     ![Hyperspace explained - plan comparison](media/lab-02-ex-02-task-02-explain-hyperspace-03.png)
 
-16. Let's investigate now a more complex case, involving a join operation. Add a new cell with the following code:
+17. Let's investigate now a more complex case, involving a join operation. Add a new cell with the following code:
 
     ```python
     eqJoin = dfSales.join(dfCustomers, dfSales.CustomerId == dfCustomers.CustomerId).select(dfSales.TotalAmount, dfCustomers.FullName)
@@ -224,7 +228,7 @@ Also, Hyperspace allows users to compare their original plan versus the updated 
     hyperspace.explain(eqJoin, True, displayHTML)
     ```
 
-17. Run the new cell. The output shows again a comparison `Plan with indexes` vs. `Plan without indexes`, where indexes are used in the first case and the original data files in the second.
+18. Run the new cell. The output shows again a comparison `Plan with indexes` vs. `Plan without indexes`, where indexes are used in the first case and the original data files in the second.
 
     ![Hyperspace explained - plan comparison for join](media/lab-02-ex-02-task-02-explain-hyperspace-04.png)
 

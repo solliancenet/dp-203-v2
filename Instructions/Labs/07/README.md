@@ -98,7 +98,7 @@ This lab requires a dedicated SQL pool. As a first step, create a new dedicated 
 6. Change directories to the root of this repo within your local file system.
 
     ```powershell
-    cd C:\labfiles\data-engineering-ilt-deployment\Instructions\Labs\01\artifacts\environment-setup\automation\
+    cd C:\labfiles\data-engineering-ilt-deployment\Instructions\Labs\00\artifacts\environment-setup\automation\
     ```
 
 7. Execute `Connect-AzAccount` and sign in to your Microsoft user account when prompted.

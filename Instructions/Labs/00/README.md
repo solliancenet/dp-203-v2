@@ -11,14 +11,13 @@ This module helps learners prepare their lab environments for the modules that f
     - [Task 1: Register resource providers](#task-1-register-resource-providers)
     - [Task 2: Create a resource group in Azure](#task-2-create-a-resource-group-in-azure)
     - [Task 3: Create an Azure VM for the deployment scripts and desktop applications](#task-3-create-an-azure-vm-for-the-deployment-scripts-and-desktop-applications)
-    - [Task 4: Create Azure Synapse Analytics workspace](#task-4-create-azure-synapse-analytics-workspace)
-    - [Task 5: Create an Azure Databricks workspace](#task-5-create-an-azure-databricks-workspace)
-    - [Task 6: Create a cluster](#task-6-create-a-cluster)
+    - [Task 4: Create Azure resources](#task-4-create-azure-resources)
   - [Exercise 2: Setup Synapse Analytics workspace](#exercise-2-setup-synapse-analytics-workspace)
     - [Task 1: Pre-requisites](#task-1-pre-requisites)
     - [Task 2: Download artifacts and install PowerShell modules](#task-2-download-artifacts-and-install-powershell-modules)
     - [Task 3: Execute setup scripts](#task-3-execute-setup-scripts)
-      - [Potential errors that you can ignore](#potential-errors-that-you-can-ignore)
+    - [Task 4: Create an Azure Databricks cluster](#task-4-create-an-azure-databricks-cluster)
+      - [Potential errors that you can ignore during PowerShell script execution](#potential-errors-that-you-can-ignore-during-powershell-script-execution)
 
 ## Requirements
 
@@ -164,7 +163,9 @@ We highly recommend executing the PowerShell scripts on an Azure Virtual Machine
 
 8. Install [Power BI Desktop](https://www.microsoft.com/download/details.aspx?id=58494) on the VM.
 
-### Task 4: Create Azure Synapse Analytics workspace
+### Task 4: Create Azure resources
+
+The below ARM template deploys several Azure resources for the labs, including Azure Synapse Analytics, Azure Databricks, storage accounts, Event Hubs, Stream Analytics, Key Vault, Azure Cosmos DB, etc.
 
 1. Deploy the workspace through the following Azure ARM template (select the button below):
 
@@ -183,46 +184,11 @@ We highly recommend executing the PowerShell scripts on an Azure Virtual Machine
 
    ![The form is configured as described.](media/synapse-arm-template.png "Deploy an Azure Synapse Analytics workspace")
 
-3. Select the **Review + create** button, then **Create**. The provisioning of your deployment resources will take approximately 13 minutes. **Wait** until provisioning successfully completes before continuing. You will need the resources in place before running the scripts below.
+3. Select the **Review + create** button, then **Create**. The provisioning of your deployment resources will take approximately 13 minutes.
+
+    During workspace creation, the portal displays the Submitting deployment for Azure Databricks tile on the right side. You may need to scroll right on your dashboard to see the tile. There is also a progress bar displayed near the top of the screen. You can watch either area for progress.
 
     > **Note**: You may experience a deployment step failing in regards to Role Assignment. This error may safely be ignored.
-
-### Task 5: Create an Azure Databricks workspace
-
-1. Deploy the workspace through the following Azure ARM template (select the button below):
-
-   <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Fquickstarts%2Fmicrosoft.databricks%2Fdatabricks-workspace%2Fazuredeploy.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
-
-2. Provide the required values to create your Azure Databricks workspace:
-
-   - **Subscription**: Choose the Azure Subscription in which to deploy the workspace.
-   - **Resource Group**: Select the resource group you previously created.
-   - **Region**: Select a location near you for deployment. Ideally, select the same region that you used for the Synapse workspace. For the list of regions supported by Azure Databricks, see [Azure services available by region](https://azure.microsoft.com/regions/services/).
-   - **Workspace Name**: Enter a unique name for your workspace.
-   - **Disable Public Ip**: Set to `false`.
-   - **Pricing Tier**: Ensure `standard` is selected.
-   - **Location**: Leave this at the default `[resourceGroup()location]` value.
-
-   ![The form is configured as described.](media/databricks-arm-template.png "Deploy an Azure Databricks Workspace")
-
-3. Select **Review + create**.
-4. Select **Create**.
-5. The workspace creation takes a few minutes. During workspace creation, the portal displays the Submitting deployment for Azure Databricks tile on the right side. You may need to scroll right on your dashboard to see the tile. There is also a progress bar displayed near the top of the screen. You can watch either area for progress.
-
-### Task 6: Create a cluster
-
-1. When your Azure Databricks workspace creation is complete, select the link to go to the resource.
-2. Select **Launch Workspace** to open your Databricks workspace in a new tab.
-3. In the left-hand menu of your Databricks workspace, select **Compute**.
-4. Select **Create Cluster** to add a new cluster.
-
-    ![The create cluster page](media/create-a-cluster.png)
-
-5. Enter a name for your cluster, such as `Test Cluster`.
-6. Select the **Databricks RuntimeVersion**. We recommend the latest runtime and **Scala 2.12**.
-7. Select the default values for the cluster configuration.
-8. Check **Spot instances** to optimize costs.
-9. Select **Create Cluster**.
 
 ## Exercise 2: Setup Synapse Analytics workspace
 
@@ -301,13 +267,15 @@ Perform all of the steps below from your **deployment VM**:
 
 Perform all of the steps below from your **deployment VM**:
 
-1. Open Windows PowerShell as an Administrator and execute the following to set the `PSGallery` as a trusted repository:
+1. **Important step:** Go back to the Azure portal to make sure the **ARM template deployment has completed**. If it has not, these scripts will fail. *Wait until the deployment successfully completes*.
+
+2. Open Windows PowerShell as an Administrator and execute the following to set the `PSGallery` as a trusted repository:
 
     ```powershell
     Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
     ```
 
-2. Execute the following to set the execution policy to Unrestricted so you can run the local PowerShell script file:
+3. Execute the following to set the execution policy to Unrestricted so you can run the local PowerShell script file:
 
     ```powershell
     Set-ExecutionPolicy Unrestricted
@@ -315,27 +283,27 @@ Perform all of the steps below from your **deployment VM**:
 
     > [!Note]: If you receive a prompt that you are installing the module from an untrusted repository, select **Yes to All** to proceed with the setup.
 
-3. Execute the following to import the `Az.CosmosDB` module:
+4. Execute the following to import the `Az.CosmosDB` module:
 
     ```powershell
     Import-Module Az.CosmosDB
     ```
 
-4. Change directories to the root of this repo within your local file system.
+5. Change directories to the root of this repo within your local file system.
 
     ```powershell
-    cd C:\labfiles\data-engineering-ilt-deployment\Instructions\Labs\01\artifacts\environment-setup\automation\
+    cd C:\labfiles\data-engineering-ilt-deployment\Instructions\Labs\00\artifacts\environment-setup\automation\
     ```
 
-5. Execute `Connect-AzAccount` and sign in to your Microsoft user account when prompted.
+6. Execute `Connect-AzAccount` and sign in to your Microsoft user account when prompted.
 
     > [!WARNING]: You may receive the message "TenantId 'xxxxxx-xxxx-xxxx-xxxx' contains more than one active subscription. The first one will be selected for further use. You can ignore this at this point. When you execute the environment setup, you will choose the subscription in which you deployed the environment resources.
 
-6. Execute `az login` and sign in to your Microsoft user account when prompted.
+7. Execute `az login` and sign in to your Microsoft user account when prompted.
 
     > If you receive the following error, and have already closed and re-opened the PowerShell window, you need to restart your computer and restart the steps in this task: `The term 'az' is not recognized as the name of a cmdlet, function, script file, or operable program`.
 
-7. Execute `.\01-environment-setup.ps1`
+8. Execute `.\01-environment-setup.ps1`
 
    1. You will be prompted to setup your Azure PowerShell and Azure CLI context.
 
@@ -351,7 +319,22 @@ Perform all of the steps below from your **deployment VM**:
 
        > **NOTE** This script will take about 15-25 minutes to complete.
 
-#### Potential errors that you can ignore
+### Task 4: Create an Azure Databricks cluster
+
+1. While the PowerShell script executes, go back to the Azure portal. Navigate to your Azure resource group for this lab, then select the Azure Databricks workspace.
+2. Select **Launch Workspace** to open your Databricks workspace in a new tab.
+3. In the left-hand menu of your Databricks workspace, select **Compute**.
+4. Select **Create Cluster** to add a new cluster.
+
+    ![The create cluster page](media/create-a-cluster.png)
+
+5. Enter a name for your cluster, such as `Test Cluster`.
+6. Select the **Databricks RuntimeVersion**. We recommend the latest runtime and **Scala 2.12**.
+7. Select the default values for the cluster configuration.
+8. Check **Spot instances** to optimize costs.
+9. Select **Create Cluster**.
+
+#### Potential errors that you can ignore during PowerShell script execution
 
 You may encounter a few errors and warnings during the script execution. The errors below can safely be ignored:
 

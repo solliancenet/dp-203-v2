@@ -216,11 +216,11 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
     ) T
     ```
 
-    You should see a query result of 194683820.
+    You should see a query result of 32654168.
 
     ![The query output is displayed.](media/sqlpool-count-query-result.png "Query result")
 
-4. To connect to your datasource, open the downloaded .pbids file in Power BI Desktop. Select the **Microsoft account** option on the left, **Sign in** (with the same credentials you use for connecting to the Synapse workspace) and click **Connect**.
+4. To connect to your datasource, double-click the downloaded .pbids file in Windows Explorer. This will open it in Power BI Desktop. Select the **Microsoft account** option on the left, **Sign in** (with the same credentials you use for connecting to the Synapse workspace) and click **Connect**.
 
     ![Sign in with the Microsoft account and connect.](media/pbi-connection-settings.png "Connection settings")
 
@@ -237,29 +237,26 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
     ![Datasource change dialog.](media/pbi-source-query.png "Advanced options")
 
     ```sql
-    SELECT * FROM
-    (
-        SELECT
-            FS.CustomerID
-            ,P.Seasonality
-            ,D.Year
-            ,D.Quarter
-            ,D.Month
-            ,avg(FS.TotalAmount) as AvgTotalAmount
-            ,avg(FS.ProfitAmount) as AvgProfitAmount
-            ,sum(FS.TotalAmount) as TotalAmount
-            ,sum(FS.ProfitAmount) as ProfitAmount
-        FROM
-            wwi.SaleSmall FS
-            JOIN wwi.Product P ON P.ProductId = FS.ProductId
-            JOIN wwi.Date D ON FS.TransactionDateId = D.DateId
-        GROUP BY
-            FS.CustomerID
-            ,P.Seasonality
-            ,D.Year
-            ,D.Quarter
-            ,D.Month
-    ) T
+    SELECT
+        FS.CustomerID
+        ,P.Seasonality
+        ,D.Year
+        ,D.Quarter
+        ,D.Month
+        ,avg(FS.TotalAmount) as AvgTotalAmount
+        ,avg(FS.ProfitAmount) as AvgProfitAmount
+        ,sum(FS.TotalAmount) as TotalAmount
+        ,sum(FS.ProfitAmount) as ProfitAmount
+    FROM
+        wwi.SaleSmall FS
+        JOIN wwi.Product P ON P.ProductId = FS.ProductId
+        JOIN wwi.Date D ON FS.TransactionDateId = D.DateId
+    GROUP BY
+        FS.CustomerID
+        ,P.Seasonality
+        ,D.Year
+        ,D.Quarter
+        ,D.Month
     ```
 
     > Note that this step will take at least 40-60 seconds to execute since it submits the query directly on the Synapse SQL Pool connection.
@@ -274,7 +271,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
 10. Select the newly created chart to expand its properties pane. Using the expanded **Fields** menu, configure the visualization as follows:
 
-     - **Shared axis**: `Year`, `Quarter`
+     - **Shared axis**: `Quarter`, `Month`
      - **Column series**: `Seasonality`
      - **Column values**: `TotalAmount`
      - **Line values**: `ProfitAmount`
@@ -291,7 +288,7 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
     ![Open query monitoring from Synapse Studio.](media/monitor-query-execution.png "Monitor SQL queries")
 
-13. Identify the query behind your visualization in the topmost requests you see in the log and observe the duration which is about 20-30 seconds. Select **More** on a request to look into the actual query submitted from Power BI Desktop.
+13. Identify the query behind your visualization in the topmost requests you see in the log and observe the duration which is about 6 seconds. Select **More** on a request to look into the actual query submitted from Power BI Desktop.
 
     ![Check the request content in monitor.](media/check-request-content.png "SQL queries")
 
@@ -460,7 +457,7 @@ Let's recall the performance optimization options we have when integrating Power
     GO
     ```
 
-    > This query will take between 60 and 150 seconds to complete.
+    > This query will take between 30 and 45 seconds to complete.
     >
     > We first drop the view if it exists, in case it already exists from an earlier lab.
 
@@ -498,8 +495,10 @@ Let's recall the performance optimization options we have when integrating Power
     ![Refresh data to hit the materialized view.](media/pbi-report-refresh.png "Refresh")
 
     > Notice that the data refresh only takes a few seconds now, compared to before.
+    > 
+    > **Please note:** We have reduced the size of the data set for this lab down to 1 year of data from 9. With the larger data set, the query execution time dropped from ~45 seconds down to ~8 seconds. Materialized views have a greater impact on larger data sets.
 
-8. Check the duration of the query again in Synapse Studio, in the monitoring hub, under SQL requests. Notice that the Power BI queries using the new materialized view run much faster (Duration ~ 10s).
+8. Check the duration of the query again in Synapse Studio, in the monitoring hub, under SQL requests. Notice that the Power BI queries using the new materialized view run faster.
 
     ![The SQL requests that execute against the materialized view run faster than earlier queries.](media/monitor-sql-queries-materialized-view.png "SQL requests")
 
@@ -534,8 +533,6 @@ Let's recall the performance optimization options we have when integrating Power
 
     ![The query is displayed.](media/turn-result-set-caching-on.png "Result set caching")
 
-    > This process takes a couple of minutes to complete. While this is running, continue reading to familiarize yourself with the rest of the lab content.
-    
     >**Important**
     >
     >The operations to create result set cache and retrieve data from the cache happen on the control node of a Synapse SQL pool instance. When result set caching is turned ON, running queries that return large result set (for example, >1GB) can cause high throttling on the control node and slow down the overall query response on the instance. Those queries are commonly used during data exploration or ETL operations. To avoid stressing the control node and cause performance issue, users should turn OFF result set caching on the database before running those types of queries.

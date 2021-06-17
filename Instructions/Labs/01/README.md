@@ -1,377 +1,290 @@
-# Module 1 - Lab environment setup
+# Module 1 - Explore compute and storage options for data engineering workloads
+
+This module teaches ways to structure the data lake, and to optimize the files for exploration, streaming, and batch workloads. The student will learn how to organize the data lake into levels of data refinement as they transform files through batch and stream processing. Then they will learn how to create indexes on their datasets, such as CSV, JSON, and Parquet files, and use them for potential query and workload acceleration.
+
+In this module, the student will be able to:
+
+- Combine streaming and batch processing with a single pipeline
+- Organize the data lake into levels of file transformation
+- Index data lake storage for query and workload acceleration
 
 ## Lab details
 
-- [Module 1 - Lab environment setup](#module-1---lab-environment-setup)
+- [Module 1 - Explore compute and storage options for data engineering workloads](#module-1---explore-compute-and-storage-options-for-data-engineering-workloads)
   - [Lab details](#lab-details)
-  - [Requirements](#requirements)
-  - [Exercise 1: Azure setup](#exercise-1-azure-setup)
-    - [Task 1: Register resource providers](#task-1-register-resource-providers)
-    - [Task 2: Create a resource group in Azure](#task-2-create-a-resource-group-in-azure)
-    - [Task 3: Create an Azure VM for the deployment scripts and desktop applications](#task-3-create-an-azure-vm-for-the-deployment-scripts-and-desktop-applications)
-    - [Task 4: Create Azure Synapse Analytics workspace](#task-4-create-azure-synapse-analytics-workspace)
-    - [Task 5: Create an Azure Databricks workspace](#task-5-create-an-azure-databricks-workspace)
-    - [Task 6: Create a cluster](#task-6-create-a-cluster)
-  - [Exercise 2: Setup Synapse Analytics workspace](#exercise-2-setup-synapse-analytics-workspace)
-    - [Task 1: Pre-requisites](#task-1-pre-requisites)
-    - [Task 2: Download artifacts and install PowerShell modules](#task-2-download-artifacts-and-install-powershell-modules)
-    - [Task 3: Execute setup scripts](#task-3-execute-setup-scripts)
-      - [Potential errors that you can ignore](#potential-errors-that-you-can-ignore)
+  - [Lab 1 - Delta Lake architecture](#lab-1---delta-lake-architecture)
+    - [Before the hands-on lab](#before-the-hands-on-lab)
+      - [Task 1: Create and configure the Azure Databricks workspace](#task-1-create-and-configure-the-azure-databricks-workspace)
+    - [Exercise 1: Complete the lab notebook](#exercise-1-complete-the-lab-notebook)
+      - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive)
+      - [Task 2: Complete the following notebook](#task-2-complete-the-following-notebook)
+  - [Lab 2 - Working with Apache Spark in Synapse Analytics](#lab-2---working-with-apache-spark-in-synapse-analytics)
+    - [Before the hands-on lab](#before-the-hands-on-lab-1)
+      - [Task 1: Create and configure the Azure Synapse Analytics workspace](#task-1-create-and-configure-the-azure-synapse-analytics-workspace)
+      - [Task 2: Create and configure additional resources for this lab](#task-2-create-and-configure-additional-resources-for-this-lab)
+    - [Exercise 1: Load and data with Spark](#exercise-1-load-and-data-with-spark)
+      - [Task 1: Index the Data Lake storage with Hyperspace](#task-1-index-the-data-lake-storage-with-hyperspace)
+      - [Task 2: Explore the Data Lake storage with the MSSparkUtil library](#task-2-explore-the-data-lake-storage-with-the-mssparkutil-library)
+    - [Resources](#resources)
 
-## Requirements
+## Lab 1 - Delta Lake architecture
 
-1. An Azure Account with the ability to create an Azure Synapse Workspace
+In this lab, you will use an Azure Databricks workspace and perform Structured Streaming with batch jobs by using Delta Lake. You need to complete the exercises within a Databricks Notebook. To begin, you need to have access to an Azure Databricks workspace. If you do not have a workspace available, follow the instructions below. Otherwise, you can skip to the bottom of the page to [Clone the Databricks archive](#clone-the-databricks-archive).
 
-2. A Power BI Pro or Premium account to host Power BI reports
+### Before the hands-on lab
 
-3. Install [Power BI Desktop](https://www.microsoft.com/download/details.aspx?id=58494) on your lab computer or VM
+> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
 
-## Exercise 1: Azure setup
+Before stepping through the exercises in this lab, make sure you have access to an Azure Databricks workspace with an available cluster. Perform the tasks below to configure the workspace.
 
-### Task 1: Register resource providers
+#### Task 1: Create and configure the Azure Databricks workspace
 
-In Azure, you must register specific resource providers on your subscription before you can deploy services such as Synapse Analytics and Azure Databricks.
+**If you are not using a hosted lab environment**, follow the [lab 01 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/01/lab-01-setup.md) to manually create and configure the workspace.
 
-1. Log in to the Azure portal (<https://portal.azure.com>).
+### Exercise 1: Complete the lab notebook
 
-2. In the search bar on top of the page, type `subscriptions` and select **Subscriptions** in the results.
+#### Task 1: Clone the Databricks archive
 
-    ![The Subscriptions option is highlighted.](media/search-subscriptions.png "Subscriptions search")
+1. If you do not currently have your Azure Databricks workspace open: in the Azure portal, navigate to your deployed Azure Databricks workspace and select **Launch Workspace**.
+1. In the left pane, select **Workspace** > **Users**, and select your username (the entry with the house icon).
+1. In the pane that appears, select the arrow next to your name, and select **Import**.
 
-3. Select the Azure subscription you will use for your lab environment.
+  ![The menu option to import the archive](media/import-archive.png)
 
-    ![The subscription is selected.](media/selected-subscription.png "Subscriptions")
+1. In the **Import Notebooks** dialog box, select the URL and paste in the following URL:
 
-4. Select **Resource providers** in the left-hand menu.
+ ```
+  https://github.com/solliancenet/microsoft-learning-paths-databricks-notebooks/blob/master/data-engineering/DBC/11-Delta-Lake-Architecture.dbc?raw=true
+ ```
 
-    ![Resource providers is selected.](media/select-resource-providers.png "Resource providers")
+1. Select **Import**.
+1. Select the **11-Delta-Lake-Architecture** folder that appears.
 
-5. In the **filter**, type `databricks` to view the **Microsoft.Databricks** provider. Make sure the status is set to **Registered**.
+#### Task 2: Complete the following notebook
 
-    ![The resource provider status is Registered.](media/databricks-registered.png "Microsoft.Databricks resource provider")
+Open the **1-Delta-Architecture** notebook. Make sure you attach your cluster to the notebook before following the instructions and running the cells within.
 
-    If it is **not** registered, select the **Microsoft.Databricks** resource provider, then select **Register**.
+Within the notebook, you will explore combining streaming and batch processing with a single pipeline.
 
-    ![The register button is highlighted.](media/register-resource-provider.png "Register")
+> After you've completed the notebook, return to this screen, and continue to the next lab.
 
-6. In the **filter**, type `synapse` to view the **Microsoft.Synapse** provider. Make sure the status is set to **Registered**.
+## Lab 2 - Working with Apache Spark in Synapse Analytics
 
-    ![The resource provider status is Registered.](media/synapse-registered.png "Microsoft.Synapse resource provider")
+This lab demonstrates the experience of working with Apache Spark in Azure Synapse Analytics. You will learn how to connect an Azure Synapse Analytics workspace to an Azure Data Explorer workspace using a Linked Service and then load data from one of its databases using a Spark notebook. You will also learn how to use libraries like Hyperspace and MSSparkUtil to optimize the experience of working with Data Lake storage accounts from Spark notebooks. In addition to Data Explorer and Data Lake storage, the data enrichment process will also use historical data from a SQL Pool. In the end, you will learn how to publish the enriched data back into the Data Lake and consume it with the SQL Built-in Pool and Power BI.
 
-    If it is **not** registered, select the **Microsoft.Synapse** resource provider, then select **Register**.
+After completing the lab, you will understand the main steps of an end-to-end data enrichment process that uses Spark in an Azure Synapse Analytics workspace.
 
-    ![The register button is highlighted.](media/register-resource-provider.png "Register")
+### Before the hands-on lab
 
-7. In the **filter**, type `sql` to view the **Microsoft.Sql** provider. Make sure the status is set to **Registered**.
+> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
 
-    ![The resource provider status is Registered.](media/sql-registered.png "Microsoft.Sql resource provider")
+Before stepping through the exercises in this lab, make sure you have properly configured your Azure Synapse Analytics workspace. Perform the tasks below to configure the workspace.
 
-    If it is **not** registered, select the **Microsoft.Sql** resource provider, then select **Register**.
+#### Task 1: Create and configure the Azure Synapse Analytics workspace
 
-    ![The register button is highlighted.](media/register-resource-provider.png "Register")
+>**NOTE**
+>
+>If you have already created and configured the Synapse Analytics workspace while running one of the other labs available in this repo, you must not perform this task again and you can move on to the next task. The labs are designed to share the Synapse Analytics workspace, so you only need to create it once.
 
-8. In the **filter**, type `document` to view the **Microsoft.DocumentDB** provider. Make sure the status is set to **Registered**.
+**If you are not using a hosted lab environment**, follow the instructions in [Deploy your Azure Synapse Analytics workspace](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/01/asa-workspace-deploy.md) to create and configure the workspace.
 
-    ![The resource provider status is Registered.](media/documentdb-registered.png "Microsoft.DocumentDB resource provider")
+#### Task 2: Create and configure additional resources for this lab
 
-    If it is **not** registered, select the **Microsoft.DocumentDB** resource provider, then select **Register**.
+**If you are not using a hosted lab environment**, follow the instructions in [Deploy resources for Lab 02](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/01/lab-02-deploy.md) to deploy additional resources for this lab. Once deployment is complete, you are ready to proceed with the exercises in this lab.
 
-    ![The register button is highlighted.](media/register-resource-provider.png "Register")
+### Exercise 1: Load and data with Spark
 
-9. In the **filter**, type `stream` to view the **Microsoft.StreamAnalytics** provider. Make sure the status is set to **Registered**.
+#### Task 1: Index the Data Lake storage with Hyperspace
 
-    ![The resource provider status is Registered.](media/streamanalytics-registered.png "Microsoft.StreamAnalytics resource provider")
+When loading data from Azure Data Lake Gen 2, searching in the data is one of the most resource consuming operations. [Hyperspace](https://github.com/microsoft/hyperspace) introduces the ability for Apache Spark users to create indexes on their datasets, such as CSV, JSON, and Parquet, and use them for potential query and workload acceleration.
 
-    If it is **not** registered, select the **Microsoft.StreamAnalytics** resource provider, then select **Register**.
+Hyperspace lets you create indexes on records scanned from persisted data files. After they're successfully created, an entry that corresponds to the index is added to the Hyperspace's metadata. This metadata is later used by Apache Spark's optimizer during query processing to find and use proper indexes. If the underlying data changes, you can refresh an existing index to capture that.
 
-    ![The register button is highlighted.](media/register-resource-provider.png "Register")
+Also, Hyperspace allows users to compare their original plan versus the updated index-dependent plan before running their query.
 
-10. In the **filter**, type `event` to view the **Microsoft.EventHub** provider. Make sure the status is set to **Registered**.
+1. Open Synapse Studio (<https://web.azuresynapse.net/>).
 
-    ![The resource provider status is Registered.](media/eventhub-registered.png "Microsoft.EventHub resource provider")
+2. Select the **Develop** hub.
 
-    If it is **not** registered, select the **Microsoft.EventHub** resource provider, then select **Register**.
+    ![The develop hub is highlighted.](media/develop-hub.png "Develop hub")
 
-    ![The register button is highlighted.](media/register-resource-provider.png "Register")
+3. Select **+**, then **Notebook** to create a new Synapse notebook.
 
-### Task 2: Create a resource group in Azure
+    ![The new notebook menu item is highlighted.](media/new-notebook.png "New Notebook")
 
-1. Log into the [Azure Portal](https://portal.azure.com) using your Azure credentials.
+4. Enter **Hyperspace** for the notebook name **(1)**, then select the **Properties** button above **(2)** to hide the properties pane.
 
-2. On the Azure Portal home screen, select the **Menu** button on the top-left corner **(1)**. Hover over **Resource groups (2)**, then select **+ Create (3)**.
+    ![The notebook properties are displayed.](media/notebook-properties.png "Properties")
 
-    ![The Create button is highlighted.](media/new-resourcegroup.png "Create resource group")
+5. Attach the notebook to the Spark cluster and make sure that the language is set to **PySpark (Python)**.
 
-3. On the **Create a resource group** screen, select your desired Subscription and Region. For Resource group, enter **`data-engineering-synapse`** (make sure the name is unique), then select the **Review + Create** button. **Copy the resource group name** and save it in Notepad or similar for later reference.
+    ![The cluster is selected and the language is set.](media/notebook-attach-cluster.png "Attach cluster")
 
-    ![The Create a resource group form is displayed populated with Synapse-MCW as the resource group name.](media/bhol_resourcegroupform.png)
+6. Add the following code to a new cell in your notebook:
 
-4. Select the **Create** button once validation has passed.
+    ```python
+    from hyperspace import *  
+    from com.microsoft.hyperspace import *
+    from com.microsoft.hyperspace.index import *
 
-> **Important**: Take note of the _exact_ resource group name you provided for the steps that follow.
+    # Disable BroadcastHashJoin, so Spark will use standard SortMergeJoin. Currently, Hyperspace indexes utilize SortMergeJoin to speed up query.
+    spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
 
-### Task 3: Create an Azure VM for the deployment scripts and desktop applications
+    # Replace the value below with the name of your primary ADLS Gen2 account for your Synapse workspace
+    datalake = 'REPLACE_WITH_YOUR_DATALAKE_NAME'
 
-We highly recommend executing the PowerShell scripts on an Azure Virtual Machine instead of from your local machine. Doing so eliminates issues due to pre-existing dependencies and more importantly, network/bandwidth-related issues while executing the scripts.
+    dfSales = spark.read.parquet("abfss://wwi-02@" + datalake + ".dfs.core.windows.net/sale-small/Year=2019/Quarter=Q4/Month=12/*/*.parquet")
+    dfSales.show(10)
 
-1. In the [Azure portal](https://portal.azure.com), type in "virtual machines" in the top search menu and then select **Virtual machines** from the results.
+    dfCustomers = spark.read.load("abfss://wwi-02@" + datalake + ".dfs.core.windows.net/data-generators/generator-customer-clean.csv", format="csv", header=True)
+    dfCustomers.show(10)
 
-    ![In the Services search result list, Virtual machines is selected.](media/azure-create-vm-search.png "Virtual machines")
-
-2. Select **+ Add** on the Virtual machines page and then select the **Virtual machine** option.
-
-3. In the **Basics** tab, complete the following:
-
-   | Field                          | Value                                              |
-   | ------------------------------ | ------------------------------------------         |
-   | Subscription                   | _select the appropriate subscription_              |
-   | Resource group                 | _select `data-engineering-synapse` (the name of the resource group you created in the previous task)_                      |
-   | Virtual machine name           | _`data-engineering-lab-vm` (or unique name if not available)_      |
-   | Region                         | _select the resource group's location_             |
-   | Availability options           | _select `No infrastructure redundancy required`_   |
-   | Image                          | _select `Windows 10 Pro, Version 20H2 - Gen1` (or newer)_     |
-   | Azure Spot instance            | _set to `Unchecked`_                                      |
-   | Size                           | _select `Standard_D8s_v3`_                         |
-   | Username                       | _select `labuser`_                             |
-   | Password                       | _enter a password you will remember_               |
-   | Public inbound ports           | _select `Allow selected ports`_                    |
-   | Select inbound ports           | _select `RDP (3389)`_                              |
-   | Licensing                      | _select the option to confirm that you have an  eligible Windows 10 license with multi-tenant hosting rights._ |
-
-   ![The form fields are completed with the previously described settings.](media/azure-create-vm-1.png "Create a virtual machine")
-
-4. Select **Review + create**. On the review screen, select **Create**. After the deployment completes, select **Go to resource** to go to the virtual machine.
-
-    ![The Go to resource option is selected.](media/azure-create-vm-2.png "Go to resource")
-
-5. Select **Connect** from the actions menu and choose **RDP**.
-
-    ![The option to connect to the virtual machine via RDP is selected.](media/azure-vm-connect.png "Connect via RDP")
-
-6. On the **Connect** tab, select **Download RDP File**.
-
-    ![Download the RDP file to connect to the Power BI virtual machine.](media/azure-vm-connect-2.png "Download RDP File")
-
-7. Open the RDP file and select **Connect** to access the virtual machine. When prompted for credentials, enter `labuser` for the username and the password you chose.
-
-    ![Connect to a remote host.](media/azure-vm-connect-3.png "Connect to a remote host")
-
-    Click Yes to connect despite security certificate errors when prompted.
-
-    ![The Yes button is highlighted.](media/rdp-connect-certificate.png "Remote Desktop Connection")
-
-8. Install [Power BI Desktop](https://www.microsoft.com/download/details.aspx?id=58494) on the VM.
-
-### Task 4: Create Azure Synapse Analytics workspace
-
-1. Deploy the workspace through the following Azure ARM template (select the button below):
-
-    <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsolliancenet%2FDP-203T00-Data-Engineering-on-Microsoft-Azure%2Foptimizations%2FInstructions%2FLabs%2F01%2Fartifacts%2Fenvironment-setup%2fautomation%2F00-asa-workspace-core.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
-
-2. On the **Custom deployment** form fill in the fields described below.
-
-   - **Subscription**: Select your desired subscription for the deployment.
-   - **Resource group**: Select the resource group you previously created.
-   - **Region**: The region where your Azure Synapse environment will be created.
-
-        > **Important**: The `Region` field under 'Parameters' will list the Azure regions where Azure Synapse Analytics is available as of November 2020. This will help you find a region where the service is available without being limited to where the resource group is defined.
-
-   - **Unique Suffix**: This unique suffix will be used naming resources that will created as part of your deployment, such as your initials followed by the current date in YYYYMMDD format (ex. `jdh20210615`). Make sure you follow correct Azure [Resource naming](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/naming-and-tagging#resource-naming) conventions.
-   - **SQL Administrator Login Password**: Provide a strong password for the SQLPool that will be created as part of your deployment. [Visit here](https://docs.microsoft.com/en-us/sql/relational-databases/security/password-policy?view=sql-server-ver15#password-complexity) to read about password rules in place. Your password will be needed during the next steps. Make sure you have your password noted and secured.
-
-   ![The form is configured as described.](media/synapse-arm-template.png "Deploy an Azure Synapse Analytics workspace")
-
-3. Select the **Review + create** button, then **Create**. The provisioning of your deployment resources will take approximately 13 minutes. **Wait** until provisioning successfully completes before continuing. You will need the resources in place before running the scripts below.
-
-    > **Note**: You may experience a deployment step failing in regards to Role Assignment. This error may safely be ignored.
-
-### Task 5: Create an Azure Databricks workspace
-
-1. Deploy the workspace through the following Azure ARM template (select the button below):
-
-   <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Fquickstarts%2Fmicrosoft.databricks%2Fdatabricks-workspace%2Fazuredeploy.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
-
-2. Provide the required values to create your Azure Databricks workspace:
-
-   - **Subscription**: Choose the Azure Subscription in which to deploy the workspace.
-   - **Resource Group**: Select the resource group you previously created.
-   - **Region**: Select a location near you for deployment. Ideally, select the same region that you used for the Synapse workspace. For the list of regions supported by Azure Databricks, see [Azure services available by region](https://azure.microsoft.com/regions/services/).
-   - **Workspace Name**: Enter a unique name for your workspace.
-   - **Disable Public Ip**: Set to `false`.
-   - **Pricing Tier**: Ensure `standard` is selected.
-   - **Location**: Leave this at the default `[resourceGroup()location]` value.
-
-   ![The form is configured as described.](media/databricks-arm-template.png "Deploy an Azure Databricks Workspace")
-
-3. Select **Review + create**.
-4. Select **Create**.
-5. The workspace creation takes a few minutes. During workspace creation, the portal displays the Submitting deployment for Azure Databricks tile on the right side. You may need to scroll right on your dashboard to see the tile. There is also a progress bar displayed near the top of the screen. You can watch either area for progress.
-
-### Task 6: Create a cluster
-
-1. When your Azure Databricks workspace creation is complete, select the link to go to the resource.
-2. Select **Launch Workspace** to open your Databricks workspace in a new tab.
-3. In the left-hand menu of your Databricks workspace, select **Compute**.
-4. Select **Create Cluster** to add a new cluster.
-
-    ![The create cluster page](media/create-a-cluster.png)
-
-5. Enter a name for your cluster, such as `Test Cluster`.
-6. Select the **Databricks RuntimeVersion**. We recommend the latest runtime and **Scala 2.12**.
-7. Select the default values for the cluster configuration.
-8. Check **Spot instances** to optimize costs.
-9. Select **Create Cluster**.
-
-## Exercise 2: Setup Synapse Analytics workspace
-
-The entire script will take about 15 minutes to complete. Major steps include:
-
-- Configure Synapse resources
-- Download all data sets and files into the data lake (~5 mins)
-- Execute the Cosmos DB pipeline (~10 mins)
-
-### Task 1: Pre-requisites
-
-Install these pre-requisites on your **deployment VM** before continuing.
-
-- Install VC Redist: <https://aka.ms/vs/15/release/vc_redist.x64.exe>
-- Install MS ODBC Driver 17 for SQL Server: <https://www.microsoft.com/download/confirmation.aspx?id=56567>
-- Install SQL CMD x64: <https://go.microsoft.com/fwlink/?linkid=2082790>
-- Install Microsoft Online Services Sign-In Assistant for IT Professionals RTW: <https://www.microsoft.com/download/details.aspx?id=28177>
-- Install [Git client](https://git-scm.com/downloads) accepting all the default options in the setup.
-- [Windows PowerShell](https://docs.microsoft.com/powershell/scripting/windows-powershell/install/installing-windows-powershell?view=powershell-7)
-
-### Task 2: Download artifacts and install PowerShell modules
-
-Perform all of the steps below from your **deployment VM**:
-
-1. Open a PowerShell Window as an administrator, run the following command to download the artifacts
-
-    ```powershell
-    mkdir c:\labfiles
-
-    cd c:\labfiles
-
-    git clone -b optimizations https://github.com/solliancenet/DP-203T00-Data-Engineering-on-Microsoft-Azure.git data-engineering-ilt-deployment
+    # Create an instance of Hyperspace
+    hyperspace = Hyperspace(spark)
     ```
 
-2. Install Azure PowerShell module
+    Replace the `REPLACE_WITH_YOUR_DATALAKE_NAME` value with the name of your primary ADLS Gen2 account for your Synapse workspace. To find this, do the following:
 
-    Open Windows PowerShell as an Administrator on your desktop and execute the following:
+    1. Navigate to the **Data** hub.
 
-    ```powershell
-    if (Get-Module -Name AzureRM -ListAvailable) {
-        Write-Warning -Message 'Az module not installed. Having both the AzureRM and Az modules installed at the same time is not supported.'
-        Uninstall-AzureRm -ea SilentlyContinue
-        Install-Module -Name Az -AllowClobber -Scope CurrentUser
-    } else {
-        Install-Module -Name Az -AllowClobber -Scope CurrentUser
-    }
+        ![The data hub is highlighted.](media/data-hub.png "Data hub")
+
+    2. Select the **Linked** tab **(1)**, expand the Azure Data Lake Storage Gen2 group, then make note of the primary ADLS Gen2 name **(2)** next to the name of the workspace.
+
+        ![The primary ADLS Gen2 name is displayed.](media/adlsgen2-name.png "ADLS Gen2 name")
+
+7. Run the new cell. It will load the two DataFrames with data from the data lake and initialize Hyperspace.
+
+    ![Load data from the data lake and initialize Hyperspace](media/lab-02-ex-02-task-02-initialize-hyperspace.png "Initialize Hyperspace")
+
+    > **Note**: You may select the Run button to the left of the cell, or enter `Shift+Enter` to execute the cell and create a new cell below.
+    >
+    > The first time you execute a cell in the notebook will take a few minutes since it must start a new Spark cluster. Each subsequent cell execution should be must faster.
+
+8. Add a new code cell to your notebook with the following code:
+
+    ```python
+    #create indexes: each one contains a name, a set of indexed columns and a set of included columns
+    indexConfigSales = IndexConfig("indexSALES", ["CustomerId"], ["TotalAmount"])
+    indexConfigCustomers = IndexConfig("indexCUSTOMERS", ["CustomerId"], ["FullName"])
+
+    hyperspace.createIndex(dfSales, indexConfigSales)			# only create index once
+    hyperspace.createIndex(dfCustomers, indexConfigCustomers)	# only create index once
+    hyperspace.indexes().show()
     ```
 
-    > [!Note]: You may be prompted to install NuGet providers, and receive a prompt that you are installing the module from an untrusted repository. Select **Yes** in both instances to proceed with the setup
+9. Run the new cell. It will create two indexes and display their structure.
 
-3. Install `Az.CosmosDB` module
+    ![Create new indexes and display their structure](media/lab-02-ex-02-task-02-create-indexes.png "New indexes")
 
-    ```powershell
-    Install-Module -Name Az.CosmosDB -AllowClobber
+10. Add another new code cell to your notebook with the following code:
+
+    ```python
+    df1 = dfSales.filter("""CustomerId = 200""").select("""TotalAmount""")
+    df1.show()
+    df1.explain(True)
     ```
 
-    > [!Note]: If you receive a prompt that you are installing the module from an untrusted repository, select **Yes to All** to proceed with the setup.
+11. Run the new cell. The output will show that the physical execution plan is not taking into account any of the indexes (performs a file scan on the original data file).
 
-4. Install `sqlserver` module
+    ![Hyperspace explained - no indexes used](media/lab-02-ex-02-task-02-explain-hyperspace-01.png)
 
-    ```powershell
-    Install-Module -Name SqlServer -AllowClobber
+12. Now add another new cell to your notebook with the following code (notice the extra line at the beginning used to enable Hyperspace optimization in the Spark engine):
+
+    ```python
+    # Enable Hyperspace - Hyperspace optimization rules become visible to the Spark optimizer and exploit existing Hyperspace indexes to optimize user queries
+    Hyperspace.enable(spark)
+    df1 = dfSales.filter("""CustomerId = 200""").select("""TotalAmount""")
+    df1.show()
+    df1.explain(True)
     ```
 
-5. Install Azure CLI
+13. Run the new cell. The output will show that the physical execution plan is now using the index instead of the original data file.
 
-    ```powershell
-    Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
+    ![Hyperspace explained - using an index](media/lab-02-ex-02-task-02-explain-hyperspace-02.png)
+
+14. Hyperspace provides an Explain API that allows you to compare the execution plans without indexes vs. with indexes. Add a new cell with the following code:
+
+    ```python
+    df1 = dfSales.filter("""CustomerId = 200""").select("""TotalAmount""")
+
+    spark.conf.set("spark.hyperspace.explain.displayMode", "html")
+    hyperspace.explain(df1, True, displayHTML)
     ```
 
-**IMPORTANT**
+15. Run the new cell. The output shows a comparison `Plan with indexes` vs. `Plan without indexes`. Observe how, in the first case the index file is used while in the second case the original data file is used.
 
-- Once the last command has completed, **close the Windows PowerShell window** so you can import the newly installed Az.CosmosDB cmdlet.
+    ![Hyperspace explained - plan comparison](media/lab-02-ex-02-task-02-explain-hyperspace-03.png)
 
-### Task 3: Execute setup scripts
+16. Let's investigate now a more complex case, involving a join operation. Add a new cell with the following code:
 
-Perform all of the steps below from your **deployment VM**:
+    ```python
+    eqJoin = dfSales.join(dfCustomers, dfSales.CustomerId == dfCustomers.CustomerId).select(dfSales.TotalAmount, dfCustomers.FullName)
 
-1. Open Windows PowerShell as an Administrator and execute the following to set the `PSGallery` as a trusted repository:
-
-    ```powershell
-    Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+    hyperspace.explain(eqJoin, True, displayHTML)
     ```
 
-2. Execute the following to set the execution policy to Unrestricted so you can run the local PowerShell script file:
+17. Run the new cell. The output shows again a comparison `Plan with indexes` vs. `Plan without indexes`, where indexes are used in the first case and the original data files in the second.
 
-    ```powershell
-    Set-ExecutionPolicy Unrestricted
+    ![Hyperspace explained - plan comparison for join](media/lab-02-ex-02-task-02-explain-hyperspace-04.png)
+
+    In case you want to deactivate Hyperspace and cleanup the indexes, you can run the following code:
+
+    ```python
+    # Disable Hyperspace - Hyperspace rules no longer apply during query optimization. Disabling Hyperspace has no impact on created indexes because they remain intact
+    Hyperspace.disable(spark)
+
+    hyperspace.deleteIndex("indexSALES")
+    hyperspace.vacuumIndex("indexSALES")
+    hyperspace.deleteIndex("indexCUSTOMERS")
+    hyperspace.vacuumIndex("indexCUSTOMERS")
     ```
 
-    > [!Note]: If you receive a prompt that you are installing the module from an untrusted repository, select **Yes to All** to proceed with the setup.
+#### Task 2: Explore the Data Lake storage with the MSSparkUtil library
 
-3. Execute the following to import the `Az.CosmosDB` module:
+Microsoft Spark Utilities (MSSparkUtils) is a builtin package to help you easily perform common tasks. You can use MSSparkUtils to work with file systems, to get environment variables, and to work with secrets.
 
-    ```powershell
-    Import-Module Az.CosmosDB
+1. Continue with the same notebook from the previous task and add a new cell with the following code:
+
+    ```python
+    from notebookutils import mssparkutils
+
+    #
+    # Microsoft Spark Utilities
+    #
+    # https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/microsoft-spark-utilities?pivots=programming-language-python
+    #
+
+    # Azure storage access info
+    blob_account_name = datalake
+    blob_container_name = 'wwi-02'
+    blob_relative_path = '/'
+    linkedServiceName = datalake
+    blob_sas_token = mssparkutils.credentials.getConnectionStringOrCreds(linkedServiceName)
+
+    # Allow SPARK to access from Blob remotely
+    spark.conf.set('fs.azure.sas.%s.%s.blob.core.windows.net' % (blob_container_name, blob_account_name), blob_sas_token)
+
+    files = mssparkutils.fs.ls('/')
+    for file in files:
+        print(file.name, file.isDir, file.isFile, file.path, file.size)
+
+    mssparkutils.fs.mkdirs('/SomeNewFolder')
+
+    files = mssparkutils.fs.ls('/')
+    for file in files:
+        print(file.name, file.isDir, file.isFile, file.path, file.size)
     ```
 
-4. Change directories to the root of this repo within your local file system.
+2. Run the new cell and observe how `mssparkutils` is used to work with the file system.
 
-    ```powershell
-    cd C:\labfiles\data-engineering-ilt-deployment\Instructions\Labs\01\artifacts\environment-setup\automation\
-    ```
+### Resources
 
-5. Execute `Connect-AzAccount` and sign in to your Microsoft user account when prompted.
+To learn more about the topics covered in this lab, use these resources:
 
-    > [!WARNING]: You may receive the message "TenantId 'xxxxxx-xxxx-xxxx-xxxx' contains more than one active subscription. The first one will be selected for further use. You can ignore this at this point. When you execute the environment setup, you will choose the subscription in which you deployed the environment resources.
-
-6. Execute `az login` and sign in to your Microsoft user account when prompted.
-
-    > If you receive the following error, and have already closed and re-opened the PowerShell window, you need to restart your computer and restart the steps in this task: `The term 'az' is not recognized as the name of a cmdlet, function, script file, or operable program`.
-
-7. Execute `.\01-environment-setup.ps1`
-
-   1. You will be prompted to setup your Azure PowerShell and Azure CLI context.
-
-   2. If you have more than one Azure Subscription, you will be prompted to enter the name of your desired Azure Subscription. You can copy and paste the value from the list to select one. For example:
-
-       ![A subscription is copied and pasted into the text entry.](media/select-desired-subscription.png "Select desired subscription")
-
-   3. Enter the name of the resource group you created at the beginning of the environment setup (such as `data-engineering-synapse`). This will make sure automation runs against the correct environment you provisioned in Azure.
-
-       During the execution of the automation script you may be prompted to approve installations from PS-Gallery. Please approve to proceed with the automation.
-
-       ![The Azure Cloud Shell window is displayed with a sample of the output from the preceding command.](media/untrusted-repo.png)
-
-       > **NOTE** This script will take about 15-25 minutes to complete.
-
-#### Potential errors that you can ignore
-
-You may encounter a few errors and warnings during the script execution. The errors below can safely be ignored:
-
-1. The following error may occur when creating SQL users and adding role assignments in the dedicated SQL pool, and can safely be ignored: `Principal 'xxx@xxx.com' could not be created. Only connections established with Active Directory accounts can create other Active Directory users.`
-
-    ![Error is displayed.](media/error-cannot-create-principal.png "Cannot create principal")
-
-2. Toward the end of the script, you may see the following error. If you do, it can be safely ignored:
-
-    ```PowerShell
-    Starting PowerBI Artifact Provisioning
-    Invoke-WebRequest : The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again.
-    At C:\labfiles\data-engineering-ilt-deployment\setup\04\artifacts\environment-setup\solliance-synapse-automation\solliance-synapse-automation. char:15
-    + ...   $result = Invoke-WebRequest -Uri $url -Method GET -ContentType "app ...
-    +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        + CategoryInfo          : NotImplemented: (:) [Invoke-WebRequest], NotSupportedException
-        + FullyQualifiedErrorId : WebCmdletIEDomNotSupportedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
-
-    Cannot index into a null array.
-    At C:\labfiles\data-engineering-ilt-deployment\setup\04\artifacts\environment-setup\solliance-synapse-automation\solliance-synapse-automation. char:5
-    +     $homeCluster = $result.Headers["home-cluster-uri"]
-    +     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        + CategoryInfo          : InvalidOperation: (:) [], RuntimeException
-        + FullyQualifiedErrorId : NullArray
-    ```
+- [Apache Spark in Azure Synapse Analytics](https://docs.microsoft.com/azure/synapse-analytics/spark/apache-spark-overview)
+- [Announcing Azure Data Explorer data connector for Azure Synapse](https://techcommunity.microsoft.com/t5/azure-data-explorer/announcing-azure-data-explorer-data-connector-for-azure-synapse/ba-p/1743868)
+- [Connect to Azure Data Explorer using Apache Spark for Azure Synapse Analytics](https://docs.microsoft.com/azure/synapse-analytics/quickstart-connect-azure-data-explorer)
+- [Azure Synapse Analytics shared metadata](https://docs.microsoft.com/azure/synapse-analytics/metadata/overview)
+- [Introduction of Microsoft Spark Utilities](https://docs.microsoft.com/azure/synapse-analytics/spark/microsoft-spark-utilities?pivots=programming-language-python)
+- [Hyperspace - An open source indexing subsystem that brings index-based query acceleration to Apache Spark™ and big data workloads](https://github.com/microsoft/hyperspace)

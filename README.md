@@ -34,7 +34,7 @@ The following is a summary of the lab objectives for each module:
 
 ### Day 1
 
-#### [Lab environment setup](Instructions/Labs/01/README.md)
+#### [Lab environment setup](Instructions/Labs/00/README.md)
 
 Complete the lab environment setup for this course.
 

@@ -63,11 +63,9 @@ In this experience, you will use Azure Event Hubs to ingest streaming vehicle te
 
 ## Lab setup and pre-requisites
 
-> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 0.
-
 - Azure subscription
 - Power BI account (sign up at <https://powerbi.microsoft.com>)
-- [Lab environment setup](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/tree/main/setup/14)
+- You have successfully completed [Module 0](../00/README.md) to create your lab environment.
 
 ## Exercise 0: Start the dedicated SQL pool
 

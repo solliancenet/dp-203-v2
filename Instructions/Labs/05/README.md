@@ -37,7 +37,7 @@ In this module, the student will be able to:
 
 ## Exercise 0: Create a new dedicated SQL pool and run setup script
 
-Time to complete: 20 minutes
+Time to complete: 24 minutes (*you can continue the lab while the script runs*)
 
 This lab requires a dedicated SQL pool. As a first step, create a new dedicated SQL pool. Then, execute a PowerShell script to load the dedicated SQL pool with data.
 
@@ -105,7 +105,9 @@ This lab requires a dedicated SQL pool. As a first step, create a new dedicated 
 
 9. **Continue on to Exercise 1** while this script is running.
 
-> **NOTE** This script will take about 16 minutes to complete.
+> **NOTE** This script will take about 20 minutes to complete.
+> 
+> If it seems as though the script hangs while creating linked services for the SQLPool01 dedicated SQL pool (there are 3), hit `Enter` on the keyboard. This tends to refresh the PowerShell script and allows it to continue to the end.
 
 #### Potential errors that you can ignore
 
@@ -114,6 +116,10 @@ You may encounter a few errors and warnings during the script execution. The err
 1. The following error may occur when creating SQL users and adding role assignments in the dedicated SQL pool, and can safely be ignored: `Principal 'xxx@xxx.com' could not be created. Only connections established with Active Directory accounts can create other Active Directory users.`
 
     ![Error is displayed.](media/error-cannot-create-principal.png "Cannot create principal")
+
+2. The following error may occur when executing `07-create-wwi-perf-sale-heap with label CTAS : Sale_Heap`, and can safely be ignored: `Cannot index into a null array.`
+
+    ![Error is displayed.](media/error-cannot-index-into-null-array.png "Cannot index into a null array")
 
 ## Exercise 1: Perform Data Exploration in Synapse Studio
 
@@ -331,7 +337,9 @@ In this task, you will use a Synapse Spark notebook to explore a few of the file
 
 5. Follow the instructions contained within the notebook to complete the remainder of this task. When you are done with the notebook, return to this guide and continue with the next section.
 
-6. Once you have completed the **Lab 2 - Explore with Spark** notebook, click on the stop session button on the far right hand side of the toolbar to release the Spark cluster for the next exercise.  
+6. Once you have completed the **Lab 2 - Explore with Spark** notebook, select on the stop session button on the far right hand side of the toolbar to release the Spark cluster for the next exercise.
+
+    ![The stop session button is highlighted.](media/stop-session.png "Stop session")
 
 Tailwind Traders has unstructured and semi-structured files from various data sources. Their data engineers want to use their Spark expertise to explore, ingest, and transform these files.
 

@@ -25,22 +25,7 @@ In this module, the student will be able to:
 
 ## Lab setup and pre-requisites
 
-> **Note:** Only complete the `Lab setup and pre-requisites` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
-
-**Complete the [lab setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/04/README.md)** for this module.
-
-Note, the following modules share this same environment:
-
-- [Module 4](labs/04/README.md)
-- [Module 5](labs/05/README.md)
-- [Module 7](labs/07/README.md)
-- [Module 8](labs/08/README.md)
-- [Module 9](labs/09/README.md)
-- [Module 10](labs/10/README.md)
-- [Module 11](labs/11/README.md)
-- [Module 12](labs/12/README.md)
-- [Module 13](labs/13/README.md)
-- [Module 16](labs/16/README.md)
+- You have successfully completed [Module 0](../00/README.md) to create your lab environment.
 
 ## Exercise 1: Linked service and datasets
 
@@ -317,7 +302,7 @@ In this segment of the lab, you will create a Synapse Spark notebook to make the
 
     ![The cell results are displayed.](media/notebook-top-products-cell1results.png "Cell 1 results")
 
-    > **Note:** The first time you run a notebook in a Spark pool, Synapse creates a new session. This can take approximately 3-5 minutes.
+    > **Note:** The first time you run a notebook in a Spark pool, Synapse creates a new session. This can take approximately 2-3 minutes.
 
     > **Note:** To run just the cell, either hover over the cell and select the _Run cell_ icon to the left of the cell, or select the cell then type **Ctrl+Enter** on your keyboard.
 

@@ -454,6 +454,10 @@ To run loads with appropriate compute resources, create loading users designated
 
     ![Linked services is displayed.](media/linked-services.png "Linked services")
 
+    > **Note:** If you do not see this or the other Synapse linked services, select **Refresh** at the top-right corner of Synapse Studio. If you recently ran the PowerShell script that creates these linked services, then they might not show up until you refresh.
+
+    ![The refresh button is highlighted.](media/refresh-synapse-studio.png "Refresh")
+
 10. Notice that the user name for the dedicated SQL pool connection is the **`asa.sql.import01` user** we added to the `HeavyLoader` classifier. We will use this linked service in our new pipeline to reserve resources for the data load activity.
 
     ![The user name is highlighted.](media/sqlpool01-import01-linked-service.png "Linked service")

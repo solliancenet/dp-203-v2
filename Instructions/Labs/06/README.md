@@ -17,7 +17,6 @@ In this module the student will be able to:
   - [Lab details](#lab-details)
   - [Lab 1 - Working with DataFrames](#lab-1---working-with-dataframes)
     - [Before the hands-on lab](#before-the-hands-on-lab)
-      - [Task 1 - Create and configure the Azure Databricks workspace](#task-1---create-and-configure-the-azure-databricks-workspace)
     - [Exercise 1: Complete the lab notebook](#exercise-1-complete-the-lab-notebook)
       - [Task 1: Clone the Databricks archive](#task-1-clone-the-databricks-archive)
       - [Task 2: Complete the Describe a DataFrame notebook](#task-2-complete-the-describe-a-dataframe-notebook)
@@ -37,13 +36,7 @@ Your data processing in Azure Databricks is accomplished by defining DataFrames 
 
 ### Before the hands-on lab
 
-> **Note:** Only complete the `Before the hands-on lab` steps if you are **not** using a hosted lab environment, and are instead using your own Azure subscription. Otherwise, skip ahead to Exercise 1.
-
-Before stepping through the exercises in this lab, make sure you have access to an Azure Databricks workspace with an available cluster. Perform the tasks below to configure the workspace.
-
-#### Task 1 - Create and configure the Azure Databricks workspace
-
-Follow the [lab 06 setup instructions](https://github.com/solliancenet/microsoft-data-engineering-ilt-deploy/blob/main/setup/06/lab-01-setup.md) to create and configure the workspace.
+- You have successfully completed [Module 0](../00/README.md) to create your lab environment.
 
 ### Exercise 1: Complete the lab notebook
 

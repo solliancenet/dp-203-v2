@@ -17,7 +17,6 @@ This module helps learners prepare their lab environments for the modules that f
     - [Task 2: Download artifacts and install PowerShell modules](#task-2-download-artifacts-and-install-powershell-modules)
     - [Task 3: Execute setup scripts](#task-3-execute-setup-scripts)
     - [Task 4: Create an Azure Databricks cluster](#task-4-create-an-azure-databricks-cluster)
-      - [Potential errors that you can ignore during PowerShell script execution](#potential-errors-that-you-can-ignore-during-powershell-script-execution)
 
 ## Requirements
 
@@ -315,10 +314,6 @@ Perform all of the steps below from your **deployment VM**:
 
    3. Enter the name of the resource group you created at the beginning of the environment setup (such as `data-engineering-synapse`). This will make sure automation runs against the correct environment you provisioned in Azure.
 
-       During the execution of the automation script you may be prompted to approve installations from PS-Gallery. Please approve to proceed with the automation.
-
-       ![The Azure Cloud Shell window is displayed with a sample of the output from the preceding command.](media/untrusted-repo.png)
-
        > **NOTE** This script will take about 15-20 minutes to complete.
 
 ### Task 4: Create an Azure Databricks cluster
@@ -343,30 +338,3 @@ Time to complete: 5 minutes
 7. Select the default values for the cluster configuration.
 8. Check **Spot instances** to optimize costs.
 9. Select **Create Cluster**.
-
-#### Potential errors that you can ignore during PowerShell script execution
-
-You may encounter a few errors and warnings during the script execution. The errors below can safely be ignored:
-
-1. The following error may occur when creating SQL users and adding role assignments in the dedicated SQL pool, and can safely be ignored: `Principal 'xxx@xxx.com' could not be created. Only connections established with Active Directory accounts can create other Active Directory users.`
-
-    ![Error is displayed.](media/error-cannot-create-principal.png "Cannot create principal")
-
-2. Toward the end of the script, you may see the following error. If you do, it can be safely ignored:
-
-    ```PowerShell
-    Starting PowerBI Artifact Provisioning
-    Invoke-WebRequest : The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again.
-    At C:\labfiles\data-engineering-ilt-deployment\setup\04\artifacts\environment-setup\solliance-synapse-automation\solliance-synapse-automation. char:15
-    + ...   $result = Invoke-WebRequest -Uri $url -Method GET -ContentType "app ...
-    +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        + CategoryInfo          : NotImplemented: (:) [Invoke-WebRequest], NotSupportedException
-        + FullyQualifiedErrorId : WebCmdletIEDomNotSupportedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
-
-    Cannot index into a null array.
-    At C:\labfiles\data-engineering-ilt-deployment\setup\04\artifacts\environment-setup\solliance-synapse-automation\solliance-synapse-automation. char:5
-    +     $homeCluster = $result.Headers["home-cluster-uri"]
-    +     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        + CategoryInfo          : InvalidOperation: (:) [], RuntimeException
-        + FullyQualifiedErrorId : NullArray
-    ```

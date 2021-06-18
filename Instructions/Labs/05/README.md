@@ -14,7 +14,10 @@ In this module, the student will be able to:
 - [Module 5 - Explore, transform, and load data into the Data Warehouse using Apache Spark](#module-5---explore-transform-and-load-data-into-the-data-warehouse-using-apache-spark)
   - [Lab details](#lab-details)
   - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
-  - [Exercise 0: Start the dedicated SQL pool](#exercise-0-start-the-dedicated-sql-pool)
+  - [Exercise 0: Create a new dedicated SQL pool and run setup script](#exercise-0-create-a-new-dedicated-sql-pool-and-run-setup-script)
+    - [Task 1: Create dedicated SQL pool](#task-1-create-dedicated-sql-pool)
+    - [Task 2: Execute PowerShell script](#task-2-execute-powershell-script)
+      - [Potential errors that you can ignore](#potential-errors-that-you-can-ignore)
   - [Exercise 1: Perform Data Exploration in Synapse Studio](#exercise-1-perform-data-exploration-in-synapse-studio)
     - [Task 1: Exploring data using the data previewer in Azure Synapse Studio](#task-1-exploring-data-using-the-data-previewer-in-azure-synapse-studio)
     - [Task 2: Using serverless SQL pools to explore files](#task-2-using-serverless-sql-pools-to-explore-files)
@@ -30,11 +33,15 @@ In this module, the student will be able to:
 
 ## Lab setup and pre-requisites
 
-- You have successfully completed [Module 1](../01/README.md) to create your lab environment.
+- You have successfully completed [Module 0](../00/README.md) to create your lab environment.
 
-## Exercise 0: Start the dedicated SQL pool
+## Exercise 0: Create a new dedicated SQL pool and run setup script
 
-This lab uses the dedicated SQL pool. As a first step, make sure it is not paused. If so, start it by following these instructions:
+Time to complete: 20 minutes
+
+This lab requires a dedicated SQL pool. As a first step, create a new dedicated SQL pool. Then, execute a PowerShell script to load the dedicated SQL pool with data.
+
+### Task 1: Create dedicated SQL pool
 
 1. Open Synapse Studio (<https://web.azuresynapse.net/>).
 
@@ -42,15 +49,71 @@ This lab uses the dedicated SQL pool. As a first step, make sure it is not pause
 
     ![The manage hub is highlighted.](media/manage-hub.png "Manage hub")
 
-3. Select **SQL pools** in the left-hand menu **(1)**. If the dedicated SQL pool is paused, hover over the name of the pool and select **Resume (2)**.
+3. Select **SQL pools** in the left-hand menu **(1)**, then select **+ New (2)**.
 
-    ![The resume button is highlighted on the dedicated SQL pool.](media/resume-dedicated-sql-pool.png "Resume")
+    ![The new button is highlighted.](media/new-dedicated-sql-pool.png "New dedicated SQL pool")
 
-4. When prompted, select **Resume**. It will take a minute or two to resume the pool.
+4. In the `Create dedicated SQL pool` form, enter **`SQLPool01`** (copy and paste since the name must be exact) for the pool name, then set the performance level to **DW200c**. Select **Create** on the validation step.
 
-    ![The resume button is highlighted.](media/resume-dedicated-sql-pool-confirm.png "Resume")
+    ![The form is completed as described.](media/create-dedicated-sql-pool.png "Create dedicated SQL pool")
 
-> **Continue to the next exercise** while the dedicated SQL pool resumes.
+> **Continue to the next exercise** while the dedicated SQL pool is created.
+
+### Task 2: Execute PowerShell script
+
+1. Connect to your **lab VM**. You can find it by connecting to the [Azure portal](https://portal.azure.com) and entering `virtual machines` into the top search bar. Select **Virtual machines** from the search results.
+
+    ![The Virtual Machines service is selected.](media/virtual-machines.png "Virtual machines")
+
+2. Select your lab VM from the list of virtual machines.
+
+    ![The virtual machine is selected.](media/select-virtual-machine.png "Virtual machines")
+
+3. If the virtual machine is stopped, select **Start** and confirm that you wish to start the virtual machine.
+
+    ![The start button is highlighted.](media/start-virtual-machine.png "Start virtual machine")
+
+4. After the virtual machine successfully starts, connect to it and complete the steps that follow.
+
+5. Execute the following to set the execution policy to Unrestricted so you can run the local PowerShell script file:
+
+    ```powershell
+    Set-ExecutionPolicy Unrestricted
+    ```
+
+    > [!Note]: If you receive a prompt that you are installing the module from an untrusted repository, select **Yes to All** to proceed with the setup.
+
+6. Change directories to the root of this repo within your local file system.
+
+    ```powershell
+    cd C:\labfiles\data-engineering-ilt-deployment\Instructions\Labs\00\artifacts\environment-setup\automation\
+    ```
+
+7. Execute `Connect-AzAccount` and sign in to your Microsoft user account when prompted.
+
+    > [!WARNING]: You may receive the message "TenantId 'xxxxxx-xxxx-xxxx-xxxx' contains more than one active subscription. The first one will be selected for further use. You can ignore this at this point. When you execute the environment setup, you will choose the subscription in which you deployed the environment resources.
+
+8. **Wait until the dedicated SQL pool is created**, then execute `.\02-environment-setup-sql.ps1`
+
+   1. You will be prompted to setup your Azure PowerShell and Azure CLI context.
+
+   2. If you have more than one Azure Subscription, you will be prompted to enter the name of your desired Azure Subscription. You can copy and paste the value from the list to select one. For example:
+
+       ![A subscription is copied and pasted into the text entry.](media/select-desired-subscription.png "Select desired subscription")
+
+   3. Enter the name of the resource group you created at the beginning of the environment setup (such as `data-engineering-synapse`). This will make sure automation runs against the correct environment you provisioned in Azure.
+
+9. **Continue on to Exercise 1** while this script is running.
+
+> **NOTE** This script will take about 16 minutes to complete.
+
+#### Potential errors that you can ignore
+
+You may encounter a few errors and warnings during the script execution. The errors below can safely be ignored:
+
+1. The following error may occur when creating SQL users and adding role assignments in the dedicated SQL pool, and can safely be ignored: `Principal 'xxx@xxx.com' could not be created. Only connections established with Active Directory accounts can create other Active Directory users.`
+
+    ![Error is displayed.](media/error-cannot-create-principal.png "Cannot create principal")
 
 ## Exercise 1: Perform Data Exploration in Synapse Studio
 

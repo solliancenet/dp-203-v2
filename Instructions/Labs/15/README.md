@@ -17,7 +17,7 @@ In this module, the student will be able to:
   - [Concepts](#concepts)
   - [Event Hubs and Spark Structured Streaming](#event-hubs-and-spark-structured-streaming)
   - [Streaming concepts](#streaming-concepts)
-  - [Lab](#lab)
+  - [Lab setup and pre-requisites](#lab-setup-and-pre-requisites)
     - [Exercise 0: Provision lab resources](#exercise-0-provision-lab-resources)
       - [Task 1: Create an Event Hubs namespace](#task-1-create-an-event-hubs-namespace)
       - [Task 2: Create an event hub](#task-2-create-an-event-hub)
@@ -49,9 +49,9 @@ A streaming system consists of:
 - Input sources such as Kafka, Azure Event Hubs, IoT Hub, files on a distributed system, or TCP-IP sockets
 - Stream processing using Structured Streaming, forEach sinks, memory sinks, etc.
 
-## Lab
+## Lab setup and pre-requisites
 
-You need to complete the exercises within Databricks Notebooks. To begin, you need to have access to an Azure Databricks workspace. If you do not have a workspace available, follow the instructions below. Otherwise, you can skip ahead to the `Clone the Databricks archive` step.
+- You have successfully completed [Module 0](../00/README.md) to create your lab environment.
 
 ### Exercise 0: Provision lab resources
 

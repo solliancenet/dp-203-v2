@@ -46,15 +46,15 @@ This lab teaches ways to structure the data lake, and to optimize the files for 
 
 In this lab, students will learn how to work with files stored in the data lake and external file sources, through T-SQL statements executed by a serverless SQL pool in Azure Synapse Analytics. Students will query Parquet files stored in a data lake, as well as CSV files stored in an external data store. Next, they will create Azure Active Directory security groups and enforce access to files in the data lake through Role-Based Access Control (RBAC) and Access Control Lists (ACLs).
 
-#### [Explore, transform, and load data into the Data Warehouse using Apache Spark](Instructions/Labs/05/README.md)
-
-This lab teaches you how to explore data stored in a data lake, transform the data, and load data into a relational data store. You will explore Parquet and JSON files and use techniques to query and transform JSON files with hierarchical structures. Then you will use Apache Spark to load data into the data warehouse and join Parquet data in the data lake with data in the dedicated SQL pool.
-
-### Day 2
-
 #### [Data Exploration and Transformation in Azure Databricks](Instructions/Labs/06/README.md)
 
 This lab teaches you how to use various Apache Spark DataFrame methods to explore and transform data in Azure Databricks. You will learn how to perform standard DataFrame methods to explore and transform data. You will also learn how to perform more advanced tasks, such as removing duplicate data, manipulate date/time values, rename columns, and aggregate data. They will provision the chosen ingestion technology and integrate this with Stream Analytics to create a solution that works with streaming data.
+
+### Day 2
+
+#### [Explore, transform, and load data into the Data Warehouse using Apache Spark](Instructions/Labs/05/README.md)
+
+This lab teaches you how to explore data stored in a data lake, transform the data, and load data into a relational data store. You will explore Parquet and JSON files and use techniques to query and transform JSON files with hierarchical structures. Then you will use Apache Spark to load data into the data warehouse and join Parquet data in the data lake with data in the dedicated SQL pool.
 
 #### [Ingest and load data into the data warehouse](Instructions/Labs/07/README.md)
 

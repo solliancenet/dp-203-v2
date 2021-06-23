@@ -173,11 +173,11 @@ In this task, you will create a table in a Synapse dedicated SQL pool to store a
 
     ![The Data hub is highlighted.](media/data-hub.png "Data hub")
 
-6. Select the **Workspace** tab **(1)**, expand Databases and right-click **ContosoAuto (2)**. Select **New SQL script (3)**, then select **Empty script (4)**.
+6. Select the **Workspace** tab **(1)**, expand Databases and right-click **SQLPool01 (2)**. Select **New SQL script (3)**, then select **Empty script (4)**.
 
-    ![The New SQL script option is highlighted in the ContosoAuto context menu.](media/synapse-new-script.png "New SQL script")
+    ![The New SQL script option is highlighted in the SQLPool01 context menu.](media/synapse-new-script.png "New SQL script")
 
-7. Make sure the script is connected to `ContosoAuto`, then replace the script with the following and select **Run** to create a new table:
+7. Make sure the script is connected to `SQLPool01`, then replace the script with the following and select **Run** to create a new table:
 
     ```sql
     CREATE TABLE dbo.VehicleAverages
@@ -281,7 +281,7 @@ In this task, you will configure Stream Analytics to use the event hub you creat
 
 17. Select **Save** on the bottom of the form when you are finished entering the values.
 
-18. Select **+ Add** in the top toolbar, then select **Azure Synapse Analytics (formerly SQL DW)** to create a new Synapse Analytics output.
+18. Select **+ Add** in the top toolbar, then select **Azure Synapse Analytics** to create a new Synapse Analytics output.
 
     ![The Azure Synapse Analytics menu item is highlighted.](media/stream-analytics-add-output-synapse-link.png "Add output - Azure Synapse Analytics")
 
@@ -290,13 +290,17 @@ In this task, you will configure Stream Analytics to use the event hub you creat
     - **Output alias:** Enter "synapse".
     - **Select Azure Synapse Analytics from your subscriptions:** Selected.
     - **Subscription:** Select the subscription you are using for this lab.
-    - **Database:** Select "ContosoAuto". Make sure your correct Synapse workspace name appears under "Server name".
+    - **Database:** Select "SQLPool01". Make sure your correct Synapse workspace name appears under "Server name".
     - **Table:** Enter `dbo.VehicleAverages`
     - **Authentication mode:** Select "Connection string".
-    - **Username:** Enter `asa.sql.admin`
-    - **Password:** Enter the password of `P4ssw.rd` or the SQL admin password value you entered when deploying the lab environment, or which was provided to you as part of your hosted lab environment. **Note**: This password is most likely not the same as the password you used to sign in to the Azure portal.
+    - **Username:** Enter `asa.sql.admin` (or the dedicated SQL pool username provided to you for this lab)
+    - **Password:** Enter the SQL admin password value you entered when deploying the lab environment, or which was provided to you as part of your hosted lab environment. **Note**: This password is most likely *not* the same as the password you used to sign in to the Azure portal.
 
     ![The New Output form is filled out with the previously mentioned settings entered into the appropriate fields.](media/synapse-new-output.png "New Output")
+
+    > **Note:** If you are unsure about your SQL admin username, navigate to the Synapse workspace in the Azure resource group. The SQL admin username is shown in the Overview pane.
+
+    ![The SQL admin account name is displayed.](media/sql-admin-name.png "SQL admin name")
 
 20. Select **Save** on the bottom of the form when you are finished entering the values.
 
@@ -418,6 +422,8 @@ In this task, you will configure and run the data generator. The data generator 
 
     ![The Event Hub connection string is highlighted within the appsettings.json file.](media/appsettings.png "appsettings.json")
 
+    > **Note:** Make sure that the connection string ends with `EntityPath=telemetry` (eg. `Endpoint=sb://YOUR_EVENTHUB_NAMESPACE.servicebus.windows.net/;SharedAccessKeyName=Write;SharedAccessKey=REDACTED/S/U=;EntityPath=telemetry`). If not, then you did not copy the connection string from the `Write` policy of your event hub.
+
     `SECONDS_TO_LEAD` is the amount of time to wait before sending vehicle telemetry data. Default value is `0`.
 
     `SECONDS_TO_RUN` is the maximum amount of time to allow the generator to run before stopping transmission of data. The default value is `1800`. Data will also stop transmitting when you enter Ctrl+C while the generator is running, or if you close the window.
@@ -456,9 +462,7 @@ In this task, you will configure and run the data generator. The data generator 
 
 In this task, you will use Power BI to create a report showing captured vehicle anomaly data. Then you will pin that report to a live dashboard for near real-time updates.
 
-1. Open your web browser and navigate to <https://powerbi.microsoft.com/>. Select **Sign in** on the upper-right.
-
-    ![The Power BI home page is shown with the Sign in link highlighted.](media/pbi-signin.png 'Power BI home page')
+1. Open your web browser and navigate to <https://app.powerbi.com/>. Select **Sign in** on the upper-right.
 
 2. Enter your Power BI credentials you used when creating the Power BI output for Stream Analytics.
 
@@ -580,7 +584,7 @@ In this task, you will view the anomaly data within Synapse Analytics.
 
     ![The Data hub is highlighted.](media/data-hub.png "Data hub")
 
-7. Select the **Workspace** tab **(1)**, expand the `ContosoAuto` database, expand `Tables`, then right-click on the **dbo.VehicleAverages** table **(2)**. If you do not see the table listed, refresh the tables list. Select **New SQL script (3)**, then **Select TOP 100 rows (4)**.
+7. Select the **Workspace** tab **(1)**, expand the `SQLPool01` database, expand `Tables`, then right-click on the **dbo.VehicleAverages** table **(2)**. If you do not see the table listed, refresh the tables list. Select **New SQL script (3)**, then **Select TOP 100 rows (4)**.
 
     ![The Select TOP 100 rows menu item is selected.](media/select-top-100-rows.png "Select TOP 100 rows")
 

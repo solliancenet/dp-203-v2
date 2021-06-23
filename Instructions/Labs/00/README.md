@@ -96,6 +96,31 @@ In Azure, you must register specific resource providers on your subscription bef
 
     ![The register button is highlighted.](media/register-resource-provider.png "Register")
 
+11. In the **filter**, type `keyvault` to view the **Microsoft.KeyVault** provider. Make sure the status is set to **Registered**.
+
+    ![The resource provider status is Registered.](media/keyvault-registered.png "Microsoft.KeyVault resource provider")
+
+    If it is **not** registered, select the **Microsoft.KeyVault** resource provider, then select **Register**.
+
+    ![The register button is highlighted.](media/register-resource-provider.png "Register")
+
+12. In the **filter**, type `storage` to view the **Microsoft.Storage** provider. Make sure the status is set to **Registered**.
+
+    ![The resource provider status is Registered.](media/storage-registered.png "Microsoft.Storage resource provider")
+
+    If it is **not** registered, select the **Microsoft.Storage** resource provider, then select **Register**.
+
+    ![The register button is highlighted.](media/register-resource-provider.png "Register")
+
+13. In the **filter**, type `compute` to view the **Microsoft.Compute** provider. Make sure the status is set to **Registered**.
+
+    ![The resource provider status is Registered.](media/compute-registered.png "Microsoft.Compute resource provider")
+
+    If it is **not** registered, select the **Microsoft.Compute** resource provider, then select **Register**.
+
+    ![The register button is highlighted.](media/register-resource-provider.png "Register")
+
+
 ### Task 2: Create a resource group in Azure
 
 1. Log into the [Azure Portal](https://portal.azure.com) using your Azure credentials.

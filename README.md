@@ -80,6 +80,10 @@ In this lab, the student will learn how to integrate Power BI with their Azure S
 
 ### Day 4
 
+#### [Support Hybrid Transactional Analytical Processing (HTAP) with Azure Synapse Link](Instructions/Labs/12/README.md)
+
+This lab teaches you how Azure Synapse Link enables seamless connectivity of an Azure Cosmos DB account to a Synapse workspace. You will understand how to enable and configure Synapse link, then how to query the Azure Cosmos DB analytical store using Apache Spark and SQL Serverless.
+
 #### [Real-time Stream Processing with Stream Analytics](Instructions/Labs/14/README.md)
 
 This lab teaches you how to process streaming data with Azure Stream Analytics. You will ingest vehicle telemetry data into Event Hubs, then process that data in real time, using various windowing functions in Azure Stream Analytics. You will output the data to Azure Synapse Analytics. Finally, you will learn how to scale the Stream Analytics job to increase throughput.
